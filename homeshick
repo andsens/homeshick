@@ -1,0 +1,70 @@
+#!/usr/bin/env sh
+mkdir -p "$HOME/.homesick/repos"
+repos="$HOME/.homesick/repos"
+
+clone () {
+	cd $repos
+	git clone $1
+	cd - > /dev/null
+}
+
+pull () {
+	repo="$repos/$1/home"
+	if [[ ! -d "$repos/$1/home" ]]; then
+		die "The castle $1 does not exist."
+	fi
+	cd $repo
+	git pull
+	cd - > /dev/null
+}
+
+pullall () {
+	for castle in `ls "$repos"`; do
+		if [[ -d "$repos/$castle" && -d "$repos/$castle/.git" ]]; then
+			pull $castle
+		fi
+	done
+}
+
+symlink () {
+	dir="$repos/$1/home"
+	if [[ ! -d "$dir" ]]; then
+		die "The castle $1 does not exist."
+	fi
+	cd $HOME
+	direrrors=''
+	for file in `ls -A "$dir"`; do
+		if [[ -e $file && `readlink -f "$file"` == "$dir/$file" ]]; then
+			echo "   identical  $HOME/$file"
+			continue
+		fi
+		if [[ -d $file ]]; then
+			direrrors="$direrrors\n$file"
+			continue
+		fi
+		echo "   symlink    $HOME/$file"
+		ln -si $dir/$file $file
+	done
+	
+	if [[ -n "$direrrors" ]]; then
+		echo 'The following directories already exist and will only' >&2
+		echo -n 'be overwritten, if you delete them manually:' >&2
+		echo -e $direrrors >&2
+	fi
+	cd - > /dev/null
+}
+
+function die {
+	echo $@ >&2
+	exit 1
+}
+
+
+case $1 in
+	clone)   clone $2   ;;
+	pull)    pull $2    ;;
+	pullall) pullall $2 ;;
+	symlink) symlink $2 ;;
+	*)     die "Unrecognized command $1. Type $0 --help for help."
+esac
+
