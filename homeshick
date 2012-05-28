@@ -1,70 +1,167 @@
-#!/usr/bin/env sh
-mkdir -p "$HOME/.homesick/repos"
-repos="$HOME/.homesick/repos"
+#!/usr/bin/env bash
+# Define some colors
+txtdef="\e[0m"    # Revert to default
+bldred="\e[1;31m" # Red
+bldgrn="\e[1;32m" # Green
+bldblu="\e[1;34m" # Blue
+bldcyn="\e[1;36m" # Cyan
 
-clone () {
-	cd $repos
-	git clone $1
-	cd - > /dev/null
+repos="$HOME/.homesick/repo§s"
+mkdir -p "$repos"
+
+
+# Get the repo name from an URL
+function parse_url {
+	printf $1 | sed -E 's#^.*/([^/]+)(\.git)?$#\1#'
 }
 
-pull () {
-	repo="$repos/$1/home"
-	if [[ ! -d "$repos/$1/home" ]]; then
-		die "The castle $1 does not exist."
-	fi
-	cd $repo
-	git pull
-	cd - > /dev/null
+function clone {
+	repo_path="$repos/`parse_url $1`"
+	test -e $repo_path && die "      $bldblu exists $txtdef $repo_path"
+	git clone $1 $repo_path
+	pushd $repo_path > /dev/null
+	git submodule update --init
+	popd > /dev/null
 }
 
-pullall () {
-	for castle in `ls "$repos"`; do
-		if [[ -d "$repos/$castle" && -d "$repos/$castle/.git" ]]; then
-			pull $castle
-		fi
+function generate {
+	mkdir $1
+	pushd $1 > /dev/null
+	git init
+	mkdir home
+	popd > /dev/null
+}
+
+function list {
+	pushd $repos > /dev/null
+	for repo in `echo *`; do
+		pushd $repo > /dev/null
+		printf "   $bldcyn $repo $txtdef `git config remote.origin.url`\n"
+		popd > /dev/null
 	done
+	popd > /dev/null
 }
 
-symlink () {
-	dir="$repos/$1/home"
-	if [[ ! -d "$dir" ]]; then
-		die "The castle $1 does not exist."
+function pull {
+	repo="$repos/$1"
+	castle_exists 'pull' $1
+	pushd $repo > /dev/null
+	git pull
+	git submodule update --init
+	popd > /dev/null
+}
+
+function symlink {
+	if [[ -z "$1" ]]; then
+		die "homeshick symlink requires at least 1 argument: \"homeshick symlink NAME\"."
 	fi
-	cd $HOME
+	castle_exists 'symlink' $1
+	repo="$repos/$1/home"
+	pushd $repo > /dev/null
 	direrrors=''
-	for file in `ls -A "$dir"`; do
-		if [[ -e $file && `readlink -f "$file"` == "$dir/$file" ]]; then
-			echo "   identical  $HOME/$file"
+	shopt -s dotglob
+	for file in `echo *`; do
+		if [[ -e $HOME/$file && `readlink "$HOME/$file"` == "$repo/$file" ]]; then
+			log "  $bldblu identical $txtdef $file"
 			continue
 		fi
-		if [[ -d $file ]]; then
+		if [[ -d $HOME/$file ]]; then
 			direrrors="$direrrors\n$file"
 			continue
 		fi
-		echo "   symlink    $HOME/$file"
-		ln -si $dir/$file $file
+		log "    $bldgrn symlink $txtdef $file"
+		ln -si $file $HOME/$file
 	done
-	
+	shopt -u dotglob
 	if [[ -n "$direrrors" ]]; then
-		echo 'The following directories already exist and will only' >&2
-		echo -n 'be overwritten, if you delete them manually:' >&2
-		echo -e $direrrors >&2
+		printf "The following directories already exist and will only\n" >&2
+		printf "be overwritten, if you delete or move them manually:\n" >&2
+		printf $direrrors >&2
 	fi
-	cd - > /dev/null
+	popd > /dev/null
+}
+
+function track {
+	if [[ -z "$1" || -z "$2" ]]; then
+		die "homesick track requires at least 2 arguments: \"homeshick track FILE CASTLE\"."
+	fi
+	castle_exists 'track' $2
+	repo="$repos/$2/home"
+	newfile="$repo/$1"
+	if [[ ! -e "$1" ]]; then
+		die "   $bldred error $txtdef The file $1 does not exist."
+	fi
+	if [[ -e "$newfile" ]]; then
+		die "   $bldred error $txtdef The file $1 already exists in the castle $2."
+	fi
+	mv "$1" "$newfile"
+	ln -s "$newfile" $1
+	log "    $bldgrn symlink $txtdef $newfile to $1"
+}
+
+function castle_exists {
+	if [[ ! -d "$repos/$2/home" ]]; then
+		die "  $bldred error $txtdef Could not $1 $2, expected $repo to exist and contain dotfiles"
+	fi
+}
+
+function help {
+	case $1 in
+		clone)    printf "Usage:\n  homesick clone URL"     ;;
+		generate) printf "Usage:\n  homesick generate PATH" ;;
+		help)     printf "Usage:\n  homesick help [TASK]"   ;;
+		list)     printf "Usage:\n  homesick list"          ;;
+		pull)     printf "Usage:\n  homesick pull NAME"     ;;
+		symlink)  printf "Usage:\n  homesick symlink NAME"  ;;
+		track)    printf "Usage:\n  homesick track FILE CASTLE"  ;;
+		"")       printf "Tasks:
+  homesick clone URI          # Clone +uri+ as a castle for homesick
+  homesick generate PATH      # generate a homesick-ready git repo at PATH
+  homesick help [TASK]        # Describe available tasks or one specific task
+  homesick list               # List cloned castles
+  homesick pull NAME          # Update the specified castle
+  homesick symlink NAME       # Symlinks all dotfiles from the specified castle
+  homesick track FILE CASTLE  # add a file to a castle" ;;
+		*)       notfound $1 ;;
+	esac
+	printf "\n\n"
+# cat <<EOM
+
+
+# Runtime options:
+#   -s, [--skip]     # Skip files that already exist
+#   -f, [--force]    # Overwrite files that already exist
+#   -p, [--pretend]  # Run but do not make any changes
+#   -q, [--quiet]    # Suppress status output
+# EOM
+}
+
+function notfound {
+	die "Could not find task \"$1\"."
 }
 
 function die {
-	echo $@ >&2
+	for line in "$@"; do
+		printf "$line\n" >&2
+	done
 	exit 1
+}
+
+function log {
+	for line in "$@"; do
+		printf "$line\n"
+	done
 }
 
 
 case $1 in
-	clone)   clone $2   ;;
-	pull)    pull $2    ;;
-	pullall) pullall $2 ;;
-	symlink) symlink $2 ;;
-	*)     die "Unrecognized command $1. Type $0 --help for help."
+	clone)    clone $2    ;;
+	generate) generate $2 ;;
+	help)     help $2     ;;
+	list)     list $2     ;;
+	pull)     pull $2     ;;
+	symlink)  symlink $2  ;;
+	track)    track $2 $3 ;;
+	"")       help        ;;
+	*)        notfound $1 ;;
 esac
-
