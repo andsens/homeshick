@@ -1,10 +1,10 @@
 homeshick
 =========
 <div style="float: right"><img src="http://i.imgur.com/3zAK9.jpg"></div>
-homs**h**ick is a dependency-free alternative to [homesick](https://github.com/technicalpickles/homesick) (except git+bash)
+homs**h**ick is a dependency-free stand-in [homesick](https://github.com/technicalpickles/homesick) (except git+bash)
 
 # homeshick vs. homesick #
-The goal is to mimick homesick in functionality.
+The goal is to mimick homesick in functionality so that it can be a drop-in replacement.
 _Functionality_ does however not include:
 * **reliability**. technicalpickles has created a ton of tests for his tool, I'm not going to do that.
 * **prompting**. When conflicts arise (symlink, track etc.) homesick prompts you nicely about what you want to do
