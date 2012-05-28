@@ -15,11 +15,12 @@ _Functionality_ does however not include:
 * **runtime options**. For now, there are no runtime options because I focused on the core features,
   they may come in a future version.
 * **tersity**. homesick hides a lot of git output. homeshick doesn't.
+
 If anyone were to send a pull request fixing one/some of the above, I would be very grateful.
 
 One advantage homshick has over homesick is the ability to install it easily without root privileges.
-To install a gem, no root privileges make the job a lot harder (in my experience).
-With homshick you simply run the three commands listed below and you are done!
+To install a gem, not having root privileges make the job a lot harder (in my experience).
+With homeshick you simply run the three commands listed below and you are done!
 
 # Installation #
 Get the latest version of the script
