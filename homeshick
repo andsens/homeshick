@@ -13,7 +13,10 @@ mkdir -p "$repos"
 # Get the repo name from an URL
 function parse_url {
 	regexp_extended_flag='r'
-	[ "`uname`" == 'Darwin' ] && regexp_extended_flag='E'
+	system=`uname -a`
+	if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
+		regexp_extended_flag='E'
+	fi
 	printf $1 | sed -$regexp_extended_flag 's#^.*/([^/]+)(\.git)?$#\1#'
 }
 
