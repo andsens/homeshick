@@ -29,6 +29,6 @@ Get the latest version of the script
 ```
 make the script executable and alias it in your .bashrc or .zshrc
 ```
-    chmod +x ~/homeshick
-    printf '\nalias homesick="$HOME/homeshick"' >> .bashrc
+    chmod +x ~/.homeshick
+    printf '\nalias homesick="$HOME/.homeshick"' >> .bashrc
 ```
