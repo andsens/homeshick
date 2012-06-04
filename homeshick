@@ -12,7 +12,9 @@ mkdir -p "$repos"
 
 # Get the repo name from an URL
 function parse_url {
-	printf $1 | sed -E 's#^.*/([^/]+)(\.git)?$#\1#'
+	regexp_extended_flag='r'
+	[ "`uname`" == 'Darwin' ] && regexp_extended_flag='E'
+	printf $1 | sed -$regexp_extended_flag 's#^.*/([^/]+)(\.git)?$#\1#'
 }
 
 function clone {
