@@ -82,6 +82,7 @@ function symlink {
 		printf "The following directories already exist and will only\n" >&2
 		printf "be overwritten, if you delete or move them manually:\n" >&2
 		printf $direrrors >&2
+		printf '\n' >&2
 	fi
 	popd > /dev/null
 }
