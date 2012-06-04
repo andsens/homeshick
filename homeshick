@@ -75,7 +75,7 @@ function symlink {
 			continue
 		fi
 		log "    $bldgrn symlink $txtdef $file"
-		ln -si $file $HOME/$file
+		ln -si $repo/$file $HOME/$file
 	done
 	shopt -u dotglob
 	if [[ -n "$direrrors" ]]; then
