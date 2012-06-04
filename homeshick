@@ -6,7 +6,7 @@ bldgrn="\e[1;32m" # Green
 bldblu="\e[1;34m" # Blue
 bldcyn="\e[1;36m" # Cyan
 
-repos="$HOME/.homesick/repo§s"
+repos="$HOME/.homesick/repos"
 mkdir -p "$repos"
 
 
