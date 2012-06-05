@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Define some colors
 txtdef="\e[0m"    # Revert to default
 bldred="\e[1;31m" # Red
