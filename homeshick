@@ -23,22 +23,44 @@ function parse_url {
 function clone {
 	repo_path="$repos/`parse_url $1`"
 	test -e $repo_path && die "      $bldblu exists $txtdef $repo_path"
-	git clone $1 $repo_path
+	if [ -z "$B_PRETEND" ]; then
+          	if [ -n "$B_QUIET" ]; then
+			git clone --quiet $1 $repo_path
+	  	else
+			git clone $1 $repo_path
+		fi
+	fi
+	log "git clone for $repo_path done."
 	pushd $repo_path > /dev/null
-	git submodule update --init
+	if [ -z "$B_PRETEND" ]; then
+                if [ -n "$B_QUIET" ]; then
+			git submodule --quiet update --init
+                else
+			git submodule update --init
+                fi
+        fi
+	log "git init for submodule(s)"
 	popd > /dev/null
 }
 
 function generate {
-	mkdir $1
-	pushd $1 > /dev/null
-	git init
-	mkdir home
+	if [ -z "$B_PRETEND" ]; then
+		mkdir -p $1
+		pushd $1 > /dev/null
+        	if [ -n "$B_QUIET" ]; then
+			git init --quiet
+		else
+			git init
+		fi
+		mkdir -p home
+	end
+	log "git init for `pwd` && mkdir home"
 	popd > /dev/null
 }
 
 function list {
 	pushd $repos > /dev/null
+        test `find ./ -type d |wc -l` -lt 2 && die "       $bldblu no castles exist for homesick in: $txtdef $repos" 
 	for repo in `echo *`; do
 		pushd $repo > /dev/null
 		printf "   $bldcyn $repo $txtdef `git config remote.origin.url`\n"
@@ -51,8 +73,16 @@ function pull {
 	repo="$repos/$1"
 	castle_exists 'pull' $1
 	pushd $repo > /dev/null
-	git pull
-	git submodule update --init
+	if [ -z "$B_PRETEND" ]; then
+       		if [ -n "$B_QUIET" ]; then
+			git pull --quiet
+			git submodule --quiet update --init 
+		else
+			git pull
+			git submodule update --init
+		fi
+	fi
+	log "git pull and update for submodule(s) in `pwd`"
 	popd > /dev/null
 }
 
@@ -75,10 +105,18 @@ function symlink {
 			continue
 		fi
 		log "    $bldgrn symlink $txtdef $file"
-		ln -si $repo/$file $HOME/$file
+	 	
+		if [ -z "$B_PRETEND" ]; then
+			if [ -z "$B_FORCE" ]; then
+		  		ln -si $repo/$file $HOME/$file
+			else
+		  		log "   $bldblu Forcefully overwritting: $txtdef $direrrors \n"
+		  		ln -sfi $repo/$file $HOME/$file
+			fi
+		fi
 	done
 	shopt -u dotglob
-	if [[ -n "$direrrors" ]]; then
+	if [[ -n "$direrrors" && -z "$B_FORCE" ]]; then
 		printf "The following directories already exist and will only\n" >&2
 		printf "be overwritten, if you delete or move them manually:\n" >&2
 		printf $direrrors >&2
@@ -97,11 +135,18 @@ function track {
 	if [[ ! -e "$1" ]]; then
 		die "   $bldred error $txtdef The file $1 does not exist."
 	fi
-	if [[ -e "$newfile" ]]; then
+	if [[ -e "$newfile" && -z "$B_FORCE" ]]; then
 		die "   $bldred error $txtdef The file $1 already exists in the castle $2."
 	fi
-	mv "$1" "$newfile"
-	ln -s "$newfile" $1
+	if [ -z "$B_PRETEND" ]; then
+		if [ -z "$B_FORCE" ]; then
+	  		mv "$1" "$newfile"
+	  		ln -s "$newfile" $1
+		else
+	  		mv -f "$1" "$newfile"
+	  		ln -sf "$newfile" $1
+		fi
+	fi
 	log "    $bldgrn symlink $txtdef $newfile to $1"
 }
 
@@ -111,35 +156,44 @@ function castle_exists {
 	fi
 }
 
-function help {
+function extend_help {
 	case $1 in
-		clone)    printf "Usage:\n  homesick clone URL"     ;;
-		generate) printf "Usage:\n  homesick generate PATH" ;;
-		help)     printf "Usage:\n  homesick help [TASK]"   ;;
-		list)     printf "Usage:\n  homesick list"          ;;
-		pull)     printf "Usage:\n  homesick pull NAME"     ;;
-		symlink)  printf "Usage:\n  homesick symlink NAME"  ;;
-		track)    printf "Usage:\n  homesick track FILE CASTLE"  ;;
-		"")       printf "Tasks:
-  homesick clone URI          # Clone +uri+ as a castle for homesick
-  homesick generate PATH      # generate a homesick-ready git repo at PATH
-  homesick help [TASK]        # Describe available tasks or one specific task
-  homesick list               # List cloned castles
-  homesick pull NAME          # Update the specified castle
-  homesick symlink NAME       # Symlinks all dotfiles from the specified castle
-  homesick track FILE CASTLE  # add a file to a castle" ;;
-		*)       notfound $1 ;;
-	esac
+		clone)    printf "Usage:\n  $0 clone URL"     ;;
+		generate) printf "Usage:\n  $0 generate PATH" ;;
+		help)     printf "Usage:\n  $0 help [TASK]"   ;;
+		list)     printf "Usage:\n  $0 list"          ;;
+		pull)     printf "Usage:\n  $0 pull NAME"     ;;
+		symlink)  printf "Usage:\n  $0 symlink NAME"  ;;
+		track)    printf "Usage:\n  $0 track FILE CASTLE"  ;;
+		*)    help  ;;
+        esac
 	printf "\n\n"
-# cat <<EOM
+	runtime
+}
 
+function help { 
+cat <<EOM
+ Usage: $0 [options] TASK
 
-# Runtime options:
-#   -s, [--skip]     # Skip files that already exist
-#   -f, [--force]    # Overwrite files that already exist
-#   -p, [--pretend]  # Run but do not make any changes
-#   -q, [--quiet]    # Suppress status output
-# EOM
+ Tasks:
+  $0 clone URI          # Clone +uri+ as a castle for homesick
+  $0 generate PATH      # generate a homesick-ready git repo at PATH
+  $0 help [TASK]        # Describe available tasks or one specific task
+  $0 list               # List cloned castles
+  $0 pull NAME          # Update the specified castle
+  $0 symlink NAME       # Symlinks all dotfiles from the specified castle
+  $0 track FILE CASTLE  # add a file to a castle 
+EOM
+}
+
+function runtime {
+cat <<EOM
+ Runtime options:
+   -f, [--force]    # Overwrite files that already exist
+   -p, [--pretend]  # Run but do not make any changes
+   -q, [--quiet]    # Suppress status output
+
+EOM
 }
 
 function notfound {
@@ -154,20 +208,59 @@ function die {
 }
 
 function log {
-	for line in "$@"; do
-		printf "$line\n"
-	done
+        if [ -z "$B_QUIET" ]; then
+		for line in "$@"; do
+			printf "$line\n"
+		done
+	fi
 }
 
 
-case $1 in
-	clone)    clone $2    ;;
-	generate) generate $2 ;;
-	help)     help $2     ;;
-	list)     list $2     ;;
-	pull)     pull $2     ;;
-	symlink)  symlink $2  ;;
-	track)    track $2 $3 ;;
-	"")       help        ;;
-	*)        notfound $1 ;;
-esac
+test -x `which git` || die "       $bldred git not found in path $txtdef "
+
+for arg; do
+    delim=""
+    case "$arg" in
+       clone)     args="${args}-c ";;
+       generate)  args="${args}-g ";;
+       list)      args="${args}-l ";;
+       pull)      args="${args}-p ";;
+       symlink)   args="${args}-s ";;
+       track)     args="${args}-t ";;
+
+       help)      extend_help $2 
+		  exit 0	   ;;
+       --help)    extend_help      
+                  exit 0           ;;
+       --quiet)   args="${args}-q ";;
+       --pretend) args="${args}-t ";;
+       --force)   args="${args}-f ";;
+       # pass through anything else
+       *) [[ "${arg:0:1}" == "-" ]] || delim="\""
+           args="${args}${delim}${arg}${delim} ";;
+    esac
+done
+
+# reset the translated args
+eval set -- $args
+# now we can process with getopt
+
+while getopts "c:g:lp:s:t:fktqhe:" opt; do
+case $opt in
+        c) clone $OPTARG    	;;
+        g) generate $OPTARG 	;;
+        l) list 	      	;;
+        p) pull $OPTARG     	;;
+        s) symlink $OPTARG  	;;
+        t) track $OPTARG 	;;
+        e) extend_help $OPTARG 	;;
+        f) B_FORCE=1		;;
+        t) B_PRETEND=1		;;
+        q) B_QUIET=1		;;
+        h) extend_help 
+                         exit 0 ;;
+        * ) notfound 
+                         exit 1 ;;
+    esac
+done
+
