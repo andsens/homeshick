@@ -7,8 +7,6 @@ bldblu="\e[1;34m" # Blue
 bldcyn="\e[1;36m" # Cyan
 
 repos="$HOME/.homesick/repos"
-mkdir -p "$repos"
-
 
 # Get the repo name from an URL
 function parse_url {
@@ -219,6 +217,8 @@ function log {
 
 
 test -x `which git` || die "       $bldred git not found in path $txtdef "
+
+mkdir -p "$repos"
 
 for arg; do
 	delim=""
