@@ -20,7 +20,7 @@ function parse_url {
 
 function clone {
 	repo_path="$repos/`parse_url $1`"
-	test -e $repo_path && die "      $bldblu exists $txtdef $repo_path"
+	test -e $repo_path && die "     $bldblu exists $txtdef $repo_path"
 	if [ -z "$B_PRETEND" ]; then
 		if [ -n "$B_QUIET" ]; then
 			git clone --quiet $1 $repo_path
@@ -58,7 +58,9 @@ function generate {
 
 function list {
 	pushd $repos > /dev/null
-	test `find ./ -type d |wc -l` -lt 2 && die "       $bldblu no castles exist for homesick in: $txtdef $repos" 
+	if [ `find ./ -type d | wc -l` -lt 2 ]; then
+		die "      $bldred error $txtdef no castles exist for homesick in: $repos"
+	fi
 	for repo in `echo *`; do
 		pushd $repo > /dev/null
 		printf "   $bldcyn $repo $txtdef `git config remote.origin.url`\n"
@@ -86,7 +88,7 @@ function pull {
 
 function symlink {
 	if [[ -z "$1" ]]; then
-		die "homeshick symlink requires at least 1 argument: \"homeshick symlink NAME\"."
+		die "$0 symlink requires at least 1 argument: \"homeshick symlink NAME\"."
 	fi
 	castle_exists 'symlink' $1
 	repo="$repos/$1/home"
@@ -98,23 +100,23 @@ function symlink {
 			log "  $bldblu identical $txtdef $file"
 			continue
 		fi
-		if [[ -d $HOME/$file && -z "$B_FORCE" ]]; then
-			direrrors="$direrrors  $file\n"
-			continue
-		fi
-		log "    $bldgrn symlink $txtdef $file"
 		
-		if [ -z "$B_PRETEND" ]; then
+		if [[ -e $HOME/$file ]]; then
 			if [ -z "$B_FORCE" ]; then
-				ln -si $repo/$file $HOME/$file
-			else
-				if [[ -d $HOME/$file ]]; then
-					rm -rf "$HOME/$file"
+				log "   $bldred conflict $txtdef $file exists"
+				read -p "Overwrite $file? [yN]" overwrite
+				if [[ ! $overwrite =~ [Yy] ]]; then
+					continue
 				fi
-				log "  $bldgrn overwrite $txtdef $file"
-				ln -sf $repo/$file $HOME/$file
+			else
+				log "  $bldred overwrite $txtdef $file"
 			fi
+			test -z "$B_PRETEND" && rm -rf "$HOME/$file"
+		else
+			log "    $bldgrn symlink $txtdef $file"
 		fi
+		
+		test -z "$B_PRETEND" && ln -s $repo/$file $HOME/$file
 	done
 	shopt -u dotglob
 	if [[ -n "$direrrors" && -z "$B_FORCE" ]]; then
@@ -133,10 +135,10 @@ function track {
 	repo="$repos/$2/home"
 	newfile="$repo/$1"
 	if [[ ! -e "$1" ]]; then
-		die "   $bldred error $txtdef The file $1 does not exist."
+		die "      $bldred error $txtdef The file $1 does not exist."
 	fi
 	if [[ -e "$newfile" && -z "$B_FORCE" ]]; then
-		die "   $bldred error $txtdef The file $1 already exists in the castle $2."
+		die "      $bldred error $txtdef The file $1 already exists in the castle $2."
 	fi
 	if [ -z "$B_PRETEND" ]; then
 		if [ -z "$B_FORCE" ]; then
@@ -152,7 +154,7 @@ function track {
 
 function castle_exists {
 	if [[ ! -d "$repos/$2/home" ]]; then
-		die "  $bldred error $txtdef Could not $1 $2, expected $repo to exist and contain dotfiles"
+		die "      $bldred error $txtdef Could not $1 $2, expected $repo to exist and contain dotfiles"
 	fi
 }
 
