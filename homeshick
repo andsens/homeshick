@@ -111,7 +111,7 @@ function symlink {
 				ln -si $repo/$file $HOME/$file
 			else
 				if [[ -d $HOME/$file ]]; then
-					rm -rf $HOME/$file
+					rm -rf "$HOME/$file"
 				fi
 				log "  $bldgrn overwrite $txtdef $file"
 				ln -sf $repo/$file $HOME/$file
