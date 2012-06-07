@@ -57,7 +57,6 @@ function generate {
 }
 
 function list {
-	pushd $repos > /dev/null
 	if [ `find ./ -type d | wc -l` -lt 2 ]; then
 		die "      $bldred error $txtdef no castles exist for homesick in: $repos"
 	fi
@@ -101,7 +100,11 @@ function symlink {
 			continue
 		fi
 		
-		if [[ -e $HOME/$file ]]; then
+		if [ -e $HOME/$file ]; then
+			if [ -n "$B_SKIP" ]; then
+				log "     $bldred exists $txtdef $file"
+				continue
+			fi
 			if [ -z "$B_FORCE" ]; then
 				log "   $bldred conflict $txtdef $file exists"
 				read -p "Overwrite $file? [yN]" overwrite
@@ -191,9 +194,10 @@ EOM
 function runtime {
 cat <<EOM
  Runtime options:
+   -q, [--quiet]    # Suppress status output
+   -s, [--skip]     # Skip files that already exist
    -f, [--force]    # Overwrite files that already exist
    -p, [--pretend]  # Run but do not make any changes
-   -q, [--quiet]    # Suppress status output
 
 EOM
 }
@@ -237,8 +241,9 @@ for arg; do
 		--help)    extend_help  
 		           exit 0            ;;
 		--quiet)   args="${args}-q " ;;
-		--pretend) args="${args}-u " ;;
+		--skip)    args="${args}-i " ;;
 		--force)   args="${args}-f " ;;
+		--pretend) args="${args}-u " ;;
 		
 		# pass through anything else
 		*) [[ "${arg:0:1}" == "-" ]] || delim="\""
@@ -250,7 +255,7 @@ done
 eval set -- $args
 # now we can process with getopt
 
-while getopts "c:g:lp:s:t:fkuqhe:" opt; do
+while getopts "c:g:lp:s:t:qifue:h" opt; do
 	case $opt in
 		c) clone $OPTARG       ;;
 		g) generate $OPTARG    ;;
@@ -259,10 +264,11 @@ while getopts "c:g:lp:s:t:fkuqhe:" opt; do
 		s) symlink $OPTARG     ;;
 		t) shift $(( OPTIND - 1 ))
        track $OPTARG $1    ;;
-		e) extend_help $OPTARG ;;
+		q) B_QUIET=1           ;;
+		i) B_SKIP=1            ;;
 		f) B_FORCE=1           ;;
 		u) B_PRETEND=1         ;;
-		q) B_QUIET=1           ;;
+		e) extend_help $OPTARG ;;
 		h) extend_help
 		   exit 0              ;;
 		* ) notfound
