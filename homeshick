@@ -63,7 +63,7 @@ function list {
 	fi
 	for repo in `echo *`; do
 		pushd $repo > /dev/null
-		printf "   $bldcyn $repo $txtdef `git config remote.origin.url`\n"
+		printf "$bldcyn%12s$txtdef  %s\n" "$repo" "`git config remote.origin.url`"
 		popd > /dev/null
 	done
 	popd > /dev/null
