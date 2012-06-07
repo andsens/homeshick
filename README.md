@@ -8,18 +8,13 @@ The goal is to mimick homesick in functionality so that it can be a drop-in repl
 
 _Functionality_ does however not include:
 * **reliability**. technicalpickles has created a ton of tests for his tool, I'm not going to do that.
-* **prompting**. When conflicts arise (symlink, track etc.) homesick prompts you nicely about what you want to do
-  and gives you a wide range of options. It's too much of a hassle to do this in bash.
-  Instead _homeshick_ simply compiles a list of stuff you have to do manually (except with symlink file overwrites).
 * **gem** With _gem_ you can easily install and update homesick. That's a bit harder with a simple shell script.
-* **runtime options**. For now, there are no runtime options because I focused on the core features,
-  they may come in a future version.
 * **tersity**. homesick hides a lot of git output. homeshick doesn't.
 
 If anyone were to send a pull request fixing one/some of the above, I would be very grateful.
 
 One advantage homshick has over homesick is the ability to install it easily without root privileges.
-To install a gem, not having root privileges make the job a lot harder (in my experience).
+To install a gem, not having root privileges makes the job a lot harder (in my experience).
 With homeshick you simply run the three commands listed below and you are done!
 
 # Installation #
