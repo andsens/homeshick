@@ -156,7 +156,8 @@ function track {
 }
 
 function castle_exists {
-	if [[ ! -d "$repos/$2/home" ]]; then
+	repo="$repos/$2/home"
+	if [[ ! -d "$repo" ]]; then
 		die "      $bldred error $txtdef Could not $1 $2, expected $repo to exist and contain dotfiles"
 	fi
 }
