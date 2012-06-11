@@ -15,7 +15,7 @@ function parse_url {
 	if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
 		regexp_extended_flag='E'
 	fi
-	printf $1 | sed -$regexp_extended_flag 's#^.*/([^/]+)(\.git)?$#\1#'
+	printf -- "$1" | sed -$regexp_extended_flag 's#^.*/([^/.]+)(\.git)?$#\1#'
 }
 
 function clone {
