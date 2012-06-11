@@ -27,3 +27,11 @@ make the script executable and alias it in your .bashrc or .zshrc
     chmod +x ~/.homeshick
     printf '\nalias homesick="$HOME/.homeshick"' >> .bashrc
 ```
+
+# Automatic deployment #
+After having launched ec2 instances a lot, I got tired of installing zsh, tmux etc.
+Check out [this gist](https://gist.github.com/2913223).
+
+In one line you can run a script which installs your favorite shell and multiplexer.
+It also installs homeshick, which then clones and symlinks your castle(s).
+To clone via ssh instead of https, you will need a private key. You may however not trust the current server with agent forwarding, which is why the script contains variables to hold the unencrypted deploy of your castles. They will be added to the ssh-agent in order for git to be able to clone. Enjoy!
