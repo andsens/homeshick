@@ -34,4 +34,8 @@ Check out [this gist](https://gist.github.com/2913223).
 
 In one line you can run a script which installs your favorite shell and multiplexer.
 It also installs homeshick, which then clones and symlinks your castle(s).
-To clone via ssh instead of https, you will need a private key. You may however not trust the current server with agent forwarding, which is why the script contains variables to hold the unencrypted deploy of your castles. They will be added to the ssh-agent in order for git to be able to clone. Enjoy!
+To clone via ssh instead of https, you will need a private key.
+You may however not trust the current server with agent forwarding,
+which is why the script contains variables to hold the unencrypted deploy key of your castles
+(available in the admin section of your repo).
+They will be added to the ssh-agent in order for git to be able to clone. Enjoy!
