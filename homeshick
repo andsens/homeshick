@@ -10,8 +10,8 @@ repos="$HOME/.homesick/repos"
 
 # Get the repo name from an URL
 function parse_url {
-	regexp_extended_flag='r'
-	system=`uname -a`
+	local regexp_extended_flag='r'
+	local system=`uname -a`
 	if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
 		regexp_extended_flag='E'
 	fi
@@ -19,7 +19,7 @@ function parse_url {
 }
 
 function clone {
-	repo_path="$repos/`parse_url $1`"
+	local repo_path="$repos/`parse_url $1`"
 	test -e $repo_path && die "     $bldblu exists $txtdef $repo_path"
 	if [ -z "$B_PRETEND" ]; then
 		if [ -n "$B_QUIET" ]; then
@@ -69,7 +69,7 @@ function list {
 }
 
 function pull {
-	repo="$repos/$1"
+	local repo="$repos/$1"
 	castle_exists 'pull' $1
 	pushd $repo > /dev/null
 	if [ -z "$B_PRETEND" ]; then
@@ -90,9 +90,9 @@ function symlink {
 		die "$0 symlink requires at least 1 argument: \"homeshick symlink NAME\"."
 	fi
 	castle_exists 'symlink' $1
-	repo="$repos/$1/home"
+	local repo="$repos/$1/home"
 	pushd $repo > /dev/null
-	direrrors=''
+	local direrrors=''
 	shopt -s dotglob
 	for file in `echo *`; do
 		if [[ -e $HOME/$file && `readlink "$HOME/$file"` == "$repo/$file" ]]; then
@@ -135,8 +135,8 @@ function track {
 		die "homesick track requires at least 2 arguments: \"homeshick track FILE CASTLE\"."
 	fi
 	castle_exists 'track' $2
-	repo="$repos/$2/home"
-	newfile="$repo/$1"
+	local repo="$repos/$2/home"
+	local newfile="$repo/$1"
 	if [[ ! -e "$1" ]]; then
 		die "      $bldred error $txtdef The file $1 does not exist."
 	fi
@@ -156,7 +156,7 @@ function track {
 }
 
 function castle_exists {
-	repo="$repos/$2/home"
+	local repo="$repos/$2/home"
 	if [[ ! -d "$repo" ]]; then
 		die "      $bldred error $txtdef Could not $1 $2, expected $repo to exist and contain dotfiles"
 	fi
