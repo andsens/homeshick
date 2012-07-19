@@ -58,7 +58,7 @@ function generate {
 
 function list {
 	if [ `find ./ -type d | wc -l` -lt 2 ]; then
-		die "      $bldred error $txtdef no castles exist for homesick in: $repos"
+		die "      $bldred error $txtdef no castles exist for homeshick in: $repos"
 	fi
 	for repo in `echo *`; do
 		pushd $repo > /dev/null
@@ -132,7 +132,7 @@ function symlink {
 
 function track {
 	if [[ -z "$1" || -z "$2" ]]; then
-		die "homesick track requires at least 2 arguments: \"homeshick track FILE CASTLE\"."
+		die "homeshick track requires at least 2 arguments: \"homeshick track FILE CASTLE\"."
 	fi
 	castle_exists 'track' $2
 	local repo="$repos/$2/home"
@@ -182,8 +182,8 @@ cat <<EOM
  Usage: $0 [options] TASK
 
  Tasks:
-  $0 clone URI          # Clone +uri+ as a castle for homesick
-  $0 generate PATH      # generate a homesick-ready git repo at PATH
+  $0 clone URI          # Clone +uri+ as a castle for homeshick
+  $0 generate PATH      # generate a homeshick-ready git repo at PATH
   $0 help [TASK]        # Describe available tasks or one specific task
   $0 list               # List cloned castles
   $0 pull NAME          # Update the specified castle
