@@ -20,12 +20,12 @@ With homeshick you simply run the three commands listed below and you are done!
 # Installation #
 Get the latest version of the script
 ```
-    curl -so ~/.homeshick https://raw.github.com/andsens/homeshick/master/homeshick
+curl -so ~/.homeshick https://raw.github.com/andsens/homeshick/master/homeshick
 ```
 make the script executable and alias it in your .bashrc or .zshrc
 ```
-    chmod +x ~/.homeshick
-    printf '\nalias homesick="$HOME/.homeshick"' >> .bashrc
+chmod +x ~/.homeshick
+printf '\nalias homesick="$HOME/.homeshick"' >> .bashrc
 ```
 
 # Automatic deployment #
