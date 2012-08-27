@@ -20,25 +20,30 @@ function parse_url {
 
 function clone {
 	local repo_path="$repos/`parse_url $1`"
-	test -e $repo_path && die "     $bldblu exists $txtdef $repo_path"
-	if [ -z "$B_PRETEND" ]; then
-		if [ -n "$B_QUIET" ]; then
-			git clone --quiet $1 $repo_path
+	if [[ -d "$1"  && ! -e "$repo_path" ]]; then
+		log "symlink $repo_path to $1"
+		ln -s $1 $repo_path
 	else
-			git clone $1 $repo_path
+		test -e $repo_path && die "     $bldblu exists $txtdef $repo_path"
+		if [ -z "$B_PRETEND" ]; then
+			if [ -n "$B_QUIET" ]; then
+				git clone --quiet $1 $repo_path
+			else
+				git clone $1 $repo_path
+			fi
 		fi
-	fi
-	log "git clone for $repo_path done."
-	pushd $repo_path > /dev/null
-	if [ -z "$B_PRETEND" ]; then
-		if [ -n "$B_QUIET" ]; then
-			git submodule --quiet update --init
-		else
-			git submodule update --init
+		log "git clone for $repo_path done."
+		pushd $repo_path > /dev/null
+		if [ -z "$B_PRETEND" ]; then
+			if [ -n "$B_QUIET" ]; then
+				git submodule --quiet update --init
+			else
+				git submodule update --init
+			fi
 		fi
+		log "git init for submodule(s)"
+		popd > /dev/null
 	fi
-	log "git init for submodule(s)"
-	popd > /dev/null
 }
 
 function generate {
@@ -75,7 +80,7 @@ function pull {
 	if [ -z "$B_PRETEND" ]; then
 		if [ -n "$B_QUIET" ]; then
 			git pull --quiet
-			git submodule --quiet update --init 
+			git submodule --quiet update --init
 		else
 			git pull
 			git submodule update --init
@@ -99,7 +104,7 @@ function symlink {
 			log "  $bldblu identical $txtdef $file"
 			continue
 		fi
-		
+
 		if [ -e $HOME/$file ]; then
 			if [ -n "$B_SKIP" ]; then
 				log "     $bldred exists $txtdef $file"
@@ -118,7 +123,7 @@ function symlink {
 		else
 			log "    $bldgrn symlink $txtdef $file"
 		fi
-		
+
 		test -z "$B_PRETEND" && ln -s $repo/$file $HOME/$file
 	done
 	shopt -u dotglob
@@ -177,7 +182,7 @@ function extend_help {
 	runtime
 }
 
-function help { 
+function help {
 cat <<EOM
  Usage: $0 [options] TASK
 
@@ -188,7 +193,7 @@ cat <<EOM
   $0 list               # List cloned castles
   $0 pull NAME          # Update the specified castle
   $0 symlink NAME       # Symlinks all dotfiles from the specified castle
-  $0 track FILE CASTLE  # add a file to a castle 
+  $0 track FILE CASTLE  # add a file to a castle
 EOM
 }
 
@@ -236,16 +241,16 @@ for arg; do
 		pull)      args="${args}-p " ;;
 		symlink)   args="${args}-s " ;;
 		track)     args="${args}-t " ;;
-		
-		help)      extend_help $2 
+
+		help)      extend_help $2
 		           exit 0            ;;
-		--help)    extend_help  
+		--help)    extend_help
 		           exit 0            ;;
 		--quiet)   args="${args}-q " ;;
 		--skip)    args="${args}-i " ;;
 		--force)   args="${args}-f " ;;
 		--pretend) args="${args}-u " ;;
-		
+
 		# pass through anything else
 		*) [[ "${arg:0:1}" == "-" ]] || delim="\""
 		   args="${args}${delim}${arg}${delim} ";;
