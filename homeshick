@@ -62,10 +62,11 @@ function generate {
 }
 
 function list {
-	if [ `find ./ -type d | wc -l` -lt 2 ]; then
+	pushd $repos > /dev/null
+	if [ `(find ./ -type d; find ./ -type l)  | wc -l` -lt 2 ]; then
 		die "      $bldred error $txtdef no castles exist for homesick in: $repos"
 	fi
-	for repo in `echo *`; do
+	for repo in `echo "*"`; do
 		pushd $repo > /dev/null
 		printf "$bldcyn%12s$txtdef  %s\n" "$repo" "`git config remote.origin.url`"
 		popd > /dev/null
