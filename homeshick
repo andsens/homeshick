@@ -8,8 +8,6 @@ bldcyn="\e[1;36m" # Cyan
 
 repos="$HOME/.homesick/repos"
 
-GITHUB_NAME_REPO_PATTERN="^([A-Za-z_-]+\/[A-Za-z_-]+)$"
-
 # Get the repo name from an URL
 function parse_url {
 	local regexp_extended_flag='r'
@@ -24,7 +22,7 @@ function clone {
 	local repo_path="$repos/`parse_url $1`"
 	test -e $repo_path && die "     $bldblu exists $txtdef $repo_path"
 	local git_repo=$1
-	if [[ $git_repo =~ $GITHUB_NAME_REPO_PATTERN ]]; then
+	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
 		git_repo="git://github.com/$1.git"
 	fi
 	if [ -z "$B_PRETEND" ]; then
