@@ -200,10 +200,13 @@ function notfound {
 }
 
 function err {
-	die "      $bldred error $txtdef $1"
+	die "       $bldred error$txtdef $1"
 }
 
 function die {
+	if [[ -z "$B_QUIET" && ! -z $pending_status ]]; then
+		printf "\r$bldred%13s$txtdef %s\n" "$pending_status" "$pending_message"
+	fi
 	for line in "$@"; do
 		printf "$line\n" >&2
 	done
