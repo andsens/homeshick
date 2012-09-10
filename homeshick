@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Define some colors
 txtdef="\e[0m"    # Revert to default
-bldred="\e[1;31m" # Red
-bldgrn="\e[1;32m" # Green
-bldblu="\e[1;34m" # Blue
-bldcyn="\e[1;36m" # Cyan
+bldred="\e[1;31m" # Red - error
+bldgrn="\e[1;32m" # Green - success
+bldblu="\e[1;34m" # Blue - no action/ignored
+bldcyn="\e[1;36m" # Cyan - pending action
 
 repos="$HOME/.homesick/repos"
 
@@ -27,17 +27,17 @@ function clone {
 	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
 		git_repo="git://github.com/$1.git"
 	fi
+	status $bldcyn 'clone' $git_repo
 	if [ -z "$B_PRETEND" ]; then
 		git clone $git_quiet $git_repo $repo_path
 		if [ $? != 0 ]; then
-			die "      $bldred error $txtdef unable to clone $git_repo"
+			err "Unable to clone $git_repo"
 		fi
 	fi
-	log "git clone for $repo_path done."
+	status $bldcyn 'submodules' $git_repo
 	if [ -z "$B_PRETEND" ]; then
 		(cd $repo_path; git submodule $git_quiet update --init)
 	fi
-	log "git init for submodule(s)"
 }
 
 function generate {
@@ -46,29 +46,29 @@ function generate {
 		(cd $1; git init $git_quiet)
 		mkdir -p home
 	fi
-	log "git init for `pwd` && mkdir home"
+	status $bldgrn 'generate' $1
 }
 
 function list {
 	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
-		die "      $bldred error $txtdef no castles exist for homeshick in: $repos"
+		err "No castles exist for homeshick in: $repos"
 	fi
 	for repo in `echo "$repos/*"`; do
 		remote_url=$(cd $repo; git config remote.origin.url)
 		reponame=`basename $repo`
-		printf "$bldcyn%12s$txtdef  %s\n" "$reponame" "$remote_url"
+		status $bldblu $reponame $remote_url
 	done
 }
 
 function pull {
 	local repo="$repos/$1"
 	castle_exists 'pull' $1
+	status $bldcyn 'pull' $1
 	if [ -z "$B_PRETEND" ]; then
 		(cd $repo;
 			git pull $git_quiet;
 			git submodule $git_quiet update --init)
 	fi
-	log "git pull and update for submodule(s) in `pwd`"
 }
 
 function symlink {
@@ -81,27 +81,27 @@ function symlink {
 	for filepath in `find $repo -mindepth 1 -maxdepth 1`; do
 		file=`basename $filepath`
 		if [[ -e $HOME/$file && `readlink "$HOME/$file"` == "$repo/$file" ]]; then
-			log "  $bldblu identical $txtdef $file"
+			status $bldblu 'identical' $file
 			continue
 		fi
 		
 		if [ -e $HOME/$file ]; then
 			if [ -n "$B_SKIP" ]; then
-				log "     $bldred exists $txtdef $file"
+				status $bldred 'exists' $file
 				continue
 			fi
 			if [ -z "$B_FORCE" ]; then
-				log "   $bldred conflict $txtdef $file exists"
+				status $bldred 'conflict' "$file exists"
 				read -p "Overwrite $file? [yN]" overwrite
 				if [[ ! $overwrite =~ [Yy] ]]; then
 					continue
 				fi
 			else
-				log "  $bldred overwrite $txtdef $file"
+				status $bldcyn 'overwrite' $file
 			fi
 			test -z "$B_PRETEND" && rm -rf "$HOME/$file"
 		else
-			log "    $bldgrn symlink $txtdef $file"
+			status $bldcyn 'symlink' $file
 		fi
 
 		test -z "$B_PRETEND" && ln -s $repo/$file $HOME/$file
@@ -121,10 +121,10 @@ function track {
 	local repo="$repos/$2/home"
 	local newfile="$repo/$1"
 	if [[ ! -e "$1" ]]; then
-		die "      $bldred error $txtdef The file $1 does not exist."
+		err "The file $1 does not exist."
 	fi
 	if [[ -e "$newfile" && -z "$B_FORCE" ]]; then
-		die "      $bldred error $txtdef The file $1 already exists in the castle $2."
+		err "The file $1 already exists in the castle $2."
 	fi
 	if [ -z "$B_PRETEND" ]; then
 		if [ -z "$B_FORCE" ]; then
@@ -135,13 +135,13 @@ function track {
 			ln -sf "$newfile" $1
 		fi
 	fi
-	log "    $bldgrn symlink $txtdef $newfile to $1"
+	status $bldgrn "symlink" "$newfile to $1"
 }
 
 function castle_exists {
 	local repo="$repos/$2/home"
 	if [[ ! -d "$repo" ]]; then
-		die "      $bldred error $txtdef Could not $1 $2, expected $repo to exist and contain dotfiles"
+		err "Could not $1 $2, expected $repo to exist and contain dotfiles"
 	fi
 }
 
@@ -190,6 +190,10 @@ function notfound {
 	die "Could not find task \"$1\"."
 }
 
+function err {
+	die "      $bldred error $txtdef $1"
+}
+
 function die {
 	for line in "$@"; do
 		printf "$line\n" >&2
@@ -197,14 +201,11 @@ function die {
 	exit 1
 }
 
-function log {
-		if [ -z "$B_QUIET" ]; then
-		for line in "$@"; do
-			printf "$line\n"
-		done
+function status {
+	if [ -z "$B_QUIET" ]; then
+		printf "$1%13s$txtdef %s\n" "$2" "$3"
 	fi
 }
-
 
 test -x `which git` || die "       $bldred git not found in path $txtdef "
 
