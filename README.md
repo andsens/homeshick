@@ -9,7 +9,6 @@ The goal is to mimick homesick in functionality so that it can be a drop-in repl
 _Functionality_ does however not include:
 * **reliability**. technicalpickles has created a ton of tests for his tool, I'm not going to do that.
 * **gem** With _gem_ you can easily install and update homesick. That's a bit harder with a simple shell script.
-* **tersity**. homesick hides a lot of git output. homeshick doesn't.
 
 If anyone were to send a pull request fixing one/some of the above, I would be very grateful.
 
