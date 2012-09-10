@@ -8,6 +8,8 @@ bldcyn="\e[1;36m" # Cyan
 
 repos="$HOME/.homesick/repos"
 
+git_quiet=''
+
 # Get the repo name from an URL
 function parse_url {
 	local regexp_extended_flag='r'
@@ -26,20 +28,12 @@ function clone {
 		git_repo="git://github.com/$1.git"
 	fi
 	if [ -z "$B_PRETEND" ]; then
-		if [ -n "$B_QUIET" ]; then
-			git clone --quiet $git_repo $repo_path
-		else
-			git clone $git_repo $repo_path
-		fi
+		git clone $git_quiet $git_repo $repo_path
 	fi
 	log "git clone for $repo_path done."
 	pushd $repo_path > /dev/null
 	if [ -z "$B_PRETEND" ]; then
-		if [ -n "$B_QUIET" ]; then
-			git submodule --quiet update --init
-		else
-			git submodule update --init
-		fi
+		git submodule $git_quiet update --init
 	fi
 	log "git init for submodule(s)"
 	popd > /dev/null
@@ -49,11 +43,7 @@ function generate {
 	if [ -z "$B_PRETEND" ]; then
 		mkdir -p $1
 		pushd $1 > /dev/null
-		if [ -n "$B_QUIET" ]; then
-			git init --quiet
-		else
-			git init
-		fi
+		git init $git_quiet
 		mkdir -p home
 		popd > /dev/null
 	fi
@@ -78,13 +68,8 @@ function pull {
 	castle_exists 'pull' $1
 	pushd $repo > /dev/null
 	if [ -z "$B_PRETEND" ]; then
-		if [ -n "$B_QUIET" ]; then
-			git pull --quiet
-			git submodule --quiet update --init
-		else
-			git pull
-			git submodule update --init
-		fi
+		git pull $git_quiet
+		git submodule $git_quiet update --init
 	fi
 	log "git pull and update for submodule(s) in `pwd`"
 	popd > /dev/null
@@ -270,7 +255,8 @@ while getopts "c:g:lp:s:t:qifue:h" opt; do
 		s) symlink $OPTARG     ;;
 		t) shift $(( OPTIND - 1 ))
 		   track $OPTARG $1    ;;
-		q) B_QUIET=1           ;;
+		q) B_QUIET=1
+		   git_quiet+='--quiet';;
 		i) B_SKIP=1            ;;
 		f) B_FORCE=1           ;;
 		u) B_PRETEND=1         ;;
