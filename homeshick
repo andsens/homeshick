@@ -29,6 +29,9 @@ function clone {
 	fi
 	if [ -z "$B_PRETEND" ]; then
 		git clone $git_quiet $git_repo $repo_path
+		if [ -n $? ]; then
+			die "      $bldred error $txtdef unable to clone $git_repo"
+		fi
 	fi
 	log "git clone for $repo_path done."
 	pushd $repo_path > /dev/null
