@@ -27,26 +27,29 @@ function clone {
 	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
 		git_repo="git://github.com/$1.git"
 	fi
-	status $bldcyn 'clone' $git_repo
+	pending 'clone' $git_repo
 	if [ -z "$B_PRETEND" ]; then
-		git clone $git_quiet $git_repo $repo_path
+		git clone --quiet $git_repo $repo_path
 		if [ $? != 0 ]; then
 			err "Unable to clone $git_repo"
 		fi
 	fi
-	status $bldcyn 'submodules' $git_repo
+	success
+	pending 'submodules' $git_repo
 	if [ -z "$B_PRETEND" ]; then
-		(cd $repo_path; git submodule $git_quiet update --init)
+		(cd $repo_path; git submodule --quiet update --init)
 	fi
+	success
 }
 
 function generate {
+	pending 'generate' $1
 	if [ -z "$B_PRETEND" ]; then
 		mkdir -p $1
-		(cd $1; git init $git_quiet)
+		(cd $1; git init --quiet)
 		mkdir -p home
 	fi
-	status $bldgrn 'generate' $1
+	success
 }
 
 function list {
@@ -63,12 +66,13 @@ function list {
 function pull {
 	local repo="$repos/$1"
 	castle_exists 'pull' $1
-	status $bldcyn 'pull' $1
+	pending 'pull' $1
 	if [ -z "$B_PRETEND" ]; then
 		(cd $repo;
-			git pull $git_quiet;
-			git submodule $git_quiet update --init)
+			git pull --quiet;
+			git submodule --quiet update --init)
 	fi
+	success
 }
 
 function symlink {
@@ -87,7 +91,7 @@ function symlink {
 		
 		if [ -e $HOME/$file ]; then
 			if [ -n "$B_SKIP" ]; then
-				status $bldred 'exists' $file
+				status $bldblu 'exists' $file
 				continue
 			fi
 			if [ -z "$B_FORCE" ]; then
@@ -96,15 +100,19 @@ function symlink {
 				if [[ ! $overwrite =~ [Yy] ]]; then
 					continue
 				fi
-			else
-				status $bldcyn 'overwrite' $file
 			fi
-			test -z "$B_PRETEND" && rm -rf "$HOME/$file"
+			pending 'overwrite' $file
+			if [ -z "$B_PRETEND" ]; then
+				rm -rf "$HOME/$file"
+			fi
 		else
-			status $bldcyn 'symlink' $file
+			pending 'symlink' $file
 		fi
-
-		test -z "$B_PRETEND" && ln -s $repo/$file $HOME/$file
+		
+		if [ -z "$B_PRETEND" ]; then
+			ln -s $repo/$file $HOME/$file
+		fi
+		success
 	done
 	if [[ -n "$direrrors" && -z "$B_FORCE" ]]; then
 		printf "\nThe following directories already exist and will only\n" >&2
@@ -126,6 +134,7 @@ function track {
 	if [[ -e "$newfile" && -z "$B_FORCE" ]]; then
 		err "The file $1 already exists in the castle $2."
 	fi
+	pending "symlink" "$newfile to $1"
 	if [ -z "$B_PRETEND" ]; then
 		if [ -z "$B_FORCE" ]; then
 			mv "$1" "$newfile"
@@ -135,7 +144,7 @@ function track {
 			ln -sf "$newfile" $1
 		fi
 	fi
-	status $bldgrn "symlink" "$newfile to $1"
+	success
 }
 
 function castle_exists {
@@ -201,6 +210,21 @@ function die {
 	exit 1
 }
 
+pending_status=''
+pending_message=''
+function pending {
+	pending_status="$1"
+	pending_message="$2"
+	if [ -z "$B_QUIET" ]; then
+		printf "$bldcyn%13s$txtdef %s" "$pending_status" "$pending_message"
+	fi
+}
+function success {
+	if [ -z "$B_QUIET" ]; then
+		printf "\r$bldgrn%13s$txtdef %s\n" "$pending_status" "$pending_message"
+	fi
+}
+
 function status {
 	if [ -z "$B_QUIET" ]; then
 		printf "$1%13s$txtdef %s\n" "$2" "$3"
@@ -249,8 +273,7 @@ while getopts "c:g:lp:s:t:qifue:h" opt; do
 		s) symlink $OPTARG     ;;
 		t) shift $(( OPTIND - 1 ))
 		   track $OPTARG $1    ;;
-		q) B_QUIET=1
-		   git_quiet+='--quiet';;
+		q) B_QUIET=1           ;;
 		i) B_SKIP=1            ;;
 		f) B_FORCE=1           ;;
 		u) B_PRETEND=1         ;;
