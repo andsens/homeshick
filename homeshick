@@ -29,53 +29,46 @@ function clone {
 	fi
 	if [ -z "$B_PRETEND" ]; then
 		git clone $git_quiet $git_repo $repo_path
-		if [ -n $? ]; then
+		if [ $? != 0 ]; then
 			die "      $bldred error $txtdef unable to clone $git_repo"
 		fi
 	fi
 	log "git clone for $repo_path done."
-	pushd $repo_path > /dev/null
 	if [ -z "$B_PRETEND" ]; then
-		git submodule $git_quiet update --init
+		(cd $repo_path; git submodule $git_quiet update --init)
 	fi
 	log "git init for submodule(s)"
-	popd > /dev/null
 }
 
 function generate {
 	if [ -z "$B_PRETEND" ]; then
 		mkdir -p $1
-		pushd $1 > /dev/null
-		git init $git_quiet
+		(cd $1; git init $git_quiet)
 		mkdir -p home
-		popd > /dev/null
 	fi
 	log "git init for `pwd` && mkdir home"
 }
 
 function list {
-	pushd $repos > /dev/null
-	if [ `(find ./ -type d; find ./ -type l)  | wc -l` -lt 2 ]; then
+	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
 		die "      $bldred error $txtdef no castles exist for homeshick in: $repos"
 	fi
-	for repo in `echo "*"`; do
-		pushd $repo > /dev/null
-		printf "$bldcyn%12s$txtdef  %s\n" "$repo" "`git config remote.origin.url`"
-		popd > /dev/null
+	for repo in `echo "$repos/*"`; do
+		remote_url=$(cd $repo; git config remote.origin.url)
+		reponame=`basename $repo`
+		printf "$bldcyn%12s$txtdef  %s\n" "$reponame" "$remote_url"
 	done
-	popd > /dev/null
 }
 
 function pull {
 	local repo="$repos/$1"
 	castle_exists 'pull' $1
-	pushd $repo > /dev/null
 	if [ -z "$B_PRETEND" ]; then
-		git pull $git_quiet
-		git submodule $git_quiet update --init
+		(cd $repo;
+			git pull $git_quiet;
+			git submodule $git_quiet update --init)
 	fi
 	log "git pull and update for submodule(s) in `pwd`"
-	popd > /dev/null
 }
 
 function symlink {
@@ -84,15 +77,14 @@ function symlink {
 	fi
 	castle_exists 'symlink' $1
 	local repo="$repos/$1/home"
-	pushd $repo > /dev/null
 	local direrrors=''
-	shopt -s dotglob
-	for file in `echo *`; do
+	for filepath in `find $repo -mindepth 1 -maxdepth 1`; do
+		file=`basename $filepath`
 		if [[ -e $HOME/$file && `readlink "$HOME/$file"` == "$repo/$file" ]]; then
 			log "  $bldblu identical $txtdef $file"
 			continue
 		fi
-
+		
 		if [ -e $HOME/$file ]; then
 			if [ -n "$B_SKIP" ]; then
 				log "     $bldred exists $txtdef $file"
@@ -114,13 +106,11 @@ function symlink {
 
 		test -z "$B_PRETEND" && ln -s $repo/$file $HOME/$file
 	done
-	shopt -u dotglob
 	if [[ -n "$direrrors" && -z "$B_FORCE" ]]; then
 		printf "\nThe following directories already exist and will only\n" >&2
 		printf "be overwritten, if you delete or move them manually:\n" >&2
 		printf "$direrrors\n" >&2
 	fi
-	popd > /dev/null
 }
 
 function track {
