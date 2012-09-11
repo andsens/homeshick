@@ -8,8 +8,6 @@ bldcyn="\e[1;36m" # Cyan - pending action
 
 repos="$HOME/.homesick/repos"
 
-git_quiet=''
-
 # Get the repo name from an URL
 function parse_url {
 	local regexp_extended_flag='r'
