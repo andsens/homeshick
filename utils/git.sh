@@ -33,11 +33,12 @@ function clone {
 }
 
 function generate {
-	pending 'generate' $1
+	local repo=$1
+	pending 'generate' "$repo"
 	if [ -z "$B_PRETEND" ]; then
-		mkdir -p $1
+		mkdir -p "$repo"
 		(cd $1; git init --quiet)
-		mkdir -p home
+		mkdir -p "$repo/home"
 	fi
 	success
 }
