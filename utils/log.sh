@@ -21,6 +21,12 @@ function die {
 	exit 1
 }
 
+function status {
+	if [ -z "$B_QUIET" ]; then
+		printf "$1%13s$txtdef %s\n" "$2" "$3"
+	fi
+}
+
 pending_status=''
 pending_message=''
 function pending {
@@ -30,14 +36,21 @@ function pending {
 		printf "$bldcyn%13s$txtdef %s" "$pending_status" "$pending_message"
 	fi
 }
-function success {
+
+function fail {
 	if [ -z "$B_QUIET" ]; then
-		printf "\r$bldgrn%13s$txtdef %s\n" "$pending_status" "$pending_message"
+		if [ "$1" ]; then
+			pending_status=$1
+		fi
+		printf "\r$bldred%13s$txtdef %s\n" "$pending_status" "$pending_message"
 	fi
 }
 
-function status {
+function success {
 	if [ -z "$B_QUIET" ]; then
-		printf "$1%13s$txtdef %s\n" "$2" "$3"
+		if [ "$1" ]; then
+			pending_status=$1
+		fi
+		printf "\r$bldgrn%13s$txtdef %s\n" "$pending_status" "$pending_message"
 	fi
 }

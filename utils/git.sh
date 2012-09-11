@@ -59,8 +59,60 @@ function list {
 		err "No castles exist for homeshick in: $repos"
 	fi
 	for repo in `echo "$repos/*"`; do
-		remote_url=$(cd $repo; git config remote.origin.url)
-		reponame=`basename $repo`
+		local remote_url=$(cd $repo; git config remote.origin.url)
+		local reponame=`basename $repo`
 		status $bldblu $reponame $remote_url
 	done
+	check_updates
+}
+
+function updates {
+	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
+		err "No castles exist for homeshick in: $repos"
+	fi
+	for repo in `echo "$repos/*"`; do
+		local reponame=`basename $repo`
+		pending 'checking' $reponame
+		if [ -z "$B_PRETEND" ]; then
+			local reponame=$(get_github_reponame $reponame)
+			local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
+			if [ -n "$reponame" ]; then
+				local remote_head=$(get_repo_head $reponame $ref)
+				local local_head=$(cd $repo; git rev-parse HEAD)
+				if [ "$remote_head" == "$local_head" ]; then
+					success 'up to date'
+				else
+					if [ "$remote_head" ]; then
+						fail 'outdated'
+					else
+						fail 'private'
+					fi
+				fi
+			else
+				fail 'not github'
+			fi
+		else
+			success 'checked'
+		fi
+	done
+}
+
+function check_ {
+	local repo="$repos/$1"
+	castle_exists 'examine' $1
+}
+
+function get_repo_head {
+	local repo=$1
+	local ref=$2
+	curl -sL https://api.github.com/repos/$repo/git/$ref | grep -Eo '[a-f0-9]{40}' | head -n 1
+}
+
+function get_github_reponame {
+	local repo="$repos/$1"
+	local remote_url=$(cd $repo; git config remote.origin.url)
+	
+	if [[ $remote_url =~ github.com ]]; then
+		printf -- $remote_url | sed -E 's#.*github\.com.([^:/]+)/([^/.]+)(\.git)?$#\1/\2#'
+	fi
 }

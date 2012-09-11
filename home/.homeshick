@@ -25,6 +25,7 @@ for arg; do
 		clone)     args="${args}-c " ;;
 		generate)  args="${args}-g " ;;
 		list)      args="${args}-l " ;;
+		updates)   args="${args}-u " ;;
 		pull)      args="${args}-p " ;;
 		symlink)   args="${args}-s " ;;
 		track)     args="${args}-t " ;;
@@ -36,7 +37,7 @@ for arg; do
 		--quiet)   args="${args}-q " ;;
 		--skip)    args="${args}-i " ;;
 		--force)   args="${args}-f " ;;
-		--pretend) args="${args}-u " ;;
+		--pretend) args="${args}-n " ;;
 		
 		# pass through anything else
 		*) [[ "${arg:0:1}" == "-" ]] || delim="\""
@@ -48,10 +49,11 @@ done
 eval set -- $args
 # now we can process with getopt
 
-while getopts "c:g:lp:s:t:qifue:h" opt; do
+while getopts "c:g:lup:s:t:qifn:h" opt; do
 	case $opt in
 		c) clone $OPTARG       ;;
 		g) generate $OPTARG    ;;
+		u) updates             ;;
 		l) list                ;;
 		p) pull $OPTARG        ;;
 		s) symlink $OPTARG     ;;
@@ -60,7 +62,7 @@ while getopts "c:g:lp:s:t:qifue:h" opt; do
 		q) B_QUIET=1           ;;
 		i) B_SKIP=1            ;;
 		f) B_FORCE=1           ;;
-		u) B_PRETEND=1         ;;
+		n) B_PRETEND=1         ;;
 		e) extend_help $OPTARG ;;
 		h) extend_help
 		   exit 0              ;;
