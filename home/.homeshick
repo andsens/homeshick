@@ -1,236 +1,19 @@
 #!/usr/bin/env bash
-# Define some colors
-txtdef="\e[0m"    # Revert to default
-bldred="\e[1;31m" # Red - error
-bldgrn="\e[1;32m" # Green - success
-bldblu="\e[1;34m" # Blue - no action/ignored
-bldcyn="\e[1;36m" # Cyan - pending action
+
 
 repos="$HOME/.homesick/repos"
 
-# Get the repo name from an URL
-function parse_url {
-	local regexp_extended_flag='r'
-	local system=`uname -a`
-	if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
-		regexp_extended_flag='E'
-	fi
-	printf -- "$1" | sed -$regexp_extended_flag 's#^.*/([^/.]+)(\.git)?$#\1#'
-}
+homeshick="$repos/homeshick"
+# It's either this^ or the one below:
+# scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# The install script however symlinks us. So $0 changes.
 
-function clone {
-	local repo_path="$repos/`parse_url $1`"
-	test -e $repo_path && die "     $bldblu exists $txtdef $repo_path"
-	local git_repo=$1
-	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
-		git_repo="git://github.com/$1.git"
-	fi
-	pending 'clone' $git_repo
-	if [ -z "$B_PRETEND" ]; then
-		git clone --quiet $git_repo $repo_path
-		if [ $? != 0 ]; then
-			err "Unable to clone $git_repo"
-		fi
-	fi
-	success
-	pending 'submodules' $git_repo
-	if [ -z "$B_PRETEND" ]; then
-		(cd $repo_path; git submodule --quiet update --init)
-	fi
-	success
-}
+source $homeshick/utils/log.sh
+source $homeshick/utils/fs.sh
+source $homeshick/utils/git.sh
+source $homeshick/utils/help.sh
 
-function generate {
-	pending 'generate' $1
-	if [ -z "$B_PRETEND" ]; then
-		mkdir -p $1
-		(cd $1; git init --quiet)
-		mkdir -p home
-	fi
-	success
-}
 
-function list {
-	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
-		err "No castles exist for homeshick in: $repos"
-	fi
-	for repo in `echo "$repos/*"`; do
-		remote_url=$(cd $repo; git config remote.origin.url)
-		reponame=`basename $repo`
-		status $bldblu $reponame $remote_url
-	done
-}
-
-function pull {
-	local repo="$repos/$1"
-	castle_exists 'pull' $1
-	pending 'pull' $1
-	if [ -z "$B_PRETEND" ]; then
-		(cd $repo;
-			git pull --quiet;
-			git submodule --quiet update --init)
-	fi
-	success
-}
-
-function symlink {
-	if [[ -z "$1" ]]; then
-		die "$0 symlink requires at least 1 argument: \"homeshick symlink NAME\"."
-	fi
-	castle_exists 'symlink' $1
-	local repo="$repos/$1/home"
-	local direrrors=''
-	for filepath in `find $repo -mindepth 1 -maxdepth 1`; do
-		file=`basename $filepath`
-		if [[ -e $HOME/$file && `readlink "$HOME/$file"` == "$repo/$file" ]]; then
-			status $bldblu 'identical' $file
-			continue
-		fi
-		
-		if [ -e $HOME/$file ]; then
-			if [ -n "$B_SKIP" ]; then
-				status $bldblu 'exists' $file
-				continue
-			fi
-			if [ -z "$B_FORCE" ]; then
-				status $bldred 'conflict' "$file exists"
-				read -p "Overwrite $file? [yN]" overwrite
-				if [[ ! $overwrite =~ [Yy] ]]; then
-					continue
-				fi
-			fi
-			pending 'overwrite' $file
-			if [ -z "$B_PRETEND" ]; then
-				rm -rf "$HOME/$file"
-			fi
-		else
-			pending 'symlink' $file
-		fi
-		
-		if [ -z "$B_PRETEND" ]; then
-			ln -s $repo/$file $HOME/$file
-		fi
-		success
-	done
-	if [[ -n "$direrrors" && -z "$B_FORCE" ]]; then
-		printf "\nThe following directories already exist and will only\n" >&2
-		printf "be overwritten, if you delete or move them manually:\n" >&2
-		printf "$direrrors\n" >&2
-	fi
-}
-
-function track {
-	if [[ -z "$1" || -z "$2" ]]; then
-		die "homeshick track requires at least 2 arguments: \"homeshick track FILE CASTLE\"."
-	fi
-	castle_exists 'track' $2
-	local repo="$repos/$2/home"
-	local newfile="$repo/$1"
-	if [[ ! -e "$1" ]]; then
-		err "The file $1 does not exist."
-	fi
-	if [[ -e "$newfile" && -z "$B_FORCE" ]]; then
-		err "The file $1 already exists in the castle $2."
-	fi
-	pending "symlink" "$newfile to $1"
-	if [ -z "$B_PRETEND" ]; then
-		if [ -z "$B_FORCE" ]; then
-			mv "$1" "$newfile"
-			ln -s "$newfile" $1
-		else
-			mv -f "$1" "$newfile"
-			ln -sf "$newfile" $1
-		fi
-	fi
-	success
-}
-
-function castle_exists {
-	local repo="$repos/$2/home"
-	if [[ ! -d "$repo" ]]; then
-		err "Could not $1 $2, expected $repo to exist and contain dotfiles"
-	fi
-}
-
-function extend_help {
-	case $1 in
-		clone)    printf "Usage:\n  $0 clone URL"     ;;
-		generate) printf "Usage:\n  $0 generate PATH" ;;
-		help)     printf "Usage:\n  $0 help [TASK]"   ;;
-		list)     printf "Usage:\n  $0 list"          ;;
-		pull)     printf "Usage:\n  $0 pull NAME"     ;;
-		symlink)  printf "Usage:\n  $0 symlink NAME"  ;;
-		track)    printf "Usage:\n  $0 track FILE CASTLE"  ;;
-		*)    help  ;;
-		esac
-	printf "\n\n"
-	runtime
-}
-
-function help {
-cat <<EOM
- Usage: $0 [options] TASK
-
- Tasks:
-  $0 clone URI          # Clone +uri+ as a castle for homeshick
-  $0 generate PATH      # generate a homeshick-ready git repo at PATH
-  $0 help [TASK]        # Describe available tasks or one specific task
-  $0 list               # List cloned castles
-  $0 pull NAME          # Update the specified castle
-  $0 symlink NAME       # Symlinks all dotfiles from the specified castle
-  $0 track FILE CASTLE  # add a file to a castle
-EOM
-}
-
-function runtime {
-cat <<EOM
- Runtime options:
-   -q, [--quiet]    # Suppress status output
-   -s, [--skip]     # Skip files that already exist
-   -f, [--force]    # Overwrite files that already exist
-   -p, [--pretend]  # Run but do not make any changes
-
-EOM
-}
-
-function notfound {
-	die "Could not find task \"$1\"."
-}
-
-function err {
-	die "       $bldred error$txtdef $1"
-}
-
-function die {
-	if [[ -z "$B_QUIET" && ! -z $pending_status ]]; then
-		printf "\r$bldred%13s$txtdef %s\n" "$pending_status" "$pending_message"
-	fi
-	for line in "$@"; do
-		printf "$line\n" >&2
-	done
-	exit 1
-}
-
-pending_status=''
-pending_message=''
-function pending {
-	pending_status="$1"
-	pending_message="$2"
-	if [ -z "$B_QUIET" ]; then
-		printf "$bldcyn%13s$txtdef %s" "$pending_status" "$pending_message"
-	fi
-}
-function success {
-	if [ -z "$B_QUIET" ]; then
-		printf "\r$bldgrn%13s$txtdef %s\n" "$pending_status" "$pending_message"
-	fi
-}
-
-function status {
-	if [ -z "$B_QUIET" ]; then
-		printf "$1%13s$txtdef %s\n" "$2" "$3"
-	fi
-}
 
 test -x `which git` || die "       $bldred git not found in path $txtdef "
 
@@ -281,7 +64,7 @@ while getopts "c:g:lp:s:t:qifue:h" opt; do
 		e) extend_help $OPTARG ;;
 		h) extend_help
 		   exit 0              ;;
-		* ) notfound
+		* ) die "Could not find task \"$opt\"."
 		   exit 1              ;;
 	esac
 done
