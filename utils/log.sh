@@ -46,6 +46,15 @@ function fail {
 	fi
 }
 
+function ignore {
+	if [ -z "$B_QUIET" ]; then
+		if [ "$1" ]; then
+			pending_status=$1
+		fi
+		printf "\r$bldblu%13s$txtdef %s\n" "$pending_status" "$pending_message"
+	fi
+}
+
 function success {
 	if [ -z "$B_QUIET" ]; then
 		if [ "$1" ]; then
@@ -54,3 +63,4 @@ function success {
 		printf "\r$bldgrn%13s$txtdef %s\n" "$pending_status" "$pending_message"
 	fi
 }
+

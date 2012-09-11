@@ -85,11 +85,11 @@ function updates {
 					if [ "$remote_head" ]; then
 						fail 'outdated'
 					else
-						fail 'private'
+						ignore 'private'
 					fi
 				fi
 			else
-				fail 'not github'
+				ignore 'not github'
 			fi
 		else
 			success 'checked'
