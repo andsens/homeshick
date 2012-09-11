@@ -6,24 +6,23 @@ homs**h**ick is a dependency-free stand-in for [homesick](https://github.com/tec
 # homeshick vs. homesick #
 The goal is to mimick homesick in functionality so that it can be a drop-in replacement.
 
-_Functionality_ does however not include:
-* **reliability**. technicalpickles has created a ton of tests for his tool, I'm not going to do that.
-* **gem** With _gem_ you can easily install and update homesick. That's a bit harder with a simple shell script.
+_Functionality_ does however not include **reliability**. technicalpickles has created a ton of tests for his tool, I'm not going to do that.
 
-If anyone were to send a pull request fixing one/some of the above, I would be very grateful.
+If anyone were to send a pull request adding some kind of testing for this tool, I would be very grateful.
 
 One advantage homshick has over homesick is the ability to install it easily without root privileges.
 To install a gem, not having root privileges makes the job a lot harder (in my experience).
 With homeshick you simply run the three commands listed below and you are done!
 
 # Installation #
-Get the latest version of the script
+homeshick will be installed as your first castle. After that you can easily update it with `homeshick pull homeshick`.  
+In order to create the castle, simply download the install script and run it through bash.
 ```
-curl -so ~/.homeshick https://raw.github.com/andsens/homeshick/master/homeshick
+curl -s https://raw.github.com/andsens/homeshick/master/install.sh | bash
 ```
-make the script executable and alias it in your .bashrc or .zshrc
+
+You can make homeshick accessible as an alias like this
 ```
-chmod +x ~/.homeshick
 printf '\nalias homesick="$HOME/.homeshick"' >> .bashrc
 ```
 
