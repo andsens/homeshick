@@ -59,19 +59,18 @@ function list {
 	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
 		err "No castles exist for homeshick in: $repos"
 	fi
-	for repo in `echo "$repos/*"`; do
+	for repo in `find $repos -type d -name .git -mindepth 2 -maxdepth 2 | sed 's#/.git$##g'`; do
 		local remote_url=$(cd $repo; git config remote.origin.url)
 		local reponame=`basename $repo`
 		status $bldblu $reponame $remote_url
 	done
-	check_updates
 }
 
 function updates {
 	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
 		err "No castles exist for homeshick in: $repos"
 	fi
-	for repo in `echo "$repos/*"`; do
+	for repo in `find $repos -type d -name .git -mindepth 2 -maxdepth 2 | sed 's#/.git$##g'`; do
 		local reponame=`basename $repo`
 		pending 'checking' $reponame
 		if [ -z "$B_PRETEND" ]; then
