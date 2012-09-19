@@ -84,7 +84,12 @@ function updates {
 					success 'up to date'
 				else
 					if [ "$remote_head" ]; then
-						fail 'outdated'
+						(cd $repo; git branch --contains "$remote_head") > /dev/null
+						if [ "$?" == "0" ]; then
+							fail 'ahead'
+						else
+							fail 'behind'
+						fi
 					else
 						ignore 'private'
 					fi
@@ -96,11 +101,6 @@ function updates {
 			success 'checked'
 		fi
 	done
-}
-
-function check_ {
-	local repo="$repos/$1"
-	castle_exists 'examine' $1
 }
 
 function get_repo_head {
