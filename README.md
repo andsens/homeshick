@@ -8,11 +8,11 @@ The goal is to mimick homesick in functionality so that it can be a drop-in repl
 
 _Functionality_ does however not include **reliability**. technicalpickles has created a ton of tests for his tool, I'm not going to do that.
 
-If anyone were to send a pull request adding some kind of testing for this tool, I would be very grateful.
+If anyone were to send a pull request adding some kind of homeshick testing script, I would be very grateful.
 
 One advantage homshick has over homesick is the ability to install it easily without root privileges.
-To install a gem, not having root privileges makes the job a lot harder (in my experience).
-With homeshick you simply run the three commands listed below and you are done!
+To install a gem, not having root privileges makes the job a lot harder.
+With homeshick you simply run the two commands listed below and you are done!
 
 # Installation #
 homeshick will be installed as your first castle. After that you can easily update it with `homeshick pull homeshick`.  
