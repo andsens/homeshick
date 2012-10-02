@@ -59,7 +59,7 @@ function list {
 	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
 		err "No castles exist for homeshick in: $repos"
 	fi
-	for repo in `find $repos -type d -name .git -mindepth 2 -maxdepth 2 | sed 's#/.git$##g'`; do
+	for repo in `find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'`; do
 		local remote_url=$(cd $repo; git config remote.origin.url)
 		local reponame=`basename $repo`
 		status $bldblu $reponame $remote_url
@@ -70,7 +70,7 @@ function updates {
 	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
 		err "No castles exist for homeshick in: $repos"
 	fi
-	for repo in `find $repos -type d -name .git -mindepth 2 -maxdepth 2 | sed 's#/.git$##g'`; do
+	for repo in `find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'`; do
 		local reponame=`basename $repo`
 		pending 'checking' $reponame
 		if [ -z "$B_PRETEND" ]; then
@@ -83,7 +83,7 @@ function updates {
 					success 'up to date'
 				else
 					if [ "$remote_head" ]; then
-						(cd $repo; git branch --contains "$remote_head") > /dev/null
+						(cd $repo; git branch --contains "$remote_head" 2>/dev/null) > /dev/null
 						if [ "$?" == "0" ]; then
 							fail 'ahead'
 						else
