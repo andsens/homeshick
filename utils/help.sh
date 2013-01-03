@@ -31,7 +31,7 @@ cat <<EOM
   $0 generate PATH      # generate a homeshick-ready git repo at PATH
   $0 help [TASK]        # Describe available tasks or one specific task
   $0 list               # List cloned castles
-  $0 updates            # Check all repositories for updates (github only)
+  $0 updates            # Check all repositories for updates
   $0 pull NAME          # Update the specified castle
   $0 symlink NAME       # Symlinks all dotfiles from the specified castle
   $0 track FILE CASTLE  # add a file to a castle
