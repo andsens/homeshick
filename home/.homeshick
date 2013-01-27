@@ -31,9 +31,9 @@ for arg; do
 		track)     args="${args}-t " ;;
 		
 		help)      extend_help $2
-							 exit 0            ;;
+		           exit 0            ;;
 		--help)    extend_help
-							 exit 0            ;;
+		           exit 0            ;;
 		--quiet)   args="${args}-q " ;;
 		--skip)    args="${args}-i " ;;
 		--force)   args="${args}-f " ;;

@@ -1,13 +1,13 @@
 #!/bin/bash
 function extend_help {
 	case $1 in
-		clone)    printf "Usage:\n  $0 clone URL"     ;;
-		generate) printf "Usage:\n  $0 generate PATH" ;;
-		help)     printf "Usage:\n  $0 help [TASK]"   ;;
-		list)     printf "Usage:\n  $0 list"          ;;
-		updates)  printf "Usage:\n  $0 updates"       ;;
-		pull)     printf "Usage:\n  $0 pull NAME"     ;;
-		symlink)  printf "Usage:\n  $0 symlink NAME"  ;;
+		clone)    printf "Usage:\n  $0 clone URL"          ;;
+		generate) printf "Usage:\n  $0 generate PATH"      ;;
+		help)     printf "Usage:\n  $0 help [TASK]"        ;;
+		list)     printf "Usage:\n  $0 list"               ;;
+		updates)  printf "Usage:\n  $0 updates"            ;;
+		pull)     printf "Usage:\n  $0 pull NAME"          ;;
+		symlink)  printf "Usage:\n  $0 symlink NAME"       ;;
 		track)    printf "Usage:\n  $0 track FILE CASTLE"  ;;
 		*)    help  ;;
 		esac

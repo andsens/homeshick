@@ -12,7 +12,7 @@ function parse_url {
 
 function clone {
 	local repo_path="$repos/`parse_url $1`"
-	test -e $repo_path && die "     $bldblu exists $txtdef $repo_path"
+	test -e $repo_path && die "      $bldblu exists$txtdef $repo_path"
 	local git_repo=$1
 	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
 		git_repo="git://github.com/$1.git"
