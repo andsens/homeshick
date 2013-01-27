@@ -2,7 +2,7 @@
 
 function symlink {
 	if [[ -z "$1" ]]; then
-		die "$0 symlink requires at least 1 argument: \"homeshick symlink NAME\"."
+		die "homeshick symlink requires at least 1 argument: \"homeshick symlink NAME\"."
 	fi
 	castle_exists 'symlink' $1
 	local repo="$repos/$1/home"
