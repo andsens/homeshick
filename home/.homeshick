@@ -48,7 +48,7 @@ done
 eval set -- $args
 # now we can process with getopt
 
-while getopts "c:g:lup:s:t:qifh" opt; do
+while getopts "c:g:lup:s:t:e:qifh" opt; do
 	case $opt in
 		c) clone $OPTARG       ;;
 		g) generate $OPTARG    ;;
@@ -58,10 +58,10 @@ while getopts "c:g:lup:s:t:qifh" opt; do
 		s) symlink $OPTARG     ;;
 		t) shift $(( OPTIND - 1 ))
 		   track $OPTARG $1    ;;
+		e) extend_help $OPTARG ;;
 		q) B_QUIET=1           ;;
 		i) B_SKIP=1            ;;
 		f) B_FORCE=1           ;;
-		e) extend_help $OPTARG ;;
 		h) extend_help
 		   exit 0              ;;
 		* ) die "Could not find task \"$opt\"."
