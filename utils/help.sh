@@ -17,7 +17,6 @@ function extend_help {
    -q, [--quiet]    # Suppress status output
    -s, [--skip]     # Skip files that already exist
    -f, [--force]    # Overwrite files that already exist
-   -p, [--pretend]  # Run but do not make any changes
 
 EOM
 }

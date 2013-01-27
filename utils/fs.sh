@@ -27,16 +27,12 @@ function symlink {
 				fi
 			fi
 			pending 'overwrite' $file
-			if [ -z "$B_PRETEND" ]; then
-				rm -rf "$HOME/$file"
-			fi
+			rm -rf "$HOME/$file"
 		else
 			pending 'symlink' $file
 		fi
 		
-		if [ -z "$B_PRETEND" ]; then
-			ln -s $repo/$file $HOME/$file
-		fi
+		ln -s $repo/$file $HOME/$file
 		success
 	done
 	if [[ -n "$direrrors" && -z "$B_FORCE" ]]; then
@@ -60,14 +56,12 @@ function track {
 		err "The file $1 already exists in the castle $2."
 	fi
 	pending "symlink" "$newfile to $1"
-	if [ -z "$B_PRETEND" ]; then
-		if [ -z "$B_FORCE" ]; then
-			mv "$1" "$newfile"
-			ln -s "$newfile" $1
-		else
-			mv -f "$1" "$newfile"
-			ln -sf "$newfile" $1
-		fi
+	if [ -z "$B_FORCE" ]; then
+		mv "$1" "$newfile"
+		ln -s "$newfile" $1
+	else
+		mv -f "$1" "$newfile"
+		ln -sf "$newfile" $1
 	fi
 	success
 }

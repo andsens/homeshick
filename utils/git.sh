@@ -22,35 +22,27 @@ function clone {
 	
 	pending 'clone' $git_repo
 	if [ "$(version_compare $git_version 1.6.5)" -ge '0' ]; then
-		if [ -z "$B_PRETEND" ]; then
-			git clone --quiet --recursive $git_repo $repo_path
-		fi
+		git clone --quiet --recursive $git_repo $repo_path
 		success
 	else
-		if [ -z "$B_PRETEND" ]; then
-			git clone --quiet $git_repo $repo_path
-			if [ $? != 0 ]; then
-				err "Unable to clone $git_repo"
-			fi
-			success
-			
-			pending 'submodules' $git_repo
-			if [ -z "$B_PRETEND" ]; then
-				(cd $repo_path; git submodule --quiet update --init)
-			fi
-			success
+		git clone --quiet $git_repo $repo_path
+		if [ $? != 0 ]; then
+			err "Unable to clone $git_repo"
 		fi
+		success
+		
+		pending 'submodules' $git_repo
+		(cd $repo_path; git submodule --quiet update --init)
+		success
 	fi
 }
 
 function generate {
 	local repo=$1
 	pending 'generate' "$repo"
-	if [ -z "$B_PRETEND" ]; then
-		mkdir -p "$repo"
-		(cd $1; git init --quiet)
-		mkdir -p "$repo/home"
-	fi
+	mkdir -p "$repo"
+	(cd $1; git init --quiet)
+	mkdir -p "$repo/home"
 	success
 }
 
@@ -58,14 +50,12 @@ function pull {
 	local repo="$repos/$1"
 	castle_exists 'pull' $1
 	pending 'pull' $1
-	if [ -z "$B_PRETEND" ]; then
-		(cd $repo; git pull --quiet)
-		local git_version=`git --version | grep -oE '([0-9]+.?){3}'`
-		if [ "$(version_compare $git_version 1.6.5)" -ge '0' ]; then
-			(cd $repo; git submodule --quiet update --recursive --init)
-		else
-			(cd $repo; git submodule --quiet update --init)
-		fi
+	(cd $repo; git pull --quiet)
+	local git_version=`git --version | grep -oE '([0-9]+.?){3}'`
+	if [ "$(version_compare $git_version 1.6.5)" -ge '0' ]; then
+		(cd $repo; git submodule --quiet update --recursive --init)
+	else
+		(cd $repo; git submodule --quiet update --init)
 	fi
 	success
 }
@@ -88,27 +78,23 @@ function updates {
 	for repo in `find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'`; do
 		local reponame=`basename $repo`
 		pending 'checking' $reponame
-		if [ -z "$B_PRETEND" ]; then
-			local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
-			local remote_url=$(cd $repo; git config remote.origin.url 2>/dev/null)
-			local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
-			if [ -n "$remote_head" ]; then
-				local local_head=$(cd $repo; git rev-parse HEAD)
-				if [ "$remote_head" == "$local_head" ]; then
-					success 'up to date'
-				else
-					(cd $repo; git branch --contains "$remote_head" 2>/dev/null) > /dev/null
-					if [ "$?" == "0" ]; then
-						fail 'ahead'
-					else
-						fail 'behind'
-					fi
-				fi
+		local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
+		local remote_url=$(cd $repo; git config remote.origin.url 2>/dev/null)
+		local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
+		if [ -n "$remote_head" ]; then
+			local local_head=$(cd $repo; git rev-parse HEAD)
+			if [ "$remote_head" == "$local_head" ]; then
+				success 'up to date'
 			else
-				ignore 'uncheckable'
+				(cd $repo; git branch --contains "$remote_head" 2>/dev/null) > /dev/null
+				if [ "$?" == "0" ]; then
+					fail 'ahead'
+				else
+					fail 'behind'
+				fi
 			fi
 		else
-			success 'checked'
+			ignore 'uncheckable'
 		fi
 	done
 }
