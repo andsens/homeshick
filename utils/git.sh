@@ -17,19 +17,30 @@ function clone {
 	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
 		git_repo="git://github.com/$1.git"
 	fi
+	
+	local git_version=`git --version | grep -oE '([0-9]+.?){3}'`
+	
 	pending 'clone' $git_repo
-	if [ -z "$B_PRETEND" ]; then
-		git clone --quiet $git_repo $repo_path
-		if [ $? != 0 ]; then
-			err "Unable to clone $git_repo"
+	if [ "$(version_compare $git_version 1.6.5)" -ge '0' ]; then
+		if [ -z "$B_PRETEND" ]; then
+			git clone --quiet --recursive $git_repo $repo_path
+		fi
+		success
+	else
+		if [ -z "$B_PRETEND" ]; then
+			git clone --quiet $git_repo $repo_path
+			if [ $? != 0 ]; then
+				err "Unable to clone $git_repo"
+			fi
+			success
+			
+			pending 'submodules' $git_repo
+			if [ -z "$B_PRETEND" ]; then
+				(cd $repo_path; git submodule --quiet update --init)
+			fi
+			success
 		fi
 	fi
-	success
-	pending 'submodules' $git_repo
-	if [ -z "$B_PRETEND" ]; then
-		(cd $repo_path; git submodule --quiet update --init)
-	fi
-	success
 }
 
 function generate {
@@ -48,9 +59,13 @@ function pull {
 	castle_exists 'pull' $1
 	pending 'pull' $1
 	if [ -z "$B_PRETEND" ]; then
-		(cd $repo;
-			git pull --quiet;
-			git submodule --quiet update --init)
+		(cd $repo; git pull --quiet)
+		local git_version=`git --version | grep -oE '([0-9]+.?){3}'`
+		if [ "$(version_compare $git_version 1.6.5)" -ge '0' ]; then
+			(cd $repo; git submodule --quiet update --recursive --init)
+		else
+			(cd $repo; git submodule --quiet update --init)
+		fi
 	fi
 	success
 }
@@ -96,4 +111,12 @@ function updates {
 			success 'checked'
 		fi
 	done
+}
+
+# Snatched from http://rubinium.org/blog/archives/2010/04/05/shell-script-version-compare-vercmp/
+function version_compare {
+	expr '(' "$1" : '\([^.]*\)' ')' '-' '(' "$2" : '\([^.]*\)' ')' '|' \
+		'(' "$1.0" : '[^.]*[.]\([^.]*\)' ')' '-' '(' "$2.0" : '[^.]*[.]\([^.]*\)' ')' '|' \
+		'(' "$1.0.0" : '[^.]*[.][^.]*[.]\([^.]*\)' ')' '-' '(' "$2.0.0" : '[^.]*[.][^.]*[.]\([^.]*\)' ')' '|' \
+		'(' "$1.0.0.0" : '[^.]*[.][^.]*[.][^.]*[.]\([^.]*\)' ')' '-' '(' "$2.0.0.0" : '[^.]*[.][^.]*[.][^.]*[.]\([^.]*\)' ')'
 }
