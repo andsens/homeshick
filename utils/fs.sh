@@ -2,7 +2,7 @@
 
 function symlink {
 	if [[ -z "$1" ]]; then
-		die "homeshick symlink requires at least 1 argument: \"homeshick symlink NAME\"."
+		err "homeshick symlink requires at least 1 argument: \"homeshick symlink NAME\"."
 	fi
 	castle_exists 'symlink' $1
 	local repo="$repos/$1/home"
@@ -44,7 +44,7 @@ function symlink {
 
 function track {
 	if [[ -z "$1" || -z "$2" ]]; then
-		die "homeshick track requires at least 2 arguments: \"homeshick track FILE CASTLE\"."
+		err "homeshick track requires at least 2 arguments: \"homeshick track FILE CASTLE\"."
 	fi
 	castle_exists 'track' $2
 	local repo="$repos/$2/home"

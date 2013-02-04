@@ -15,7 +15,7 @@ source $homeshick/utils/help.sh
 
 
 
-test -x `which git` || die "       $bldred git not found in path $txtdef "
+test -x `which git` || err "git not found in path"
 
 mkdir -p "$repos"
 
@@ -31,7 +31,7 @@ while [ $# -gt 0 ]; do
 			-q | --quiet) TALK=true  ; shift; continue ;;
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
-			*)            die "Unknown option '$1'"    ;;
+			*)            err "Unknown option '$1'"    ;;
 		esac
 	else
 		break
@@ -50,7 +50,7 @@ if [ -z "$cmd" ]; then
 		fi
 	done
 	if [ -z "$cmd" ]; then
-		die "Unknown command '$1'"
+		err "Unknown command '$1'"
 	fi
 fi
 
@@ -62,23 +62,23 @@ while [ $# -gt 0 ]; do
 			-q | --quiet) TALK=true  ; shift; continue ;;
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
-			*)            die "Unknown option '$1'"    ;;
+			*)            err "Unknown option '$1'"    ;;
 		esac
 	fi
 	
 	case $cmd in
-		clone)    [ -z "$url" ] || die "Only one URL param allowed"
+		clone)    [ -z "$url" ] || err "Only one URL param allowed"
 			url=$1
 			shift; continue ;;
-		generate) [ -z "$path" ] || die "Only one PATH param allowed"
+		generate) [ -z "$path" ] || err "Only one PATH param allowed"
 			path=$1
 			shift; continue ;;
-		list)     die "The 'list' command does not take any arguments" ;;
-		updates)  die "The 'updates' command does not take any arguments" ;;
-		pull)     [ -z "$castle" ] || die "Only one CASTLE param allowed"
+		list)     err "The 'list' command does not take any arguments" ;;
+		updates)  err "The 'updates' command does not take any arguments" ;;
+		pull)     [ -z "$castle" ] || err "Only one CASTLE param allowed"
 			castle=$1
 			shift; continue ;;
-		symlink)  [ -z "$castle" ] || die "Only one CASTLE param allowed"
+		symlink)  [ -z "$castle" ] || err "Only one CASTLE param allowed"
 			castle=$1
 			shift; continue ;;
 		track)
@@ -88,13 +88,13 @@ while [ $# -gt 0 ]; do
 				if [ -z "$castle" ]; then
 					castle=$1
 				else
-					die "'track' takes only two parameters"
+					err "'track' takes only two parameters"
 				fi
 			fi
 			shift; continue ;;
 		help) [ -z "$help_cmd" ] && help_cmd=$1
 			shift; continue;;
-		*)    die "Unknown command '$1'" ;;
+		*)    err "Unknown command '$1'" ;;
 	esac
 done
 
