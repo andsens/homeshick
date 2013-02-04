@@ -10,8 +10,8 @@ It is a bash stand-in for the original homesick by technicalpickles.
  Usage: homesick [options] TASK
 
  Tasks:
-  homesick clone [URI..]         # Clone URI as a castle for homeshick
-  homesick generate [PATH..]     # Generate a homeshick-ready git repo at PATH
+  homesick clone [URI..]         # Clone URI as a castle for homesick
+  homesick generate [PATH..]     # Generate a homesick-ready git repo at PATH
   homesick list                  # List cloned castles
   homesick check [CASTLE..]      # Check a castle for updates
   homesick pull [CASTLE..]       # Update a castle
