@@ -19,52 +19,98 @@ test -x `which git` || die "       $bldred git not found in path $txtdef "
 
 mkdir -p "$repos"
 
-for arg; do
-	delim=""
-	case "$arg" in
-		clone)    args="${args}-c " ;;
-		generate) args="${args}-g " ;;
-		list)     args="${args}-l " ;;
-		updates)  args="${args}-u " ;;
-		pull)     args="${args}-p " ;;
-		symlink)  args="${args}-s " ;;
-		track)    args="${args}-t " ;;
-		
-		help)     extend_help $2
-		          exit 0            ;;
-		--help)   extend_help
-		          exit 0            ;;
-		--quiet)  args="${args}-q " ;;
-		--skip)   args="${args}-i " ;;
-		--force)  args="${args}-f " ;;
-		
-		# pass through anything else
-		*) [[ "${arg:0:1}" == "-" ]] || delim="\""
-		   args="${args}${delim}${arg}${delim} ";;
+# Retrieve all the flags preceeding a subcommand
+while [ $# -gt 0 ]; do
+	if [[ "$1" =~ ^- ]]; then
+		case $1 in
+			-h | --help)  cmd="help"  ; shift; continue ;;
+			-q | --quiet) B_QUIET="1" ; shift; continue ;;
+			-s | --skip)  B_SKIP="1"  ; shift; continue ;;
+			-f | --force) B_FORCE="1" ; shift; continue ;;
+			*)            die "Unknown option '$1'"     ;;
+		esac
+	else
+		break
+	fi
+done
+
+[ $# -gt 0 ] || cmd="help"
+
+# Get the subcommand
+if [ -z "$cmd" ]; then
+	for valid_cmd in clone generate list updates pull symlink track help; do
+		if [ "$valid_cmd" = $1 ]; then
+			cmd=$1
+			shift
+			break
+		fi
+	done
+	if [ -z "$cmd" ]; then
+		die "Unknown command '$1'"
+	fi
+fi
+
+# Get the arguments for the subcommand, also parse flags if there are any left
+while [ $# -gt 0 ]; do
+	if [[ "$1" =~ ^- ]]; then
+		case $1 in
+			-h | --help)  cmd="help"  ; shift; continue ;;
+			-q | --quiet) B_QUIET="1" ; shift; continue ;;
+			-s | --skip)  B_SKIP="1"  ; shift; continue ;;
+			-f | --force) B_FORCE="1" ; shift; continue ;;
+			*)            die "Unknown option '$1'"     ;;
+		esac
+	fi
+	
+	case $cmd in
+		clone)    [ -z "$url" ] || die "Only one URL param allowed"
+			url=$1
+			shift; continue ;;
+		generate) [ -z "$path" ] || die "Only one PATH param allowed"
+			path=$1
+			shift; continue ;;
+		list)     die "The 'list' command does not take any arguments" ;;
+		updates)  die "The 'updates' command does not take any arguments" ;;
+		pull)     [ -z "$castle" ] || die "Only one CASTLE param allowed"
+			castle=$1
+			shift; continue ;;
+		symlink)  [ -z "$castle" ] || die "Only one CASTLE param allowed"
+			castle=$1
+			shift; continue ;;
+		track)
+			if [ -z "$file" ]; then
+				file=$1
+			else
+				if [ -z "$castle" ]; then
+					castle=$1
+				else
+					die "'track' takes only two parameters"
+				fi
+			fi
+			shift; continue ;;
+		help) [ -z "$help_cmd" ] && help_cmd=$1
+			shift; continue;;
+		*)    die "Unknown command '$1'" ;;
 	esac
 done
 
-# reset the translated args
-eval set -- $args
-# now we can process with getopt
 
-while getopts "c:g:lup:s:t:e:qifh" opt; do
-	case $opt in
-		c) clone $OPTARG       ;;
-		g) generate $OPTARG    ;;
-		u) updates             ;;
-		l) list                ;;
-		p) pull $OPTARG        ;;
-		s) symlink $OPTARG     ;;
-		t) shift $(( OPTIND - 1 ))
-		   track $OPTARG $1    ;;
-		e) extend_help $OPTARG ;;
-		q) B_QUIET=1           ;;
-		i) B_SKIP=1            ;;
-		f) B_FORCE=1           ;;
-		h) extend_help
-		   exit 0              ;;
-		* ) die "Could not find task \"$opt\"."
-		   exit 1              ;;
-	esac
-done
+case $cmd in
+	clone)    clone $url          ;;
+	generate) generate $path      ;;
+	list)     list                ;;
+	updates)  updates             ;;
+	pull)     pull $castle        ;;
+	symlink)  symlink $castle     ;;
+	track)    track $file $castle ;;
+	help)     help $help_cmd      ;;
+esac
+
+
+
+
+
+
+
+
+
