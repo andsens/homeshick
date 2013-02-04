@@ -14,7 +14,6 @@ source $homeshick/utils/git.sh
 source $homeshick/utils/help.sh
 
 
-
 test -x `which git` || err "git not found in path"
 
 mkdir -p "$repos"
@@ -73,7 +72,7 @@ while [ $# -gt 0 ]; do
 			shift; continue ;;
 		updates)
 			shift; continue ;;
-		list)     err "The 'list' command does not take any arguments" ;;
+		list) err "The 'list' command does not take any arguments" ;;
 		track)
 			if [ -z "$file" ]; then
 				file=$1
@@ -111,7 +110,3 @@ for param in ${params[*]}; do
 		help)     help $help_cmd      ;;
 	esac
 done
-
-
-
-
