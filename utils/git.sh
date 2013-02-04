@@ -71,32 +71,28 @@ function list {
 	done
 }
 
-function updates {
-	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
-		err "No castles exist for homeshick in: $repos"
-	fi
-	for repo in `find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'`; do
-		local reponame=`basename $repo`
-		pending 'checking' $reponame
-		local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
-		local remote_url=$(cd $repo; git config remote.origin.url 2>/dev/null)
-		local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
-		if [ -n "$remote_head" ]; then
-			local local_head=$(cd $repo; git rev-parse HEAD)
-			if [ "$remote_head" == "$local_head" ]; then
-				success 'up to date'
-			else
-				(cd $repo; git branch --contains "$remote_head" 2>/dev/null) > /dev/null
-				if [ "$?" == "0" ]; then
-					fail 'ahead'
-				else
-					fail 'behind'
-				fi
-			fi
+function check {
+	local repo="$repos/$1"
+	castle_exists 'check' $1
+	pending 'checking' $1
+	local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
+	local remote_url=$(cd $repo; git config remote.origin.url 2>/dev/null)
+	local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
+	if [ -n "$remote_head" ]; then
+		local local_head=$(cd $repo; git rev-parse HEAD)
+		if [ "$remote_head" == "$local_head" ]; then
+			success 'up to date'
 		else
-			ignore 'uncheckable'
+			(cd $repo; git branch --contains "$remote_head" 2>/dev/null) > /dev/null
+			if [ "$?" == "0" ]; then
+				fail 'ahead'
+			else
+				fail 'behind'
+			fi
 		fi
-	done
+	else
+		ignore 'uncheckable'
+	fi
 }
 
 # Snatched from http://rubinium.org/blog/archives/2010/04/05/shell-script-version-compare-vercmp/

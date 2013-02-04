@@ -42,7 +42,7 @@ done
 
 # Get the subcommand
 if [ -z "$cmd" ]; then
-	for valid_cmd in clone generate list updates pull symlink track help; do
+	for valid_cmd in clone generate list check pull symlink track help; do
 		if [ "$valid_cmd" = $1 ]; then
 			cmd=$1
 			shift
@@ -74,7 +74,9 @@ while [ $# -gt 0 ]; do
 			path=$1
 			shift; continue ;;
 		list)     err "The 'list' command does not take any arguments" ;;
-		updates)  err "The 'updates' command does not take any arguments" ;;
+		check)    [ -z "$castle" ] || err "Only one CASTLE param allowed"
+			castle=$1
+			shift; continue ;;
 		pull)     [ -z "$castle" ] || err "Only one CASTLE param allowed"
 			castle=$1
 			shift; continue ;;
@@ -103,7 +105,7 @@ case $cmd in
 	clone)    clone $url          ;;
 	generate) generate $path      ;;
 	list)     list                ;;
-	updates)  updates             ;;
+	check)    check $castle       ;;
 	pull)     pull $castle        ;;
 	symlink)  symlink $castle     ;;
 	track)    track $file $castle ;;
