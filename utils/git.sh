@@ -11,6 +11,7 @@ function parse_url {
 }
 
 function clone {
+	[ -z "$1" ] && help clone
 	local repo_path="$repos/`parse_url $1`"
 	test -e $repo_path && die "      $bldblu exists$txtdef $repo_path"
 	local git_repo=$1
@@ -38,6 +39,7 @@ function clone {
 }
 
 function generate {
+	[ -z "$1" ] && help generate
 	local repo=$1
 	pending 'generate' "$repo"
 	mkdir -p "$repo"
@@ -47,6 +49,7 @@ function generate {
 }
 
 function pull {
+	[ -z "$1" ] && help pull
 	local repo="$repos/$1"
 	castle_exists 'pull' $1
 	pending 'pull' $1
@@ -79,6 +82,7 @@ function list_castle_names {
 }
 
 function check {
+	[ -z "$1" ] && help check
 	local repo="$repos/$1"
 	castle_exists 'check' $1
 	pending 'checking' $1

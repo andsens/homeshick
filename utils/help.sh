@@ -27,6 +27,12 @@ cat <<EOM
 EOM
 }
 
+function help_err {
+	extended_help $1
+	[ -z "$2" ] && 2=1
+	exit $2
+}
+
 function extended_help {
 	case $1 in
 		clone)    printf "Usage:\n  homesick clone [URL..]"      ;;
