@@ -70,20 +70,17 @@ while [ $# -gt 0 ]; do
 			[ -z "$params" ] && params=()
 			params+=($1)
 			shift; continue ;;
+		track)
+			if [ -z "$castle" ]; then
+				castle=$1
+				params=()
+			else
+				params+=($1)
+			fi
+			shift; continue ;;
 		updates)
 			shift; continue ;;
 		list) err "The 'list' command does not take any arguments" ;;
-		track)
-			if [ -z "$file" ]; then
-				file=$1
-			else
-				if [ -z "$castle" ]; then
-					castle=$1
-				else
-					err "'track' takes only two parameters"
-				fi
-			fi
-			shift; continue ;;
 		help) [ -z "$help_cmd" ] && help_cmd=$1
 			shift; continue;;
 		*)    err "Unknown command '$1'" ;;
@@ -97,16 +94,20 @@ if [ -z "$params" ]; then
 	esac
 fi
 
-for param in ${params[*]}; do
-	case $cmd in
-		clone)    clone $param        ;;
-		generate) generate $param     ;;
-		list)     list                ;;
-		check)    check $param        ;;
-		updates)  check $param        ;;
-		pull)     pull $param         ;;
-		symlink)  symlink $param      ;;
-		track)    track $file $castle ;;
-		help)     help $help_cmd      ;;
-	esac
-done
+case $cmd in
+	list)  list           ;;
+	help)  help $help_cmd ;;
+	*)
+		for param in ${params[*]}; do
+			case $cmd in
+				clone)    clone $param         ;;
+				generate) generate $param      ;;
+				check)    check $param         ;;
+				updates)  check $param         ;;
+				pull)     pull $param          ;;
+				symlink)  symlink $param       ;;
+				track)    track $castle $param ;;
+			esac
+		done
+		;;
+esac

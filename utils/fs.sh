@@ -42,22 +42,22 @@ function symlink {
 
 function track {
 	[[ -z "$1" || -z "$2" ]] && help track
-	castle_exists 'track' $2
-	local repo="$repos/$2/home"
-	local newfile="$repo/$1"
-	if [[ ! -e "$1" ]]; then
-		err "The file $1 does not exist."
+	castle_exists 'track' $1
+	local repo="$repos/$1/home"
+	local newfile="$repo/$2"
+	if [[ ! -e "$2" ]]; then
+		err "The file $2 does not exist."
 	fi
 	if [[ -e "$newfile" && $FORCE = false ]]; then
-		err "The file $1 already exists in the castle $2."
+		err "The file $2 already exists in the castle $1."
 	fi
-	pending "symlink" "$newfile to $1"
+	pending "symlink" "$newfile to $2"
 	if ! $FORCE; then
-		mv "$1" "$newfile"
-		ln -s "$newfile" $1
+		mv "$2" "$newfile"
+		ln -s "$newfile" $2
 	else
-		mv -f "$1" "$newfile"
-		ln -sf "$newfile" $1
+		mv -f "$2" "$newfile"
+		ln -sf "$newfile" $2
 	fi
 	success
 }
