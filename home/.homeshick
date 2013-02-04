@@ -89,6 +89,12 @@ while [ $# -gt 0 ]; do
 	esac
 done
 
+# If no additional arguments are give, run the subcommand for every castle
+if [ -z "$params" ]; then
+	case $cmd in
+		check | pull | symlink) params=`list_castle_names` ;;
+	esac
+fi
 
 for param in ${params[*]}; do
 	case $cmd in

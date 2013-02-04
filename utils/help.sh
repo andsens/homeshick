@@ -21,6 +21,9 @@ cat <<EOM
    -q, [--quiet]    # Suppress status output
    -s, [--skip]     # Skip files that already exist
    -f, [--force]    # Overwrite files that already exist
+ 
+ Note:
+  To check, pull or symlink all your castles, simply omit the CASTLE argument
 EOM
 }
 

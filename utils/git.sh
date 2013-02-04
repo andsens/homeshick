@@ -71,6 +71,13 @@ function list {
 	done
 }
 
+function list_castle_names {
+	for repo in `find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'`; do
+		local reponame=`basename $repo`
+		printf "$reponame\n"
+	done
+}
+
 function check {
 	local repo="$repos/$1"
 	castle_exists 'check' $1
