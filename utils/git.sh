@@ -64,9 +64,6 @@ function pull {
 }
 
 function list {
-	if [ `(find $repos -type d; find $repos -type l)  | wc -l` -lt 2 ]; then
-		err "No castles exist for homeshick in: $repos"
-	fi
 	for repo in `find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'`; do
 		local remote_url=$(cd $repo; git config remote.origin.url)
 		local reponame=`basename $repo`
