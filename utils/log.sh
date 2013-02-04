@@ -12,7 +12,7 @@ function err {
 }
 
 function die {
-	if [[ -z "$B_QUIET" && ! -z $pending_status ]]; then
+	if [[ $TALK = true && ! -z "$pending_status" ]]; then
 		printf "\r$bldred%13s$txtdef %s\n" "$pending_status" "$pending_message"
 	fi
 	for line in "$@"; do
@@ -22,7 +22,7 @@ function die {
 }
 
 function status {
-	if [ -z "$B_QUIET" ]; then
+	if $TALK; then
 		printf "$1%13s$txtdef %s\n" "$2" "$3"
 	fi
 }
@@ -32,13 +32,13 @@ pending_message=''
 function pending {
 	pending_status="$1"
 	pending_message="$2"
-	if [ -z "$B_QUIET" ]; then
+	if $TALK; then
 		printf "$bldcyn%13s$txtdef %s" "$pending_status" "$pending_message"
 	fi
 }
 
 function fail {
-	if [ -z "$B_QUIET" ]; then
+	if $TALK; then
 		if [ "$1" ]; then
 			pending_status=$1
 		fi
@@ -47,7 +47,7 @@ function fail {
 }
 
 function ignore {
-	if [ -z "$B_QUIET" ]; then
+	if $TALK; then
 		if [ "$1" ]; then
 			pending_status=$1
 		fi
@@ -56,7 +56,7 @@ function ignore {
 }
 
 function success {
-	if [ -z "$B_QUIET" ]; then
+	if $TALK; then
 		if [ "$1" ]; then
 			pending_status=$1
 		fi

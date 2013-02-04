@@ -15,11 +15,11 @@ function symlink {
 		fi
 		
 		if [ -e $HOME/$file ]; then
-			if [ -n "$B_SKIP" ]; then
+			if $SKIP; then
 				status $bldblu 'exists' $file
 				continue
 			fi
-			if [ -z "$B_FORCE" ]; then
+			if ! $FORCE; then
 				status $bldred 'conflict' "$file exists"
 				read -p "Overwrite $file? [yN]" overwrite
 				if [[ ! $overwrite =~ [Yy] ]]; then
@@ -35,7 +35,7 @@ function symlink {
 		ln -s $repo/$file $HOME/$file
 		success
 	done
-	if [[ -n "$direrrors" && -z "$B_FORCE" ]]; then
+	if [[ -n "$direrrors" && $FORCE = false ]]; then
 		printf "\nThe following directories already exist and will only\n" >&2
 		printf "be overwritten, if you delete or move them manually:\n" >&2
 		printf "$direrrors\n" >&2
@@ -52,11 +52,11 @@ function track {
 	if [[ ! -e "$1" ]]; then
 		err "The file $1 does not exist."
 	fi
-	if [[ -e "$newfile" && -z "$B_FORCE" ]]; then
+	if [[ -e "$newfile" && $FORCE = false ]]; then
 		err "The file $1 already exists in the castle $2."
 	fi
 	pending "symlink" "$newfile to $1"
-	if [ -z "$B_FORCE" ]; then
+	if ! $FORCE; then
 		mv "$1" "$newfile"
 		ln -s "$newfile" $1
 	else

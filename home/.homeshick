@@ -19,15 +19,19 @@ test -x `which git` || die "       $bldred git not found in path $txtdef "
 
 mkdir -p "$repos"
 
+TALK=true
+SKIP=false
+FORCE=false
+
 # Retrieve all the flags preceeding a subcommand
 while [ $# -gt 0 ]; do
 	if [[ "$1" =~ ^- ]]; then
 		case $1 in
-			-h | --help)  cmd="help"  ; shift; continue ;;
-			-q | --quiet) B_QUIET="1" ; shift; continue ;;
-			-s | --skip)  B_SKIP="1"  ; shift; continue ;;
-			-f | --force) B_FORCE="1" ; shift; continue ;;
-			*)            die "Unknown option '$1'"     ;;
+			-h | --help)  cmd="help" ; shift; continue ;;
+			-q | --quiet) TALK=true  ; shift; continue ;;
+			-s | --skip)  SKIP=true  ; shift; continue ;;
+			-f | --force) FORCE=true ; shift; continue ;;
+			*)            die "Unknown option '$1'"    ;;
 		esac
 	else
 		break
@@ -54,11 +58,11 @@ fi
 while [ $# -gt 0 ]; do
 	if [[ "$1" =~ ^- ]]; then
 		case $1 in
-			-h | --help)  cmd="help"  ; shift; continue ;;
-			-q | --quiet) B_QUIET="1" ; shift; continue ;;
-			-s | --skip)  B_SKIP="1"  ; shift; continue ;;
-			-f | --force) B_FORCE="1" ; shift; continue ;;
-			*)            die "Unknown option '$1'"     ;;
+			-h | --help)  cmd="help" ; shift; continue ;;
+			-q | --quiet) TALK=true  ; shift; continue ;;
+			-s | --skip)  SKIP=true  ; shift; continue ;;
+			-f | --force) FORCE=true ; shift; continue ;;
+			*)            die "Unknown option '$1'"    ;;
 		esac
 	fi
 	
