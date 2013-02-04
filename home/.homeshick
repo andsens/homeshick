@@ -67,22 +67,11 @@ while [ $# -gt 0 ]; do
 	fi
 	
 	case $cmd in
-		clone)    [ -z "$url" ] || err "Only one URL param allowed"
-			url=$1
-			shift; continue ;;
-		generate) [ -z "$path" ] || err "Only one PATH param allowed"
-			path=$1
+		clone | generate | check | pull | symlink)
+			[ -z "$params" ] && params=()
+			params+=($1)
 			shift; continue ;;
 		list)     err "The 'list' command does not take any arguments" ;;
-		check)    [ -z "$castle" ] || err "Only one CASTLE param allowed"
-			castle=$1
-			shift; continue ;;
-		pull)     [ -z "$castle" ] || err "Only one CASTLE param allowed"
-			castle=$1
-			shift; continue ;;
-		symlink)  [ -z "$castle" ] || err "Only one CASTLE param allowed"
-			castle=$1
-			shift; continue ;;
 		track)
 			if [ -z "$file" ]; then
 				file=$1
@@ -101,21 +90,18 @@ while [ $# -gt 0 ]; do
 done
 
 
-case $cmd in
-	clone)    clone $url          ;;
-	generate) generate $path      ;;
-	list)     list                ;;
-	check)    check $castle       ;;
-	pull)     pull $castle        ;;
-	symlink)  symlink $castle     ;;
-	track)    track $file $castle ;;
-	help)     help $help_cmd      ;;
-esac
-
-
-
-
-
+for param in ${params[*]}; do
+	case $cmd in
+		clone)    clone $param        ;;
+		generate) generate $param     ;;
+		list)     list                ;;
+		check)    check $param        ;;
+		pull)     pull $param         ;;
+		symlink)  symlink $param      ;;
+		track)    track $file $castle ;;
+		help)     help $help_cmd      ;;
+	esac
+done
 
 
 
