@@ -42,7 +42,7 @@ done
 
 # Get the subcommand
 if [ -z "$cmd" ]; then
-	for valid_cmd in clone generate list check pull symlink track help; do
+	for valid_cmd in clone generate list check updates pull symlink track help; do
 		if [ "$valid_cmd" = $1 ]; then
 			cmd=$1
 			shift
@@ -71,6 +71,8 @@ while [ $# -gt 0 ]; do
 			[ -z "$params" ] && params=()
 			params+=($1)
 			shift; continue ;;
+		updates)
+			shift; continue ;;
 		list)     err "The 'list' command does not take any arguments" ;;
 		track)
 			if [ -z "$file" ]; then
@@ -92,7 +94,7 @@ done
 # If no additional arguments are give, run the subcommand for every castle
 if [ -z "$params" ]; then
 	case $cmd in
-		check | pull | symlink) params=`list_castle_names` ;;
+		check | updates | pull | symlink) params=`list_castle_names` ;;
 	esac
 fi
 
@@ -102,6 +104,7 @@ for param in ${params[*]}; do
 		generate) generate $param     ;;
 		list)     list                ;;
 		check)    check $param        ;;
+		updates)  check $param        ;;
 		pull)     pull $param         ;;
 		symlink)  symlink $param      ;;
 		track)    track $file $castle ;;
