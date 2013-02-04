@@ -24,6 +24,9 @@ function clone {
 	pending 'clone' $git_repo
 	if [ "$(version_compare $git_version 1.6.5)" -ge '0' ]; then
 		git clone --quiet --recursive $git_repo $repo_path
+		if [ $? != 0 ]; then
+			err "Unable to clone $git_repo"
+		fi
 		success
 	else
 		git clone --quiet $git_repo $repo_path
