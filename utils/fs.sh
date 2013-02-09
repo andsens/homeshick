@@ -12,7 +12,7 @@ function symlink {
 			continue
 		fi
 		
-		if [ -e $HOME/$file ]; then
+		if [ -e $HOME/$file ] || [ -L $HOME/$file ]; then
 			if $SKIP; then
 				status $bldblu 'exists' $file
 				continue
