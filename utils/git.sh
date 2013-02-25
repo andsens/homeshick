@@ -21,22 +21,20 @@ function clone {
 	
 	local git_version=`git --version | grep -oE '([0-9]+.?){3}'`
 	
+	local git_out
 	pending 'clone' $git_repo
 	if [ "$(version_compare $git_version 1.6.5)" -ge '0' ]; then
-		git clone --quiet --recursive $git_repo $repo_path
-		if [ $? != 0 ]; then
-			err "Unable to clone $git_repo"
-		fi
+		git_out=$(git clone --recursive $git_repo $repo_path 2>&1)
+		[ $? == 0 ] || err "Unable to clone $git_repo. Git says:" "$git_out"
 		success
 	else
-		git clone --quiet $git_repo $repo_path
-		if [ $? != 0 ]; then
-			err "Unable to clone $git_repo"
-		fi
+		git_out=$(git clone $git_repo $repo_path 2>&1)
+		[ $? == 0 ] || err "Unable to clone $git_repo. Git says:" "$git_out"
 		success
 		
 		pending 'submodules' $git_repo
-		(cd $repo_path; git submodule --quiet update --init)
+		git_out=$(cd $repo_path; git submodule update --init 2>&1)
+		[ $? == 0 ] || err "Unable to clone submodules for $git_repo. Git says:" "$git_out"
 		success
 	fi
 }
@@ -46,7 +44,9 @@ function generate {
 	local repo=$1
 	pending 'generate' "$repo"
 	mkdir -p "$repo"
-	(cd $1; git init --quiet)
+	local git_out
+	git_out=$(cd $repo; git init 2>&1)
+	[ $? == 0 ] || err "Unable to initialize repository $repo. Git says:" "$git_out"
 	mkdir -p "$repo/home"
 	success
 }
@@ -56,12 +56,18 @@ function pull {
 	local repo="$repos/$1"
 	castle_exists 'pull' $1
 	pending 'pull' $1
-	(cd $repo; git pull --quiet)
+	
+	local git_out
+	git_out=$(cd $repo; git pull 2>&1)
+	[ $? == 0 ] || err "Unable to pull $repo. Git says:" "$git_out"
+	
 	local git_version=`git --version | grep -oE '([0-9]+.?){3}'`
 	if [ "$(version_compare $git_version 1.6.5)" -ge '0' ]; then
-		(cd $repo; git submodule --quiet update --recursive --init)
+		git_out=$(cd $repo; git submodule update --recursive --init 2>&1)
+		[ $? == 0 ] || err "Unable update submodules for $repo. Git says:" "$git_out"
 	else
-		(cd $repo; git submodule --quiet update --init)
+		git_out=$(cd $repo; git submodule update --init 2>&1)
+		[ $? == 0 ] || err "Unable update submodules for $repo. Git says:" "$git_out"
 	fi
 	success
 }

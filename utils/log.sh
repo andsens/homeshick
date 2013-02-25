@@ -8,7 +8,9 @@ bldblu="\e[1;34m" # Blue - no action/ignored
 bldcyn="\e[1;36m" # Cyan - pending action
 
 function err {
-	die "       $bldred error$txtdef $1"
+	local reason="$1"
+	shift
+	die "       $bldred error$txtdef $reason" "$@"
 }
 
 function die {
