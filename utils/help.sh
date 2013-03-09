@@ -19,6 +19,10 @@ It is a bash stand-in for the original homesick by technicalpickles.
   homesick track CASTLE [FILE..] # Add a file to a castle
   homesick help [TASK]           # Show usage of a task
 
+ Aliases:
+  link   # Alias to symlink
+  updates # Alias to check
+
  Runtime options:
    -q, [--quiet]    # Suppress status output
    -s, [--skip]     # Skip files that already exist
