@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-
 repos="$HOME/.homesick/repos"
-
 homeshick="$repos/homeshick"
 # It's either this^ or the one below:
 # scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -14,7 +12,7 @@ source $homeshick/utils/git.sh
 source $homeshick/utils/help.sh
 
 
-test -x `which git` || err "git not found in path"
+test -x $(which git) || err "git not found in path"
 
 mkdir -p "$repos"
 
@@ -23,8 +21,8 @@ SKIP=false
 FORCE=false
 
 # Retrieve all the flags preceeding a subcommand
-while [ $# -gt 0 ]; do
-	if [[ "$1" =~ ^- ]]; then
+while [[ $# -gt 0 ]]; do
+	if [[ $1 =~ ^- ]]; then
 		case $1 in
 			-h | --help)  cmd="help" ; shift; continue ;;
 			-q | --quiet) TALK=true  ; shift; continue ;;
@@ -37,7 +35,7 @@ while [ $# -gt 0 ]; do
 	fi
 done
 
-[ $# -gt 0 ] || cmd="help"
+[[ $# -gt 0 ]] || cmd="help"
 
 # Get the subcommand
 if [ -z "$cmd" ]; then
@@ -48,13 +46,13 @@ if [ -z "$cmd" ]; then
 			break
 		fi
 	done
-	if [ -z "$cmd" ]; then
+	if [[ -z $cmd ]]; then
 		err "Unknown command '$1'"
 	fi
 fi
 
 # Get the arguments for the subcommand, also parse flags if there are any left
-while [ $# -gt 0 ]; do
+while [[ $# -gt 0 ]]; do
 	if [[ "$1" =~ ^- ]]; then
 		case $1 in
 			-h | --help)  cmd="help" ; shift; continue ;;
@@ -64,14 +62,14 @@ while [ $# -gt 0 ]; do
 			*)            err "Unknown option '$1'"    ;;
 		esac
 	fi
-	
+
 	case $cmd in
 		clone | generate | check | pull | symlink)
-			[ -z "$params" ] && params=()
+			[[ -z $params ]] && params=()
 			params+=($1)
 			shift; continue ;;
 		track)
-			if [ -z "$castle" ]; then
+			if [[ -z $castle ]]; then
 				castle=$1
 				params=()
 			else
@@ -81,16 +79,16 @@ while [ $# -gt 0 ]; do
 		updates)
 			shift; continue ;;
 		list) err "The 'list' command does not take any arguments" ;;
-		help) [ -z "$help_cmd" ] && help_cmd=$1
+		help) [[ -z $help_cmd ]] && help_cmd=$1
 			shift; continue;;
 		*)    err "Unknown command '$1'" ;;
 	esac
 done
 
 # If no additional arguments are give, run the subcommand for every castle
-if [ -z "$params" ]; then
+if [[ -z $params ]]; then
 	case $cmd in
-		check | updates | pull | symlink) params=`list_castle_names` ;;
+		check | updates | pull | symlink) params=$(list_castle_names) ;;
 	esac
 fi
 
