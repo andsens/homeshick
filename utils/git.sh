@@ -61,7 +61,7 @@ function pull {
 	git_out=$(cd $repo; git pull 2>&1)
 	[[ $? == 0 ]] || err "Unable to pull $repo. Git says:" "$git_out"
 
-	local git_version=`git --version | grep -oE '([0-9]+.?){3}'`
+	local git_version=$(git --version | grep -oE '([0-9]+.?){3}')
 	if [[ $(version_compare $git_version 1.6.5) -ge 0 ]]; then
 		git_out=$(cd $repo; git submodule update --recursive --init 2>&1)
 		[[ $? == 0 ]] || err "Unable update submodules for $repo. Git says:" "$git_out"
