@@ -38,9 +38,9 @@ done
 [[ $# -gt 0 ]] || cmd="help"
 
 # Get the subcommand
-if [ -z "$cmd" ]; then
-	for valid_cmd in clone generate list check updates pull symlink track help; do
-		if [ "$valid_cmd" = $1 ]; then
+if [[ -z $cmd ]]; then
+	for valid_cmd in clone generate list check updates pull symlink link track help; do
+		if [[ $valid_cmd = $1 ]]; then
 			cmd=$1
 			shift
 			break
@@ -64,7 +64,7 @@ while [[ $# -gt 0 ]]; do
 	fi
 
 	case $cmd in
-		clone | generate | check | pull | symlink)
+		clone | generate | check | pull | symlink | link)
 			[[ -z $params ]] && params=()
 			params+=($1)
 			shift; continue ;;
@@ -98,13 +98,12 @@ case $cmd in
 	*)
 		for param in ${params[*]}; do
 			case $cmd in
-				clone)    clone $param         ;;
-				generate) generate $param      ;;
-				check)    check $param         ;;
-				updates)  check $param         ;;
-				pull)     pull $param          ;;
-				symlink)  symlink $param       ;;
-				track)    track $castle $param ;;
+				clone)         clone $param         ;;
+				generate)      generate $param      ;;
+				check|updates) check $param         ;;
+				pull)          pull $param          ;;
+				symlink|link)  symlink $param       ;;
+				track)         track $castle $param ;;
 			esac
 		done
 		;;
