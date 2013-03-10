@@ -88,7 +88,7 @@ done
 # If no additional arguments are give, run the subcommand for every castle
 if [[ -z $params ]]; then
 	case $cmd in
-		check | updates | pull | symlink) params=$(list_castle_names) ;;
+		check | updates | pull | symlink | link) params=$(list_castle_names) ;;
 	esac
 fi
 
