@@ -1,7 +1,7 @@
 homeshick
 =========
 <div style="float: right"><img src="http://i.imgur.com/3zAK9.jpg"></div>
-homs**h**ick is a dependency-free stand-in for [homesick](https://github.com/technicalpickles/homesick)
+homs​**h**​ick is a dependency-free stand-in for [homesick](https://github.com/technicalpickles/homesick)
 
 # homeshick vs. homesick #
 The goal is to mimick homesick in functionality so that it can be a drop-in replacement.
@@ -10,7 +10,7 @@ _Functionality_ does however not include **reliability**. technicalpickles has c
 
 If anyone were to send a pull request adding some kind of homeshick testing script, I would be very grateful.
 
-One advantage homshick has over homesick is the ability to install it easily without root privileges.
+One advantage homeshick has over homesick is the ability to install it easily without root privileges.
 To install a gem, not having root privileges makes the job a lot harder.
 With homeshick you simply run the two commands listed below and you are done!
 
