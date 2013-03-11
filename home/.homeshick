@@ -89,6 +89,7 @@ done
 if [[ -z $params ]]; then
 	case $cmd in
 		check | updates | pull | symlink | link) params=$(list_castle_names) ;;
+		clone | generate | track) help_cmd=$cmd; cmd="help" ;;
 	esac
 fi
 
