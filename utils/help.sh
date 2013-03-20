@@ -27,6 +27,7 @@ It is a bash stand-in for the original homesick by technicalpickles.
    -q, [--quiet]    # Suppress status output
    -s, [--skip]     # Skip files that already exist
    -f, [--force]    # Overwrite files that already exist
+   -b, [--batch]    # Batch-mode: Skip interactive prompts / Choose the default
 
  Note:
   To check, pull or symlink all your castles, simply omit the CASTLE argument

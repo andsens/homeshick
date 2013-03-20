@@ -66,3 +66,18 @@ function success {
 	fi
 }
 
+function prompt {
+	if ! $BATCH; then
+		local answer
+		while true; do
+			read -p "$1" answer
+			case $answer in
+				Y|y) return 0 ;;
+				N|n) return 1 ;;
+				"")  return 2 ;;
+			esac
+		done
+	else
+		return 2
+	fi
+}

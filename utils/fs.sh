@@ -19,8 +19,8 @@ function symlink {
 			fi
 			if ! $FORCE; then
 				status $bldred 'conflict' "$file exists"
-				read -p "Overwrite $file? [yN]" overwrite
-				if [[ ! $overwrite =~ [Yy] ]]; then
+				prompt "Overwrite $file? [yN]"
+				if [[ $? != 0 ]]; then
 					continue
 				fi
 			fi

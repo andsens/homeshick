@@ -19,6 +19,7 @@ mkdir -p "$repos"
 TALK=true
 SKIP=false
 FORCE=false
+BATCH=false
 
 # Retrieve all the flags preceeding a subcommand
 while [[ $# -gt 0 ]]; do
@@ -28,6 +29,7 @@ while [[ $# -gt 0 ]]; do
 			-q | --quiet) TALK=true  ; shift; continue ;;
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
+			-b | --batch) BATCH=true ; shift; continue ;;
 			*)            err "Unknown option '$1'"    ;;
 		esac
 	else
@@ -59,6 +61,7 @@ while [[ $# -gt 0 ]]; do
 			-q | --quiet) TALK=true  ; shift; continue ;;
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
+			-b | --batch) BATCH=true ; shift; continue ;;
 			*)            err "Unknown option '$1'"    ;;
 		esac
 	fi

@@ -151,8 +151,8 @@ function ask_symlink {
 			status $bldcyn 'updates' "The castles $* have new files."
 			IFS=$OIFS
 		fi
-		read -p "Symlink? [yN]" symlink
-		if [[ $symlink =~ [Yy] ]]; then
+		prompt "Symlink? [yN]"
+		if [[ $? = 0 ]]; then
 			for castle in $*; do
 				symlink $castle
 			done
