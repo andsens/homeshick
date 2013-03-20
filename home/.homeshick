@@ -107,5 +107,9 @@ case $cmd in
 				track)         track $castle $param ;;
 			esac
 		done
+		case $cmd in
+			clone)         symlink_cloned_files ${params[*]} ;;
+			pull)          symlink_new_files ${params[*]} ;;
+		esac
 		;;
 esac

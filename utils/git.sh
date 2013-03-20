@@ -112,6 +112,54 @@ function check {
 	fi
 }
 
+function symlink_cloned_files {
+	local cloned_castles=()
+	while [[ $# -gt 0 ]]; do
+		local castle=$(parse_url $1)
+		shift
+		local repo="$repos/$castle"
+		if [[ $(find $repo -maxdepth 1 -mindepth 1 | wc -l) > 0 ]]; then
+			cloned_castles+=($castle)
+		fi
+	done
+	ask_symlink ${cloned_castles[*]}
+}
+
+function symlink_new_files {
+	local updated_castles=()
+	while [[ $# -gt 0 ]]; do
+		local castle=$1
+		shift
+		local repo="$repos/$castle"
+		local git_out
+		git_out=$(cd $repo; git diff --name-only --diff-filter=A HEAD@{1} HEAD 2>/dev/null | wc -l 2>&1)
+		[[ $? == 0 ]] || continue # Ignore errors, this operation is not mission critical
+		if [[ $git_out > 0 ]]; then
+			updated_castles+=($castle)
+		fi
+	done
+	ask_symlink ${updated_castles[*]}
+}
+
+function ask_symlink {
+	if [[ $# > 0 ]]; then
+		if [[ $# = 1 ]]; then
+			status $bldcyn 'updates' "The castle $1 has new files."
+		else
+			OIFS=$IFS
+			IFS=,
+			status $bldcyn 'updates' "The castles $* have new files."
+			IFS=$OIFS
+		fi
+		read -p "Symlink? [yN]" symlink
+		if [[ $symlink =~ [Yy] ]]; then
+			for castle in $*; do
+				symlink $castle
+			done
+		fi
+	fi
+}
+
 # Snatched from http://rubinium.org/blog/archives/2010/04/05/shell-script-version-compare-vercmp/
 function version_compare {
 	expr '(' "$1" : '\([^.]*\)' ')' '-' '(' "$2" : '\([^.]*\)' ')' '|' \
