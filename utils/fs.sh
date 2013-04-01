@@ -5,12 +5,19 @@ function symlink {
 	castle_exists 'symlink' $1
 	local repo="$repos/$1/home"
 	local direrrors=''
-	for filepath in $(find $repo -mindepth 1 -maxdepth 1); do
-		file=$(basename $filepath)
-		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/$file ]]; then
+    pushd $repo > /dev/null
+	for filepath in $(find . -mindepth 1); do
+		file=${filepath//\.\//}
+		if [[ -f $file && -e $HOME/$file && $(readlink "$HOME/$file") == $repo/$file ]]; then
 			status $bldblu 'identical' $file
 			continue
 		fi
+
+        if [[ -d $file ]]; then
+            status $bldblu 'directory' "Creating directory $file"
+            mkdir -p $HOME/$file
+            continue
+        fi
 
 		if [[ -e $HOME/$file || -L $HOME/$file ]]; then
 			if $SKIP; then
@@ -33,6 +40,7 @@ function symlink {
 		ln -s $repo/$file $HOME/$file
 		success
 	done
+    popd $repo
 	if [[ -n $direrrors && $FORCE = false ]]; then
 		printf "\nThe following directories already exist and will only\n" >&2
 		printf "be overwritten, if you delete or move them manually:\n" >&2
