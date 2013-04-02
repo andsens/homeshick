@@ -2,15 +2,15 @@
 
 function symlink {
 	[[ -z $1 ]] && help symlink
-	local repo="$repos/$1/home"
-	if [[ ! -d $repo ]]; then
+	local repo="$repos/$1"
+	if [[ ! -d $repo/home ]]; then
 		ignore 'ignored' "$1"
 		return
 	fi
 	local direrrors=''
-	for filepath in $(find $repo -mindepth 1 -maxdepth 1); do
+	for filepath in $(find $repo/home -mindepth 1 -maxdepth 1); do
 		file=$(basename $filepath)
-		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/$file ]]; then
+		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
 			ignore 'identical' $file
 			continue
 		fi
@@ -33,7 +33,7 @@ function symlink {
 			pending 'symlink' $file
 		fi
 
-		ln -s $repo/$file $HOME/$file
+		ln -s $repo/home/$file $HOME/$file
 		success
 	done
 	if [[ -n $direrrors && $FORCE = false ]]; then
@@ -46,8 +46,8 @@ function symlink {
 function track {
 	[[ -z $1 || -z $2 ]] && help track
 	home_exists 'track' $1
-	local repo="$repos/$1/home"
-	local newfile="$repo/$2"
+	local repo="$repos/$1"
+	local newfile="$repo/home/$2"
 	if [[ ! -e $2 ]]; then
 		err "The file $2 does not exist."
 	fi
@@ -74,8 +74,7 @@ function castle_exists {
 
 function home_exists {
 	local repo="$repos/$2"
-	local home="$repo/home"
-	if [[ ! -d $home ]]; then
+	if [[ ! -d $repo/home ]]; then
 		err "Could not $1 $2, expected $repo to contain a home folder"
 	fi
 }
