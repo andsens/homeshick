@@ -6,6 +6,7 @@ bldred="\e[1;31m" # Red - error
 bldgrn="\e[1;32m" # Green - success
 bldblu="\e[1;34m" # Blue - no action/ignored
 bldcyn="\e[1;36m" # Cyan - pending action
+bldwht="\e[1;37m" # White - info
 
 function err {
 	local reason="$1"
@@ -25,6 +26,10 @@ function status {
 	if $TALK; then
 		printf "$1%13s$txtdef %s\n" "$2" "$3"
 	fi
+}
+
+function info {
+	status "$bldwht" "$1" "$2"
 }
 
 pending_status=''

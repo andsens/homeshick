@@ -76,7 +76,7 @@ function list {
 	for repo in $(find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'); do
 		local remote_url=$(cd $repo; git config remote.origin.url)
 		local reponame=$(basename $repo)
-		ignore $reponame $remote_url
+		info $reponame $remote_url
 	done
 }
 
@@ -144,11 +144,11 @@ function symlink_new_files {
 function ask_symlink {
 	if [[ $# > 0 ]]; then
 		if [[ $# = 1 ]]; then
-			ignore 'updates' "The castle $1 has new files."
+			info 'updates' "The castle $1 has new files."
 		else
 			OIFS=$IFS
 			IFS=,
-			ignore 'updates' "The castles $* have new files."
+			info 'updates' "The castles $* have new files."
 			IFS=$OIFS
 		fi
 		prompt "Symlink? [yN]"
