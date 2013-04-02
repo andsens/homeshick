@@ -8,17 +8,17 @@ function symlink {
 	for filepath in $(find $repo -mindepth 1 -maxdepth 1); do
 		file=$(basename $filepath)
 		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/$file ]]; then
-			status $bldblu 'identical' $file
+			ignore 'identical' $file
 			continue
 		fi
 
 		if [[ -e $HOME/$file || -L $HOME/$file ]]; then
 			if $SKIP; then
-				status $bldblu 'exists' $file
+				ignore 'exists' $file
 				continue
 			fi
 			if ! $FORCE; then
-				status $bldred 'conflict' "$file exists"
+				fail 'conflict' "$file exists"
 				prompt "Overwrite $file? [yN]"
 				if [[ $? != 0 ]]; then
 					continue

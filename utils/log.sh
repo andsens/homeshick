@@ -14,9 +14,7 @@ function err {
 }
 
 function die {
-	if [[ $TALK = true && ! -z $pending_status ]]; then
-		printf "\r$bldred%13s$txtdef %s\n" "$pending_status" "$pending_message"
-	fi
+	[[ $pending_status ]] && fail
 	for line in "$@"; do
 		printf "$line\n" >&2
 	done
@@ -40,30 +38,24 @@ function pending {
 }
 
 function fail {
-	if $TALK; then
-		if [[ $1 ]]; then
-			pending_status=$1
-		fi
-		printf "\r$bldred%13s$txtdef %s\n" "$pending_status" "$pending_message"
-	fi
+	[[ $1 ]] && pending_status=$1
+	[[ $2 ]] && pending_message=$2
+	status "\r$bldred" "$pending_status" "$pending_message"
+	unset pending_status pending_message
 }
 
 function ignore {
-	if $TALK; then
-		if [[ $1 ]]; then
-			pending_status=$1
-		fi
-		printf "\r$bldblu%13s$txtdef %s\n" "$pending_status" "$pending_message"
-	fi
+	[[ $1 ]] && pending_status=$1
+	[[ $2 ]] && pending_message=$2
+	status "\r$bldblu" "$pending_status" "$pending_message"
+	unset pending_status pending_message
 }
 
 function success {
-	if $TALK; then
-		if [[ $1 ]]; then
-			pending_status=$1
-		fi
-		printf "\r$bldgrn%13s$txtdef %s\n" "$pending_status" "$pending_message"
-	fi
+	[[ $1 ]] && pending_status=$1
+	[[ $2 ]] && pending_message=$2
+	status "\r$bldgrn" "$pending_status" "$pending_message"
+	unset pending_status pending_message
 }
 
 function prompt {
