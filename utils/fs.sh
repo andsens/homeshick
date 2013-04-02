@@ -2,8 +2,11 @@
 
 function symlink {
 	[[ -z $1 ]] && help symlink
-	castle_exists 'symlink' $1
 	local repo="$repos/$1/home"
+	if [[ ! -d $repo ]]; then
+		ignore 'ignored' "$1"
+		return
+	fi
 	local direrrors=''
 	for filepath in $(find $repo -mindepth 1 -maxdepth 1); do
 		file=$(basename $filepath)
@@ -42,7 +45,7 @@ function symlink {
 
 function track {
 	[[ -z $1 || -z $2 ]] && help track
-	castle_exists 'track' $1
+	home_exists 'track' $1
 	local repo="$repos/$1/home"
 	local newfile="$repo/$2"
 	if [[ ! -e $2 ]]; then
@@ -63,8 +66,16 @@ function track {
 }
 
 function castle_exists {
-	local repo="$repos/$2/home"
+	local repo="$repos/$2"
 	if [[ ! -d $repo ]]; then
-		err "Could not $1 $2, expected $repo to exist and contain dotfiles"
+		err "Could not $1 $2, expected $repo to exist"
+	fi
+}
+
+function home_exists {
+	local repo="$repos/$2"
+	local home="$repo/home"
+	if [[ ! -d $home ]]; then
+		err "Could not $1 $2, expected $repo to contain a home folder"
 	fi
 }
