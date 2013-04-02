@@ -96,6 +96,7 @@ if [[ -z $params ]]; then
 	esac
 fi
 
+T_START=$(date +%s)
 case $cmd in
 	list)  list           ;;
 	help)  help $help_cmd ;;
