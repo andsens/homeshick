@@ -4,7 +4,7 @@ homeshick
 homshick is a dependency-free stand-in for [homesick](https://github.com/technicalpickles/homesick)
 
 # homeshick vs. homesick #
-The original goal of homeshick was to mimick its functionality so that it could be a drop-in replacement.  
+The original goal of homeshick was to mimick its functionality so that it could be a drop-in replacement.
 Since its inception however homeshick has deviated quite a bit from the ruby-version.
 All of the original commands are still available but have been enhanced with a few additions
 like looking for new files after pulling and checking remotes for updates.
@@ -15,10 +15,10 @@ To install a gem, not having root privileges makes the job a lot harder.
 With homeshick you simply run the two commands listed below and you are done!
 
 # Installation #
-homeshick will be installed as your first castle. After that you can easily update it with `homeshick pull homeshick`.  
+homeshick will be installed as your first castle. After that you can easily update it with `homeshick pull homeshick`.
 In order to create the castle, simply download the install script and run it through bash.
 ```
-curl -sL https://raw.github.com/andsens/homeshick/master/install.sh | bash
+curl -sL https://raw.github.com/spacebark/homeshick/master/install.sh | bash
 ```
 
 You can make homeshick accessible as an alias like this
