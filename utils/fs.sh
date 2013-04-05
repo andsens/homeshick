@@ -8,7 +8,7 @@ function symlink {
 		return
 	fi
 	local direrrors=''
-    pushd $repo > /dev/null
+    pushd $repo/home > /dev/null
 	for filepath in $(find . -mindepth 1); do
 		file=${filepath//\.\//}
 		if [[ -f $file && -e $HOME/$file && $(readlink "$HOME/$file") == $repo/$file ]]; then
