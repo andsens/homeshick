@@ -67,13 +67,11 @@ while [[ $# -gt 0 ]]; do
 	fi
 
 	case $cmd in
-		clone | generate | check | pull | symlink | link)
+		clone | generate | check | updates | pull | symlink | link)
 			params+=($1)
 			shift; continue ;;
 		track)
 			[[ ! $castle ]] && castle=$1 || params+=($1)
-			shift; continue ;;
-		updates)
 			shift; continue ;;
 		list) err $EX_USAGE "The 'list' command does not take any arguments" ;;
 		help)
