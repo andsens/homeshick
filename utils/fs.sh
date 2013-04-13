@@ -46,16 +46,16 @@ function symlink {
 
 function track {
 	[[ ! $1 || ! $2 ]] && help track
-	home_exists 'track' $1
 	local repo="$repos/$1"
 	local newfile="$repo/home/$2"
+	pending "symlink" "$newfile to $2"
+	home_exists 'track' $1
 	if [[ ! -e $2 ]]; then
 		err $EX_ERR "The file $2 does not exist."
 	fi
 	if [[ -e $newfile && $FORCE = false ]]; then
 		err $EX_ERR "The file $2 already exists in the castle $1."
 	fi
-	pending "symlink" "$newfile to $2"
 	if ! $FORCE; then
 		mv "$2" "$newfile"
 		ln -s "$newfile" $2

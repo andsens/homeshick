@@ -55,8 +55,8 @@ function generate {
 function pull {
 	[[ ! $1 ]] && help_err pull
 	local repo="$repos/$1"
-	castle_exists 'pull' $1
 	pending 'pull' $1
+	castle_exists 'pull' $1
 
 	local git_out
 	git_out=$(cd $repo; git pull 2>&1)
@@ -95,8 +95,8 @@ function check {
 	local exit_status=$EX_SUCCESS
 	[[ ! $1 ]] && help_err check
 	local repo="$repos/$1"
-	castle_exists 'check' $1
 	pending 'checking' $1
+	castle_exists 'check' $1
 	local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
 	local remote_url=$(cd $repo; git config remote.origin.url 2>/dev/null)
 	local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
@@ -130,8 +130,8 @@ function refresh {
 
 	local fetch_head="$repos/$castle/.git/FETCH_HEAD"
 
-	castle_exists 'check freshness' $castle
 	pending 'checking' $castle
+	castle_exists 'check freshness' $castle
 
 	if [[ -e "$fetch_head" ]]; then
 		local time_diff=$[$(date +%s)-$(stat -c %Y "$fetch_head")]
