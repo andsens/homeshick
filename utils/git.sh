@@ -122,6 +122,77 @@ function check {
 	return $exit_status
 }
 
+
+function refresh {
+	[[ ! $1 || ! $2 ]] && help_err last-update
+	local threshhold=$1
+	local castle=$2
+
+	local fetch_head="$repos/$castle/.git/FETCH_HEAD"
+
+	castle_exists 'check freshness' $castle
+	pending 'checking' $castle
+
+	if [[ -e "$fetch_head" ]]; then
+		local time_diff=$[$(date +%s)-$(stat -c %Y "$fetch_head")]
+		if [[ $time_diff -gt $threshhold ]]; then
+			fail "outdated"
+			return $EX_TH_EXCEEDED
+		else
+			success "fresh"
+			return $EX_SUCCESS
+		fi
+	else
+		fail "outdated"
+		return $EX_TH_EXCEEDED
+	fi
+}
+
+function pull_outdated {
+	local threshhold=$1
+	shift
+	local outdated_castles=()
+	while [[ $# -gt 0 ]]; do
+		local castle=$1
+		shift
+		local fetch_head="$repos/$castle/.git/FETCH_HEAD"
+		# No matter if we are going to pull the castles or not,
+		# we reset the outdated ones by touching FETCH_HEAD
+		if [[ -e "$fetch_head" ]]; then
+			local time_diff=$[$(date +%s)-$(stat -c %Y "$fetch_head")]
+			if [[ $time_diff -gt $threshhold ]]; then
+				outdated_castles+=($castle)
+				touch "$fetch_head"
+			fi
+		else
+			outdated_castles+=($castle)
+			touch "$fetch_head"
+		fi
+	done
+	ask_pull ${outdated_castles[*]}
+	return $EX_SUCCESS
+}
+
+function ask_pull {
+	if [[ $# -gt 0 ]]; then
+		if [[ $# == 1 ]]; then
+			info 'refresh' "The castle $1 is outdated."
+		else
+			OIFS=$IFS
+			IFS=,
+			info 'updates' "The castles $* are outdated."
+			IFS=$OIFS
+		fi
+		prompt "Pull? [yN]"
+		if [[ $? = 0 ]]; then
+			for castle in $*; do
+				pull $castle
+			done
+		fi
+	fi
+	return $EX_SUCCESS
+}
+
 function symlink_cloned_files {
 	local cloned_castles=()
 	while [[ $# -gt 0 ]]; do
@@ -155,8 +226,8 @@ function symlink_new_files {
 }
 
 function ask_symlink {
-	if [[ $# > 0 ]]; then
-		if [[ $# = 1 ]]; then
+	if [[ $# -gt 0 ]]; then
+		if [[ $# == 1 ]]; then
 			info 'updates' "The castle $1 has new files."
 		else
 			OIFS=$IFS
