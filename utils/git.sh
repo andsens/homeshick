@@ -12,10 +12,10 @@ function parse_url {
 
 function clone {
 	[[ ! $1 ]] && help_err clone
-	local repo_path="$repos/$(parse_url $1)"
 	local git_repo=$1
+	local repo_path="$repos/$(parse_url $git_repo)"
 	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
-		git_repo="git://github.com/$1.git"
+		git_repo="git://github.com/$git_repo.git"
 	fi
 	pending 'clone' $git_repo
 	test -e $repo_path && err $EX_ERR "$repo_path already exists"
@@ -54,9 +54,10 @@ function generate {
 
 function pull {
 	[[ ! $1 ]] && help_err pull
-	local repo="$repos/$1"
-	pending 'pull' $1
-	castle_exists 'pull' $1
+	local castle=$1
+	local repo="$repos/$castle"
+	pending 'pull' $castle
+	castle_exists 'pull' $castle
 
 	local git_out
 	git_out=$(cd $repo; git pull 2>&1)
@@ -94,9 +95,11 @@ function list_castle_names {
 function check {
 	local exit_status=$EX_SUCCESS
 	[[ ! $1 ]] && help_err check
-	local repo="$repos/$1"
-	pending 'checking' $1
-	castle_exists 'check' $1
+	local castle=$1
+	local repo="$repos/$castle"
+	pending 'checking' $castle
+	castle_exists 'check' $castle
+
 	local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
 	local remote_url=$(cd $repo; git config remote.origin.url 2>/dev/null)
 	local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
@@ -127,9 +130,7 @@ function refresh {
 	[[ ! $1 || ! $2 ]] && help_err last-update
 	local threshhold=$1
 	local castle=$2
-
 	local fetch_head="$repos/$castle/.git/FETCH_HEAD"
-
 	pending 'checking' $castle
 	castle_exists 'check freshness' $castle
 
@@ -149,12 +150,10 @@ function refresh {
 }
 
 function pull_outdated {
-	local threshhold=$1
-	shift
+	local threshhold=$1; shift
 	local outdated_castles=()
 	while [[ $# -gt 0 ]]; do
-		local castle=$1
-		shift
+		local castle=$1; shift
 		local fetch_head="$repos/$castle/.git/FETCH_HEAD"
 		# No matter if we are going to pull the castles or not,
 		# we reset the outdated ones by touching FETCH_HEAD

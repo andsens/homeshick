@@ -2,9 +2,10 @@
 
 function symlink {
 	[[ ! $1 ]] && help symlink
-	local repo="$repos/$1"
+	local castle=$1
+	local repo="$repos/$castle"
 	if [[ ! -d $repo/home ]]; then
-		ignore 'ignored' "$1"
+		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
 	local direrrors=''
@@ -46,36 +47,42 @@ function symlink {
 
 function track {
 	[[ ! $1 || ! $2 ]] && help track
-	local repo="$repos/$1"
-	local newfile="$repo/home/$2"
-	pending "symlink" "$newfile to $2"
-	home_exists 'track' $1
-	if [[ ! -e $2 ]]; then
-		err $EX_ERR "The file $2 does not exist."
+	local castle=$1
+	local filename=$2
+	local repo="$repos/$castle"
+	local newfile="$repo/home/$filename"
+	pending "symlink" "$newfile to $filename"
+	home_exists 'track' $castle
+	if [[ ! -e $filename ]]; then
+		err $EX_ERR "The file $filename does not exist."
 	fi
 	if [[ -e $newfile && $FORCE = false ]]; then
-		err $EX_ERR "The file $2 already exists in the castle $1."
+		err $EX_ERR "The file $filename already exists in the castle $castle."
 	fi
 	if ! $FORCE; then
-		mv "$2" "$newfile"
-		ln -s "$newfile" $2
+		mv "$filename" "$newfile"
+		ln -s "$newfile" $filename
 	else
-		mv -f "$2" "$newfile"
-		ln -sf "$newfile" $2
+		mv -f "$filename" "$newfile"
+		ln -sf "$newfile" $filename
 	fi
 	success
 }
 
 function castle_exists {
-	local repo="$repos/$2"
+	local action=$1
+	local castle=$2
+	local repo="$repos/$castle"
 	if [[ ! -d $repo ]]; then
-		err $EX_ERR "Could not $1 $2, expected $repo to exist"
+		err $EX_ERR "Could not $action $castle, expected $repo to exist"
 	fi
 }
 
 function home_exists {
-	local repo="$repos/$2"
+	local action=$1
+	local castle=$2
+	local repo="$repos/$castle"
 	if [[ ! -d $repo/home ]]; then
-		err $EX_ERR "Could not $1 $2, expected $repo to contain a home folder"
+		err $EX_ERR "Could not $action $castle, expected $repo to contain a home folder"
 	fi
 }
