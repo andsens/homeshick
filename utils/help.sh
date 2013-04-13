@@ -2,7 +2,7 @@
 function help {
 	if [[ ! -z $1 ]]; then
 		extended_help $1
-		exit 0
+		exit $EX_SUCCESS
 	fi
 printf "hom${bldblu}s${txtdef}hick uses git in concert with symlinks to track your precious dotfiles.
 It is a bash stand-in for the original homesick by technicalpickles.
@@ -37,8 +37,7 @@ It is a bash stand-in for the original homesick by technicalpickles.
 
 function help_err {
 	extended_help $1
-	[[ -z $2 ]] && 2=1
-	exit $2
+	exit $EX_USAGE
 }
 
 function extended_help {

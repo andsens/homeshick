@@ -10,9 +10,11 @@ source $homeshick/utils/log.sh
 source $homeshick/utils/fs.sh
 source $homeshick/utils/git.sh
 source $homeshick/utils/help.sh
+source $homeshick/utils/exit_status.sh
 
+exit_status=$EX_SUCCESS
 
-test -x $(which git) || err "git not found in path"
+test -x $(which git) || err $EX_SOFTWARE "git not found in path"
 
 mkdir -p "$repos"
 
@@ -30,7 +32,7 @@ while [[ $# -gt 0 ]]; do
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
 			-b | --batch) BATCH=true ; shift; continue ;;
-			*)            err "Unknown option '$1'"    ;;
+			*)     err $EX_USAGE "Unknown option '$1'" ;;
 		esac
 	else
 		break
@@ -49,7 +51,7 @@ if [[ -z $cmd ]]; then
 		fi
 	done
 	if [[ -z $cmd ]]; then
-		err "Unknown command '$1'"
+		err $EX_USAGE "Unknown command '$1'"
 	fi
 fi
 
@@ -62,7 +64,7 @@ while [[ $# -gt 0 ]]; do
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
 			-b | --batch) BATCH=true ; shift; continue ;;
-			*)            err "Unknown option '$1'"    ;;
+			*)     err $EX_USAGE "Unknown option '$1'" ;;
 		esac
 	fi
 
@@ -81,18 +83,19 @@ while [[ $# -gt 0 ]]; do
 			shift; continue ;;
 		updates)
 			shift; continue ;;
-		list) err "The 'list' command does not take any arguments" ;;
+		list) err $EX_USAGE "The 'list' command does not take any arguments" ;;
 		help) [[ -z $help_cmd ]] && help_cmd=$1
 			shift; continue;;
-		*)    err "Unknown command '$1'" ;;
+		*)    err $EX_USAGE "Unknown command '$1'" ;;
 	esac
 done
 
-# If no additional arguments are give, run the subcommand for every castle
+# If no additional arguments are given, run the subcommand for every castle
 if [[ -z $params ]]; then
 	case $cmd in
 		check | updates | pull | symlink | link) params=$(list_castle_names) ;;
-		clone | generate | track) help_cmd=$cmd; cmd="help" ;;
+		# These commands require parameters, show the help message instead
+		clone | generate | track) help_cmd=$cmd; cmd="help"; exit_status=$EX_USAGE ;;
 	esac
 fi
 
@@ -110,10 +113,20 @@ case $cmd in
 				symlink|link)  symlink $param       ;;
 				track)         track $castle $param ;;
 			esac
+			result=$?
+			if [[ $exit_status == 0 && $result != 0 ]]; then
+				exit_status=$result
+			fi
 		done
 		case $cmd in
 			clone)         symlink_cloned_files ${params[*]} ;;
 			pull)          symlink_new_files ${params[*]} ;;
 		esac
+		result=$?
+		if [[ $exit_status == 0 && $result != 0 ]]; then
+			exit_status=$result
+		fi
 		;;
 esac
+
+exit $exit_status

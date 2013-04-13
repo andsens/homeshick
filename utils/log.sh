@@ -9,17 +9,17 @@ bldcyn="\e[1;36m" # Cyan - pending action
 bldwht="\e[1;37m" # White - info
 
 function err {
-	local reason="$1"
-	shift
-	die "       $bldred error$txtdef $reason" "$@"
-}
-
-function die {
-	[[ $pending_status ]] && fail
+	local exit_status=$1
+	local reason="$2"
+	shift 2
+	if [[ -n $pending_status ]]; then
+		fail
+	fi
+	status "$bldred" "error" "$reason" >&2
 	for line in "$@"; do
 		printf "$line\n" >&2
 	done
-	exit 1
+	exit $exit_status
 }
 
 function status {

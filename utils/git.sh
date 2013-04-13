@@ -11,65 +11,67 @@ function parse_url {
 }
 
 function clone {
-	[[ -z $1 ]] && help clone
+	[[ -z $1 ]] && help_err clone
 	local repo_path="$repos/$(parse_url $1)"
-	test -e $repo_path && die "      $bldblu exists$txtdef $repo_path"
 	local git_repo=$1
 	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
 		git_repo="git://github.com/$1.git"
 	fi
+	pending 'clone' $git_repo
+	test -e $repo_path && err $EX_ERR "$repo_path already exists"
 
 	local git_version=$(git --version | grep -oE '([0-9]+.?){3}')
-
 	local git_out
-	pending 'clone' $git_repo
 	if [[ $(version_compare $git_version 1.6.5) -ge 0 ]]; then
 		git_out=$(git clone --recursive $git_repo $repo_path 2>&1)
-		[[ $? == 0 ]] || err "Unable to clone $git_repo. Git says:" "$git_out"
+		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to clone $git_repo. Git says:" "$git_out"
 		success
 	else
 		git_out=$(git clone $git_repo $repo_path 2>&1)
-		[[ $? == 0 ]] || err "Unable to clone $git_repo. Git says:" "$git_out"
+		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to clone $git_repo. Git says:" "$git_out"
 		success
 
 		pending 'submodules' $git_repo
 		git_out=$(cd $repo_path; git submodule update --init 2>&1)
-		[[ $? == 0 ]] || err "Unable to clone submodules for $git_repo. Git says:" "$git_out"
+		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to clone submodules for $git_repo. Git says:" "$git_out"
 		success
 	fi
+	return $EX_SUCCESS
 }
 
 function generate {
-	[[ -z $1 ]] && help generate
+	[[ -z $1 ]] && help_err generate
 	local repo=$1
 	pending 'generate' "$repo"
 	mkdir -p "$repo"
 	local git_out
 	git_out=$(cd $repo; git init 2>&1)
-	[[ $? == 0 ]] || err "Unable to initialize repository $repo. Git says:" "$git_out"
+	[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to initialize repository $repo. Git says:" "$git_out"
 	mkdir -p "$repo/home"
 	success
+	return $EX_SUCCESS
 }
 
 function pull {
-	[[ -z $1 ]] && help pull
+	[[ -z $1 ]] && help_err pull
 	local repo="$repos/$1"
 	castle_exists 'pull' $1
 	pending 'pull' $1
 
 	local git_out
 	git_out=$(cd $repo; git pull 2>&1)
-	[[ $? == 0 ]] || err "Unable to pull $repo. Git says:" "$git_out"
+	[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to pull $repo. Git says:" "$git_out"
 
 	local git_version=$(git --version | grep -oE '([0-9]+.?){3}')
 	if [[ $(version_compare $git_version 1.6.5) -ge 0 ]]; then
 		git_out=$(cd $repo; git submodule update --recursive --init 2>&1)
-		[[ $? == 0 ]] || err "Unable update submodules for $repo. Git says:" "$git_out"
+		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
 	else
 		git_out=$(cd $repo; git submodule update --init 2>&1)
-		[[ $? == 0 ]] || err "Unable update submodules for $repo. Git says:" "$git_out"
+		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
 	fi
 	success
+	return $EX_SUCCESS
 }
 
 function list {
@@ -78,6 +80,7 @@ function list {
 		local reponame=$(basename $repo)
 		info $reponame $remote_url
 	done
+	return $EX_SUCCESS
 }
 
 function list_castle_names {
@@ -85,10 +88,12 @@ function list_castle_names {
 		local reponame=$(basename $repo)
 		printf "$reponame\n"
 	done
+	return $EX_SUCCESS
 }
 
 function check {
-	[[ -z $1 ]] && help check
+	local exit_status=$EX_SUCCESS
+	[[ -z $1 ]] && help_err check
 	local repo="$repos/$1"
 	castle_exists 'check' $1
 	pending 'checking' $1
@@ -99,17 +104,22 @@ function check {
 		local local_head=$(cd $repo; git rev-parse HEAD)
 		if [[ $remote_head == $local_head ]]; then
 			success 'up to date'
+			exit_status=$EX_SUCCESS
 		else
 			(cd $repo; git branch --contains "$remote_head" 2>/dev/null) > /dev/null
 			if [[ $? == 0 ]]; then
 				fail 'ahead'
+				exit_status=$EX_AHEAD
 			else
 				fail 'behind'
+				exit_status=$EX_BEHIND
 			fi
 		fi
 	else
 		ignore 'uncheckable'
+		exit_status=$EX_UNAVAILABLE
 	fi
+	return $exit_status
 }
 
 function symlink_cloned_files {
@@ -123,6 +133,7 @@ function symlink_cloned_files {
 		fi
 	done
 	ask_symlink ${cloned_castles[*]}
+	return $EX_SUCCESS
 }
 
 function symlink_new_files {
@@ -140,6 +151,7 @@ function symlink_new_files {
 		fi
 	done
 	ask_symlink ${updated_castles[*]}
+	return $EX_SUCCESS
 }
 
 function ask_symlink {
@@ -159,6 +171,7 @@ function ask_symlink {
 			done
 		fi
 	fi
+	return $EX_SUCCESS
 }
 
 # Snatched from http://rubinium.org/blog/archives/2010/04/05/shell-script-version-compare-vercmp/

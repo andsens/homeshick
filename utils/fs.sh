@@ -5,7 +5,7 @@ function symlink {
 	local repo="$repos/$1"
 	if [[ ! -d $repo/home ]]; then
 		ignore 'ignored' "$1"
-		return
+		return $EX_SUCCESS
 	fi
 	local direrrors=''
 	for filepath in $(find $repo/home -mindepth 1 -maxdepth 1); do
@@ -41,6 +41,7 @@ function symlink {
 		printf "be overwritten, if you delete or move them manually:\n" >&2
 		printf "$direrrors\n" >&2
 	fi
+	return $EX_SUCCESS
 }
 
 function track {
@@ -49,10 +50,10 @@ function track {
 	local repo="$repos/$1"
 	local newfile="$repo/home/$2"
 	if [[ ! -e $2 ]]; then
-		err "The file $2 does not exist."
+		err $EX_ERR "The file $2 does not exist."
 	fi
 	if [[ -e $newfile && $FORCE = false ]]; then
-		err "The file $2 already exists in the castle $1."
+		err $EX_ERR "The file $2 already exists in the castle $1."
 	fi
 	pending "symlink" "$newfile to $2"
 	if ! $FORCE; then
@@ -68,13 +69,13 @@ function track {
 function castle_exists {
 	local repo="$repos/$2"
 	if [[ ! -d $repo ]]; then
-		err "Could not $1 $2, expected $repo to exist"
+		err $EX_ERR "Could not $1 $2, expected $repo to exist"
 	fi
 }
 
 function home_exists {
 	local repo="$repos/$2"
 	if [[ ! -d $repo/home ]]; then
-		err "Could not $1 $2, expected $repo to contain a home folder"
+		err $EX_ERR "Could not $1 $2, expected $repo to contain a home folder"
 	fi
 }
