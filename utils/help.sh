@@ -1,6 +1,6 @@
 #!/bin/bash
 function help {
-	if [[ ! -z $1 ]]; then
+	if [[ $1 ]]; then
 		extended_help $1
 		exit $EX_SUCCESS
 	fi

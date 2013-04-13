@@ -11,7 +11,7 @@ function parse_url {
 }
 
 function clone {
-	[[ -z $1 ]] && help_err clone
+	[[ ! $1 ]] && help_err clone
 	local repo_path="$repos/$(parse_url $1)"
 	local git_repo=$1
 	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
@@ -40,7 +40,7 @@ function clone {
 }
 
 function generate {
-	[[ -z $1 ]] && help_err generate
+	[[ ! $1 ]] && help_err generate
 	local repo=$1
 	pending 'generate' "$repo"
 	mkdir -p "$repo"
@@ -53,7 +53,7 @@ function generate {
 }
 
 function pull {
-	[[ -z $1 ]] && help_err pull
+	[[ ! $1 ]] && help_err pull
 	local repo="$repos/$1"
 	castle_exists 'pull' $1
 	pending 'pull' $1
@@ -93,14 +93,14 @@ function list_castle_names {
 
 function check {
 	local exit_status=$EX_SUCCESS
-	[[ -z $1 ]] && help_err check
+	[[ ! $1 ]] && help_err check
 	local repo="$repos/$1"
 	castle_exists 'check' $1
 	pending 'checking' $1
 	local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
 	local remote_url=$(cd $repo; git config remote.origin.url 2>/dev/null)
 	local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
-	if [[ -n $remote_head ]]; then
+	if [[ $remote_head ]]; then
 		local local_head=$(cd $repo; git rev-parse HEAD)
 		if [[ $remote_head == $local_head ]]; then
 			success 'up to date'

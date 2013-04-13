@@ -42,15 +42,13 @@ done
 [[ $# -gt 0 ]] || cmd="help"
 
 # Get the subcommand
-if [[ -z $cmd ]]; then
-	for valid_cmd in clone generate list check updates pull symlink link track help; do
-		if [[ $valid_cmd = $1 ]]; then
-			cmd=$1
-			shift
-			break
-		fi
-	done
-	if [[ -z $cmd ]]; then
+valid_commands=(clone generate list check updates pull symlink link track help)
+if [[ ! $cmd ]]; then
+	if [[ " ${valid_commands[*]} " =~ " $1 " ]]; then
+		cmd=$1
+		shift
+	fi
+	if [[ ! $cmd ]]; then
 		err $EX_USAGE "Unknown command '$1'"
 	fi
 fi
@@ -70,28 +68,23 @@ while [[ $# -gt 0 ]]; do
 
 	case $cmd in
 		clone | generate | check | pull | symlink | link)
-			[[ -z $params ]] && params=()
 			params+=($1)
 			shift; continue ;;
 		track)
-			if [[ -z $castle ]]; then
-				castle=$1
-				params=()
-			else
-				params+=($1)
-			fi
+			[[ ! $castle ]] && castle=$1 || params+=($1)
 			shift; continue ;;
 		updates)
 			shift; continue ;;
 		list) err $EX_USAGE "The 'list' command does not take any arguments" ;;
-		help) [[ -z $help_cmd ]] && help_cmd=$1
+		help)
+			[[ ! $help_cmd ]] && help_cmd=$1
 			shift; continue;;
 		*)    err $EX_USAGE "Unknown command '$1'" ;;
 	esac
 done
 
 # If no additional arguments are given, run the subcommand for every castle
-if [[ -z $params ]]; then
+if [[ ! $params ]]; then
 	case $cmd in
 		check | updates | pull | symlink | link) params=$(list_castle_names) ;;
 		# These commands require parameters, show the help message instead

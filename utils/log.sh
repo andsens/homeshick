@@ -12,7 +12,7 @@ function err {
 	local exit_status=$1
 	local reason="$2"
 	shift 2
-	if [[ -n $pending_status ]]; then
+	if [[ $pending_status ]]; then
 		fail
 	fi
 	status "$bldred" "error" "$reason" >&2

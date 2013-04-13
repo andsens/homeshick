@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function symlink {
-	[[ -z $1 ]] && help symlink
+	[[ ! $1 ]] && help symlink
 	local repo="$repos/$1"
 	if [[ ! -d $repo/home ]]; then
 		ignore 'ignored' "$1"
@@ -36,7 +36,7 @@ function symlink {
 		ln -s $repo/home/$file $HOME/$file
 		success
 	done
-	if [[ -n $direrrors && $FORCE = false ]]; then
+	if [[ $direrrors && $FORCE = false ]]; then
 		printf "\nThe following directories already exist and will only\n" >&2
 		printf "be overwritten, if you delete or move them manually:\n" >&2
 		printf "$direrrors\n" >&2
@@ -45,7 +45,7 @@ function symlink {
 }
 
 function track {
-	[[ -z $1 || -z $2 ]] && help track
+	[[ ! $1 || ! $2 ]] && help track
 	home_exists 'track' $1
 	local repo="$repos/$1"
 	local newfile="$repo/home/$2"
