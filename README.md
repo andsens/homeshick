@@ -16,9 +16,9 @@ With homeshick you simply run the two commands listed below and you are done!
 
 # Installation #
 homeshick will be installed as your first castle. After that you can easily update it with `homeshick pull homeshick`.  
-In order to create the castle, simply download the install script and run it through bash.
+In order to create the castle, simply fetch the install script and pipe it through bash.
 ```
-wget -O - --no-check-certificate 'https://raw.github.com/andsens/homeshick/master/install.sh' | bash
+wget -O - 'https://raw.github.com/andsens/homeshick/master/install.sh' | bash
 ```
 
 You can make homeshick accessible as an alias like this
