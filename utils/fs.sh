@@ -9,7 +9,7 @@ function symlink {
 		return $EX_SUCCESS
 	fi
 	local direrrors=''
-	for filepath in $(find $repo/home -mindepth 1 -maxdepth 1); do
+	for filepath in $(find $repo/home -depth 1); do
 		file=$(basename $filepath)
 		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
 			ignore 'identical' $file
