@@ -44,17 +44,44 @@ function help_err {
 
 function extended_help {
 	case $1 in
-		clone)    printf "Usage:\n  homesick clone URL.."               ;;
-		generate) printf "Usage:\n  homesick generate PATH.."           ;;
-		list)     printf "Usage:\n  homesick list"                      ;;
-		check)    printf "Usage:\n  homesick check [CASTLE..]"          ;;
-    updates)  printf "Usage:\n  homesick updates [CASTLE..]"        ;;
-    refresh)  printf "Usage:\n  homesick refresh [DAYS] [CASTLE..]" ;;
-		pull)     printf "Usage:\n  homesick pull [CASTLE..]"           ;;
-		symlink)  printf "Usage:\n  homesick symlink [CASTLE..]"        ;;
-    link)     printf "Usage:\n  homesick link [CASTLE..]"           ;;
-		track)    printf "Usage:\n  homesick track CASTLE FILE.."       ;;
-		help)     printf "Usage:\n  homesick help [TASK]"               ;;
+		clone)
+      printf "Clones URI as a castle for homesick\n"
+      printf "Usage:\n  homesick clone URL.."
+      ;;
+		generate)
+      printf "Generates a repo prepped for usage with homeshick\n"
+      printf "Usage:\n  homesick generate PATH.."
+      ;;
+		list)
+      printf "Lists cloned castles\n"
+      printf "Usage:\n  homesick list"
+      ;;
+		check|updates)
+      printf "Checks if a castle has been updated on the remote\n"
+      printf "Usage:\n  homesick $1 [CASTLE..]"
+      ;;
+    refresh)
+      printf "Checks if a castle has not been pulled in DAYS days.\n"
+      printf "The default is one week.\n"
+      printf "Usage:\n  homesick refresh [DAYS] [CASTLE..]"
+      ;;
+		pull)
+      printf "Updates a castle. Also recurse into submodules.\n"
+      printf "Usage:\n  homesick pull [CASTLE..]"
+      ;;
+		link|symlink)
+      printf "Symlinks all dotfiles from a castle\n"
+      printf "Usage:\n  homesick $1 [CASTLE..]"
+      ;;
+		track)
+      printf "Adds a file to a castle.\n"
+      printf "This moves the file into the castle and creates a symlink in its place.\n"
+      printf "Usage:\n  homesick track CASTLE FILE.."
+      ;;
+		help)
+      printf "Shows usage of a task\n"
+      printf "Usage:\n  homesick help [TASK]"
+      ;;
 		*)    help  ;;
 		esac
 	printf "\n\n"
