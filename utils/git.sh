@@ -76,7 +76,7 @@ function pull {
 }
 
 function list {
-	for repo in $(find $repos -depth 2 -name .git -type d | sed 's#/.git$##g'); do
+	for repo in $(find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'); do
 		local remote_url=$(cd $repo; git config remote.origin.url)
 		local reponame=$(basename $repo)
 		info $reponame $remote_url
@@ -85,7 +85,7 @@ function list {
 }
 
 function list_castle_names {
-	for repo in $(find $repos -depth 2 -name .git -type d | sed 's#/.git$##g'); do
+	for repo in $(find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'); do
 		local reponame=$(basename $repo)
 		printf "$reponame\n"
 	done
@@ -198,7 +198,7 @@ function symlink_cloned_files {
 		local castle=$(parse_url $1)
 		shift
 		local repo="$repos/$castle"
-		if [[ $(find $repo -depth 1 | wc -l) > 0 ]]; then
+		if [[ $(find $repo -maxdepth 1 -mindepth 1 | wc -l) > 0 ]]; then
 			cloned_castles+=($castle)
 		fi
 	done
