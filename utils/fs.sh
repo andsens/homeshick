@@ -22,8 +22,7 @@ function symlink {
 				continue
 			fi
 			if ! $FORCE; then
-				fail 'conflict' "$file exists"
-				prompt "Overwrite $file? [yN]"
+				prompt_no 'conflict' "$file exists" "overwrite?"
 				if [[ $? != 0 ]]; then
 					continue
 				fi

@@ -63,18 +63,49 @@ function success {
 	unset pending_status pending_message
 }
 
-function prompt {
+
+# Singleline prompt that stays on the same line even if you press enter.
+# Automatically colors the line according to the answer the user gives.
+# Currently homeshick only has prompts with "no" as the default,
+# so there's no reason to implement prompt_yes right now
+function prompt_no {
+	local status=$1
+	local message=$2
+	local prompt=$3
+	local result=-1
+	status "$bldwht" "$status" "$message"
+	pending "$prompt" "[yN] "
 	if ! $BATCH; then
-		local answer
 		while true; do
-			read -p "$1" answer
+			local answer=""
+			local char=""
+			while true; do
+				read -s -n 1 char
+				if [[ $char == "" ]]; then
+					break
+				fi
+				printf "%c" $char
+				answer="${answer}${char}"
+			done
 			case $answer in
-				Y|y) return 0 ;;
-				N|n) return 1 ;;
-				"")  return 2 ;;
+				Y|y) result=0 ;;
+				N|n) result=1 ;;
+				"")  result=2 ;;
 			esac
+			[[ ! $result < 0 ]] && break
+			for (( i=0; i<${#answer}; i++ )) ; do
+				printf "\b"
+			done
+			printf "%${#answer}s\r"
+			pending "$pending_status" "$pending_message"
 		done
 	else
-		return 2
+		result=2
 	fi
+	if [[ $result == 0 ]]; then
+		success
+	else
+		fail
+	fi
+	return $result
 }

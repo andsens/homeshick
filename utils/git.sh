@@ -175,14 +175,14 @@ function pull_outdated {
 function ask_pull {
 	if [[ $# -gt 0 ]]; then
 		if [[ $# == 1 ]]; then
-			info 'refresh' "The castle $1 is outdated."
+			msg="The castle $1 is outdated."
 		else
 			OIFS=$IFS
 			IFS=,
-			info 'refresh' "The castles $* are outdated."
+			msg="The castles $* are outdated."
 			IFS=$OIFS
 		fi
-		prompt "Pull? [yN]"
+		prompt_no 'refresh' "$msg" 'pull?'
 		if [[ $? = 0 ]]; then
 			for castle in $*; do
 				pull $castle
@@ -227,14 +227,14 @@ function symlink_new_files {
 function ask_symlink {
 	if [[ $# -gt 0 ]]; then
 		if [[ $# == 1 ]]; then
-			info 'updates' "The castle $1 has new files."
+			msg="The castle $1 has new files."
 		else
 			OIFS=$IFS
 			IFS=,
-			info 'updates' "The castles $* have new files."
+			msg="The castles $* have new files."
 			IFS=$OIFS
 		fi
-		prompt "Symlink? [yN]"
+		prompt_no 'updates' "$msg" 'symlink?'
 		if [[ $? = 0 ]]; then
 			for castle in $*; do
 				symlink $castle
