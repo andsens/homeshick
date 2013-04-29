@@ -179,7 +179,7 @@ function ask_pull {
 		else
 			OIFS=$IFS
 			IFS=,
-			info 'updates' "The castles $* are outdated."
+			info 'refresh' "The castles $* are outdated."
 			IFS=$OIFS
 		fi
 		prompt "Pull? [yN]"
