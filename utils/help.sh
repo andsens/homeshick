@@ -11,7 +11,7 @@ It is a bash stand-in for the original homesick by technicalpickles.
 
  Tasks:
   homesick clone URI..               # Clone URI as a castle for homesick
-  homesick generate PATH..           # Generate a castle repo
+  homesick generate CASTLE..         # Generate a castle repo
   homesick list                      # List cloned castles
   homesick check [CASTLE..]          # Check a castle for updates
   homesick refresh [DAYS] [CASTLE..] # Check if a castle needs refreshing
@@ -50,7 +50,7 @@ function extended_help {
       ;;
 		generate)
       printf "Generates a repo prepped for usage with homeshick\n"
-      printf "Usage:\n  homesick generate PATH.."
+      printf "Usage:\n  homesick generate CASTLE.."
       ;;
 		list)
       printf "Lists cloned castles\n"
