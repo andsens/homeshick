@@ -1,7 +1,7 @@
 #!/usr/bin/env bash -e
 
 if [[ -z $SHUNIT2 ]]; then
-	printf "\$SHUNIT2 not set. Specify the path to shunit2 with \`export SHUNIT2=/path/to/shunit2'\n" >&2
+	printf "\$SHUNIT2 not set. Specify the path to shunit2 with \`export SHUNIT2=/path/to/shunit2/src/shunit2'\n" >&2
 	exit 1
 fi
 if [[ ! -f $SHUNIT2 ]]; then
@@ -25,5 +25,5 @@ setup_repo_fixtures
 source $SCRIPTDIR/link_homeshick.sh
 setup_homeshick
 
-sh $SCRIPTDIR/clone.sh
-sh $SCRIPTDIR/link.sh
+bash $SCRIPTDIR/clone.sh
+bash $SCRIPTDIR/link.sh
