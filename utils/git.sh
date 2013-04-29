@@ -20,9 +20,8 @@ function clone {
 	pending 'clone' $git_repo
 	test -e $repo_path && err $EX_ERR "$repo_path already exists"
 
-	local git_version=$(git --version | grep -oE '([0-9]+.?){3}')
 	local git_out
-	if [[ $(version_compare $git_version 1.6.5) -ge 0 ]]; then
+	if [[ $(version_compare $GIT_VERSION 1.6.5) -ge 0 ]]; then
 		git_out=$(git clone --recursive $git_repo $repo_path 2>&1)
 		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to clone $git_repo. Git says:" "$git_out"
 		success
@@ -68,8 +67,7 @@ function pull {
 	git_out=$(cd $repo; git pull 2>&1)
 	[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to pull $repo. Git says:" "$git_out"
 
-	local git_version=$(git --version | grep -oE '([0-9]+.?){3}')
-	if [[ $(version_compare $git_version 1.6.5) -ge 0 ]]; then
+	if [[ $(version_compare $GIT_VERSION 1.6.5) -ge 0 ]]; then
 		git_out=$(cd $repo; git submodule update --recursive --init 2>&1)
 		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
 	else
