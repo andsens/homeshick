@@ -69,13 +69,20 @@ function success {
 # Currently homeshick only has prompts with "no" as the default,
 # so there's no reason to implement prompt_yes right now
 function prompt_no {
+	local OTALK=$TALK
+	# Disable the quiet flag while prompting in interactive mode
+	if ! $BATCH; then
+		TALK=true
+	fi
+
 	local status=$1
 	local message=$2
 	local prompt=$3
 	local result=-1
+
 	status "$bldwht" "$status" "$message"
-	pending "$prompt" "[yN] "
 	if ! $BATCH; then
+		pending "$prompt" "[yN] "
 		while true; do
 			local answer=""
 			local char=""
@@ -100,6 +107,7 @@ function prompt_no {
 			pending "$pending_status" "$pending_message"
 		done
 	else
+		pending "$prompt" "BATCH - No"
 		result=2
 	fi
 	if [[ $result == 0 ]]; then
@@ -107,5 +115,6 @@ function prompt_no {
 	else
 		fail
 	fi
+	TALK=$OTALK
 	return $result
 }
