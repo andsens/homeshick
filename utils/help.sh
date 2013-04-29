@@ -16,12 +16,12 @@ It is a bash stand-in for the original homesick by technicalpickles.
   homesick check [CASTLE..]          # Check a castle for updates
   homesick refresh [DAYS] [CASTLE..] # Check if a castle needs refreshing
   homesick pull [CASTLE..]           # Update a castle
-  homesick symlink [CASTLE..]        # Symlinks all dotfiles from a castle
+  homesick link [CASTLE..]           # Symlinks all dotfiles from a castle
   homesick track CASTLE FILE..       # Add a file to a castle
   homesick help [TASK]               # Show usage of a task
 
  Aliases:
-  link    # Alias to symlink
+  symlink # Alias to link
   updates # Alias to check
 
  Runtime options:
