@@ -18,6 +18,8 @@ test -x $(which git) || err $EX_SOFTWARE "git not found in path"
 
 mkdir -p "$repos"
 
+T_START=$(date +%s)
+
 TALK=true
 SKIP=false
 FORCE=false
@@ -110,7 +112,6 @@ fi
 # Default param for refresh is 7
 [[ ! $threshhold ]] && threshhold=$[7*86400]
 
-T_START=$(date +%s)
 case $cmd in
 	list)  list           ;;
 	help)  help $help_cmd ;;
