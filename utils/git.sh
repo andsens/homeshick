@@ -155,17 +155,18 @@ function pull_outdated {
 	while [[ $# -gt 0 ]]; do
 		local castle=$1; shift
 		local fetch_head="$repos/$castle/.git/FETCH_HEAD"
-		# No matter if we are going to pull the castles or not,
+		# When in interactive mode:
+		# No matter if we are going to pull the castles or not
 		# we reset the outdated ones by touching FETCH_HEAD
 		if [[ -e "$fetch_head" ]]; then
 			local time_diff=$[$(date +%s)-$(stat -c %Y "$fetch_head")]
 			if [[ $time_diff -gt $threshhold ]]; then
 				outdated_castles+=($castle)
-				touch "$fetch_head"
+				! $BATCH && touch "$fetch_head"
 			fi
 		else
 			outdated_castles+=($castle)
-			touch "$fetch_head"
+			! $BATCH && touch "$fetch_head"
 		fi
 	done
 	ask_pull ${outdated_castles[*]}
