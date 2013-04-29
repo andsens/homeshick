@@ -28,7 +28,7 @@ while [[ $# -gt 0 ]]; do
 	if [[ $1 =~ ^- ]]; then
 		case $1 in
 			-h | --help)  cmd="help" ; shift; continue ;;
-			-q | --quiet) TALK=true  ; shift; continue ;;
+			-q | --quiet) TALK=false ; shift; continue ;;
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
 			-b | --batch) BATCH=true ; shift; continue ;;
@@ -58,7 +58,7 @@ while [[ $# -gt 0 ]]; do
 	if [[ "$1" =~ ^- ]]; then
 		case $1 in
 			-h | --help)  cmd="help" ; shift; continue ;;
-			-q | --quiet) TALK=true  ; shift; continue ;;
+			-q | --quiet) TALK=false ; shift; continue ;;
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
 			-b | --batch) BATCH=true ; shift; continue ;;
