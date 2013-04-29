@@ -220,7 +220,7 @@ function symlink_new_files {
 		local repo="$repos/$castle"
 		local git_out
 		local now=$(date +%s)
-		git_out=$(cd $repo; git diff --name-only --diff-filter=A HEAD@{$[$now-$T_START+1].seconds.ago} HEAD 2>/dev/null | wc -l 2>&1)
+		git_out=$(cd $repo; git diff --name-only --diff-filter=A HEAD@{$[$now-$T_START+1].seconds.ago} HEAD -- home 2>/dev/null | wc -l 2>&1)
 		[[ $? == 0 ]] || continue # Ignore errors, this operation is not mission critical
 		if [[ $git_out > 0 ]]; then
 			updated_castles+=($castle)
