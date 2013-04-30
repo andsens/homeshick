@@ -8,7 +8,6 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	local direrrors=''
 	for filepath in $(find $repo/home -mindepth 1 -maxdepth 1); do
 		file=$(basename $filepath)
 		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
@@ -36,11 +35,6 @@ function symlink {
 		ln -s $repo/home/$file $HOME/$file
 		success
 	done
-	if [[ $direrrors && $FORCE = false ]]; then
-		printf "\nThe following directories already exist and will only\n" >&2
-		printf "be overwritten, if you delete or move them manually:\n" >&2
-		printf "$direrrors\n" >&2
-	fi
 	return $EX_SUCCESS
 }
 
