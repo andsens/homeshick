@@ -99,7 +99,7 @@ function prompt_no {
 				N|n) result=1 ;;
 				"")  result=2 ;;
 			esac
-			[[ ! $result < 0 ]] && break
+			[[ $result -ge 0 ]] && break
 			for (( i=0; i<${#answer}; i++ )) ; do
 				printf "\b"
 			done
