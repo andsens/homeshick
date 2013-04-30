@@ -20,7 +20,7 @@ mkdir -p "$repos"
 
 T_START=$(date +%s)
 GIT_VERSION=$(git --version | cut -d ' ' -f 3)
-if [[ ! $GIT_VERSION =~ ([0-9]\.){3}[0-9] ]]; then
+if [[ ! $GIT_VERSION =~ ([0-9]+\.){3}[0-9]+ ]]; then
 	err $EX_SOFTWARE "could not determine git version"
 fi
 
