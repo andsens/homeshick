@@ -1,0 +1,29 @@
+#!/usr/bin/env bash -e
+
+if [[ -z $SHUNIT2 ]]; then
+	printf "\$SHUNIT2 not set. Specify the path to shunit2 with \`export SHUNIT2=/path/to/shunit2/src/shunit2'\n" >&2
+	exit 1
+fi
+if [[ ! -f $SHUNIT2 ]]; then
+	printf "File not found. \$SHUNIT2 points at \`%s'.\n" $SHUNIT2 >&2
+	exit 1
+fi
+
+export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+export REPO_FIXTURES=$SCRIPTDIR/repos
+export HOME=$SCRIPTDIR/home
+
+mkdir -p $REPO_FIXTURES $HOME
+
+export HOMESICK=$HOME/.homesick
+export HOMESHICK_BIN=$HOME/.homeshick
+
+source $SCRIPTDIR/repo_fixtures.sh
+setup_repo_fixtures
+
+source $SCRIPTDIR/link_homeshick.sh
+setup_homeshick
+
+bash $SCRIPTDIR/clone.sh
+bash $SCRIPTDIR/link.sh

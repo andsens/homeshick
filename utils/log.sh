@@ -9,17 +9,17 @@ bldcyn="\e[1;36m" # Cyan - pending action
 bldwht="\e[1;37m" # White - info
 
 function err {
-	local reason="$1"
-	shift
-	die "       $bldred error$txtdef $reason" "$@"
-}
-
-function die {
-	[[ $pending_status ]] && fail
+	local exit_status=$1
+	local reason="$2"
+	shift 2
+	if [[ $pending_status ]]; then
+		fail
+	fi
+	status "$bldred" "error" "$reason" >&2
 	for line in "$@"; do
 		printf "$line\n" >&2
 	done
-	exit 1
+	exit $exit_status
 }
 
 function status {
@@ -63,18 +63,58 @@ function success {
 	unset pending_status pending_message
 }
 
-function prompt {
+
+# Singleline prompt that stays on the same line even if you press enter.
+# Automatically colors the line according to the answer the user gives.
+# Currently homeshick only has prompts with "no" as the default,
+# so there's no reason to implement prompt_yes right now
+function prompt_no {
+	local OTALK=$TALK
+	# Disable the quiet flag while prompting in interactive mode
 	if ! $BATCH; then
-		local answer
+		TALK=true
+	fi
+
+	local status=$1
+	local message=$2
+	local prompt=$3
+	local result=-1
+
+	status "$bldwht" "$status" "$message"
+	if ! $BATCH; then
+		pending "$prompt" "[yN] "
 		while true; do
-			read -p "$1" answer
+			local answer=""
+			local char=""
+			while true; do
+				read -s -n 1 char
+				if [[ $char == "" ]]; then
+					break
+				fi
+				printf "%c" $char
+				answer="${answer}${char}"
+			done
 			case $answer in
-				Y|y) return 0 ;;
-				N|n) return 1 ;;
-				"")  return 2 ;;
+				Y|y) result=0 ;;
+				N|n) result=1 ;;
+				"")  result=2 ;;
 			esac
+			[[ $result -ge 0 ]] && break
+			for (( i=0; i<${#answer}; i++ )) ; do
+				printf "\b"
+			done
+			printf "%${#answer}s\r"
+			pending "$pending_status" "$pending_message"
 		done
 	else
-		return 2
+		pending "$prompt" "BATCH - No"
+		result=2
 	fi
+	if [[ $result == 0 ]]; then
+		success
+	else
+		fail
+	fi
+	TALK=$OTALK
+	return $result
 }
