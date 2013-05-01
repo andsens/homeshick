@@ -31,7 +31,7 @@ $HOME/.homesick/repos/homeshick/home/.homeshick link
 
 To avoid having to call homeshick with such a long path you can create an alias like this:
 ```
-printf '\nalias homeshick="$HOME/.homeshick"' >> $HOME/.bashrc
+printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> $HOME/.bashrc
 ```
 
 You can skip the [commands](#commands) part and go to the [tutorial](#tutorial)
@@ -90,14 +90,16 @@ This goes very well with your rc scripts (check out the [tutorial](#tutorial) fo
 ## Tutorial ##
 
 In the installation you added an alias to the `.bashrc` file with
-`printf '\nalias homeshick="$HOME/.homeshick"' >> $HOME/.bashrc`. 
+```
+printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> $HOME/.bashrc
+```
 You make sure that the alias is available by running
 `source $HOME/.bashrc` (this reevaluates your startup script).  
 Now lets create your first castle to hold this file. Use the [generate](#generate) command for that: 
-`homeshick generate dotfiles`.  
-You can put the `.bashrc` file into your newly create castle with `homeshick track dotfiles .bashrc`.
+`homeshick generate dotfiles`. This creates an empty castle. Now you have to populate it.  
+You can put the `.bashrc` file into your newly created castle with `homeshick track dotfiles .bashrc`.
 
-Assuming you have a repository at the other end lets now enter the castle, commit the changes,
+Assuming you have a repository at the other end, let's now enter the castle, commit the changes,
 add your github remote and push to it.
 ```
 cd $HOME/.homesick/repos/dotfiles
@@ -112,10 +114,10 @@ cd -
 
 ### Other machines ###
 To get your custom `.bashrc` file onto other machines you [install homeshick](#installation) and
-clone your castle with: `$HOME/.homeshick clone username/dotfiles`  
+clone your castle with: `homeshick clone username/dotfiles`  
 homeshick will ask you immediately whether you want to symlink the newly cloned castle.
 If agree to that and also agree to it overwriting the existing `.bashrc` you can run
-`source $HOME/.bashrc` to get your `homeshick` alias running.
+`source $HOME/.bashrc` to get your new `homeshick` alias running.
 
 ### Refreshing ###
 You can run `check` to see whether your castles are up to date or need pushing/pulling.
