@@ -23,16 +23,16 @@ Each repo is referred to as a *castle*.
 
 # Installation #
 homeshick is installed as a castle, this way it can keep itself updated.
-In order to create the castle, simply clone it to the appropriate position and run the linking command.
+In order to create the castle, simply clone it to the appropriate location.
 ```
 git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
-$HOME/.homesick/repos/homeshick/home/.homeshick link
 ```
 
-To avoid having to call homeshick with such a long path you can create an alias like this:
+To avoid having to call homeshick with such a long path you can alias it in your `.bashrc`:
 ```
 printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> $HOME/.bashrc
 ```
+*Note: You will have to rerun `.bashrc` with `source $HOME/.bashrc` to get the alias working right away.*
 
 You can skip the [commands](#commands) part and go to the [tutorial](#tutorial)
 if you prefer getting to know homeshick by using it.
@@ -93,11 +93,10 @@ In the installation you added an alias to the `.bashrc` file with
 ```
 printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> $HOME/.bashrc
 ```
-You make sure that the alias is available by running
-`source $HOME/.bashrc` (this reevaluates your startup script).  
-Now lets create your first castle to hold this file. Use the [generate](#generate) command for that: 
-`homeshick generate dotfiles`. This creates an empty castle. Now you have to populate it.  
-You can put the `.bashrc` file into your newly created castle with `homeshick track dotfiles .bashrc`.
+
+Let's create your first castle to hold this file. You use the [generate](#generate) command to do that:
+`homeshick generate dotfiles`. This creates an empty castle, which you can now populate.  
+Put the `.bashrc` file into your `dotfiles` castle with `homeshick track dotfiles .bashrc`.
 
 Assuming you have a repository at the other end, let's now enter the castle, commit the changes,
 add your github remote and push to it.
@@ -109,15 +108,15 @@ git remote add origin git@github.com/username/dotfiles
 git push -u origin master
 cd -
 ```
-*(The _.homesick_ folder is not a typo, it is named as such because of compatability with
-[homesick](#homeshick-and-homesick), the ruby tool that inspired homeshick)*
+*Note: The `.homesick/` folder is not a typo, it is named as such because of compatibility with
+[homesick](#homeshick-and-homesick), the ruby tool that inspired homeshick*
 
 ### Other machines ###
 To get your custom `.bashrc` file onto other machines you [install homeshick](#installation) and
-clone your castle with: `homeshick clone username/dotfiles`  
+clone your castle with: `$HOME/.homesick/repos/homeshick/home/homeshick clone username/dotfiles`  
 homeshick will ask you immediately whether you want to symlink the newly cloned castle.
-If agree to that and also agree to it overwriting the existing `.bashrc` you can run
-`source $HOME/.bashrc` to get your new `homeshick` alias running.
+If you agree to that and also agree to it overwriting the existing `.bashrc` you can run
+`source $HOME/.bashrc` to get your `homeshick` alias running.
 
 ### Refreshing ###
 You can run `check` to see whether your castles are up to date or need pushing/pulling.
