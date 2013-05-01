@@ -19,8 +19,8 @@ test -x $(which git) || err $EX_SOFTWARE "git not found in path"
 mkdir -p "$repos"
 
 T_START=$(date +%s)
-GIT_VERSION=$(git --version | cut -d ' ' -f 3)
-if [[ ! $GIT_VERSION =~ ([0-9]+\.){3}[0-9]+ ]]; then
+GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
+if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
 	err $EX_SOFTWARE "could not determine git version"
 fi
 
