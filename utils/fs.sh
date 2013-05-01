@@ -8,14 +8,17 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	for filepath in $(find $repo/home -mindepth 1 -maxdepth 1); do
-		file=$(basename $filepath)
+	for filepath in $(find $repo/home -mindepth 1); do
+		file=${filepath#$repo/home/}
 		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
 			ignore 'identical' $file
 			continue
 		fi
 
 		if [[ -e $HOME/$file || -L $HOME/$file ]]; then
+			if [[ -d $repo/home/$file && -d $HOME/$file ]]; then
+				continue
+			fi
 			if $SKIP; then
 				ignore 'exists' $file
 				continue
@@ -29,10 +32,18 @@ function symlink {
 			pending 'overwrite' $file
 			rm -rf "$HOME/$file"
 		else
-			pending 'symlink' $file
+			if [[ -d $repo/home/$file ]]; then
+				pending 'directory' $file
+			else
+				pending 'symlink' $file
+			fi
 		fi
 
-		ln -s $repo/home/$file $HOME/$file
+		if [[ -d $repo/home/$file ]]; then
+			mkdir -p $HOME/$file
+		else
+			ln -s $repo/home/$file $HOME/$file
+		fi
 		success
 	done
 	return $EX_SUCCESS
@@ -41,9 +52,12 @@ function symlink {
 function track {
 	[[ ! $1 || ! $2 ]] && help track
 	local castle=$1
-	local filename=$2
+	local filename=$(readlink -f $2)
+	if [[ $filename != $HOME/* ]]; then
+		err $EX_ERR "The file $filename must be in your home directory."
+	fi
 	local repo="$repos/$castle"
-	local newfile="$repo/home/$filename"
+	local newfile="$repo/home/${filename#$HOME/}"
 	pending "symlink" "$newfile to $filename"
 	home_exists 'track' $castle
 	if [[ ! -e $filename ]]; then
@@ -52,6 +66,10 @@ function track {
 	if [[ -e $newfile && $FORCE = false ]]; then
 		err $EX_ERR "The file $filename already exists in the castle $castle."
 	fi
+	if [[ ! -f $filename ]]; then
+		err $EX_ERR "The file $filename must be a regular file."
+	fi
+	mkdir -p $(dirname $newfile)
 	if ! $FORCE; then
 		mv "$filename" "$newfile"
 		ln -s "$newfile" $filename

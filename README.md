@@ -7,7 +7,7 @@ homeshick
 
 <img src="http://i.imgur.com/3zAK9.jpg">
 
-homeshick keeps your dotfiles up to date using only git and bash.  
+homeshick keeps your dotfiles up to date using only git and bash.
 It can handle many dotfile repositories at once, so you can beef up your own dotfiles
 with bigger projects like [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) and still
 keep everything organized.
@@ -15,17 +15,17 @@ keep everything organized.
 # How does it work? #
 Symlinking.
 On the simplest level, all homeshick really does is look for files and folders
-in your cloned repositories and symlink them to your home directory. 
-The symlinked files must however reside in a folder named `home`.  
+in your cloned repositories and symlink them to your home directory.
+The symlinked files must however reside in a folder named `home`.
 This way you can prevent homeshick from cluttering your home folder with
-files that are only *included* from elsewhere.  
+files that are only *included* from elsewhere.
 Each repo is referred to as a *castle*.
 
 # Installation #
 homeshick is installed as a castle, this way it can keep itself updated.
 In order to create the castle, simply clone it to the appropriate position and run the linking command.
 ```
-git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
+git clone git://github.com/spacebark/homeshick.git $HOME/.homesick/repos/homeshick
 $HOME/.homesick/repos/homeshick/home/.homeshick link
 ```
 
@@ -48,7 +48,7 @@ You can also run a subcommand on all castles by not specifying any arguments.
 ## Commands ##
 
 ### link ###
-You have already seen the first command in the installation procedure: `link`.  
+You have already seen the first command in the installation procedure: `link`.
 This command symlinks all files that reside in the `home` folders of your castles into your home folder.
 You will be prompted if there are any files or folders that would be overwritten.
 
@@ -90,11 +90,11 @@ This goes very well with your rc scripts (check out the [tutorial](#tutorial) fo
 ## Tutorial ##
 
 In the installation you added an alias to the `.bashrc` file with
-`printf '\nalias homeshick="$HOME/.homeshick"' >> $HOME/.bashrc`. 
+`printf '\nalias homeshick="$HOME/.homeshick"' >> $HOME/.bashrc`.
 You make sure that the alias is available by running
-`source $HOME/.bashrc` (this reevaluates your startup script).  
-Now lets create your first castle to hold this file. Use the [generate](#generate) command for that: 
-`homeshick generate dotfiles`.  
+`source $HOME/.bashrc` (this reevaluates your startup script).
+Now lets create your first castle to hold this file. Use the [generate](#generate) command for that:
+`homeshick generate dotfiles`.
 You can put the `.bashrc` file into your newly create castle with `homeshick track dotfiles .bashrc`.
 
 Assuming you have a repository at the other end lets now enter the castle, commit the changes,
@@ -112,7 +112,7 @@ cd -
 
 ### Other machines ###
 To get your custom `.bashrc` file onto other machines you [install homeshick](#installation) and
-clone your castle with: `$HOME/.homeshick clone username/dotfiles`  
+clone your castle with: `$HOME/.homeshick clone username/dotfiles`
 homeshick will ask you immediately whether you want to symlink the newly cloned castle.
 If agree to that and also agree to it overwriting the existing `.bashrc` you can run
 `source $HOME/.bashrc` to get your `homeshick` alias running.
@@ -123,7 +123,7 @@ This is a task that is easy to forget, which is why homeshick has the `refresh` 
 It examines your castles to see when they were pulled the last time and prompts you to pull
 any castles that have not been pulled over the last week.
 You can put this into your `.bashrc` file to run the check everytime you start up the shell:
-`printf '\nhomeshick --quiet refresh' >> $HOME/.bashrc`.  
+`printf '\nhomeshick --quiet refresh' >> $HOME/.bashrc`.
 *(The `--quiet` flag makes sure your terminal is not spammed with status info on every startup)*
 
 If you prefer to update your dotfiles every other day, simply run `homeshick refresh 2` instead.
@@ -144,7 +144,7 @@ They will be added to the ssh-agent in order for git to be able to clone. Enjoy!
 
 # homeshick and homesick #
 The original goal of homeshick was to mimick the functionality of
-[homesick](https://github.com/technicalpickles/homesick) so that it could be a drop-in replacement.  
+[homesick](https://github.com/technicalpickles/homesick) so that it could be a drop-in replacement.
 Since its inception however homeshick has deviated quite a bit from the ruby-version.
 All of the original commands are still available, but have been simplified and enhanced with interactive
 prompts like symlinking new files after a castle has been updated.
