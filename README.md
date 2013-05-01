@@ -31,7 +31,7 @@ $HOME/.homesick/repos/homeshick/home/.homeshick link
 
 To avoid having to call homeshick with such a long path you can create an alias like this:
 ```
-printf '\nalias homeshick="$HOME/.homeshick"' >> $HOME/.bashrc
+printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> $HOME/.bashrc
 ```
 
 You can skip the [commands](#commands) part and go to the [tutorial](#tutorial)
@@ -90,7 +90,7 @@ This goes very well with your rc scripts (check out the [tutorial](#tutorial) fo
 ## Tutorial ##
 
 In the installation you added an alias to the `.bashrc` file with
-`printf '\nalias homeshick="$HOME/.homeshick"' >> $HOME/.bashrc`. 
+`printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> $HOME/.bashrc`.
 You make sure that the alias is available by running
 `source $HOME/.bashrc` (this reevaluates your startup script).  
 Now lets create your first castle to hold this file. Use the [generate](#generate) command for that: 
