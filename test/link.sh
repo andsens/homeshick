@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 function oneTimeSetUp() {
 	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
