@@ -29,17 +29,17 @@ function symlink {
 					continue
 				fi
 			fi
-			pending 'overwrite' $file
 			rm -rf "$HOME/$file"
-		elif [[ -d $repo/home/$file ]]; then
-			status $bldblu 'directory' "Creating directory $HOME/$file"
-			mkdir -p $HOME/$file
-			continue
-		else
-			pending 'symlink' $file
 		fi
 
-		ln -s $repo/home/$file $HOME/$file
+		if [[ -d $repo/home/$file ]]; then
+			pending $bldblu 'directory' $file
+			mkdir $HOME/$file
+		else
+			pending 'symlink' $file
+			ln -s $repo/home/$file $HOME/$file
+		fi
+
 		success
 	done
 	return $EX_SUCCESS
