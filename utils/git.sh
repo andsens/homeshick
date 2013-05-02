@@ -138,8 +138,9 @@ function refresh {
 	castle_exists 'check freshness' $castle
 
 	if [[ -e "$fetch_head" ]]; then
-		local time_diff=$[$(date +%s)-$(stat -c %Y "$fetch_head")]
-		if [[ $time_diff -gt $threshhold ]]; then
+		local last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
+		local time_now=$(date +%s)
+		if [[ $((time_now-last_mod)) -gt $threshhold ]]; then
 			fail "outdated"
 			return $EX_TH_EXCEEDED
 		else
@@ -164,8 +165,7 @@ function pull_outdated {
 		if [[ -e "$fetch_head" ]]; then
 			local last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
 			local time_now=$(date +%s)
-			local time_diff=$((time_now-last_mod))
-			if [[ $time_diff -gt $threshhold ]]; then
+			if [[ $((time_now-last_mod)) -gt $threshhold ]]; then
 				outdated_castles+=($castle)
 				! $BATCH && touch "$fetch_head"
 			fi
