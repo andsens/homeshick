@@ -162,7 +162,9 @@ function pull_outdated {
 		# No matter if we are going to pull the castles or not
 		# we reset the outdated ones by touching FETCH_HEAD
 		if [[ -e "$fetch_head" ]]; then
-			local time_diff=$[$(date +%s)-$(stat -c %Y "$fetch_head")]
+			local last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head" 2> /dev/null)
+			local time_now=$(date +%s)
+			local time_diff=$((time_now-last_mod))
 			if [[ $time_diff -gt $threshhold ]]; then
 				outdated_castles+=($castle)
 				! $BATCH && touch "$fetch_head"
