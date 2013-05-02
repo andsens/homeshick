@@ -106,8 +106,6 @@ function prompt_no {
 			printf "%${#answer}s\r"
 			pending "$pending_status" "$pending_message"
 		done
-	elif $FORCE; then
-		result=0
 	else
 		pending "$prompt" "BATCH - No"
 		result=2
