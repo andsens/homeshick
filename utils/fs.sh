@@ -15,10 +15,10 @@ function symlink {
 			ignore 'identical' $file
 			continue
 		fi
+		if [[ -d $repo/home/$file && -d $HOME/$file ]]; then
+			continue
+		fi
 		if [[ -e $HOME/$file || -L $HOME/$file ]]; then
-			if [[ -d $repo/home/$file && -d $HOME/$file ]]; then
-				continue
-			fi
 			if $SKIP; then
 				ignore 'exists' $file
 				continue
