@@ -8,16 +8,19 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	for filepath in $(find $repo/home -mindepth 1 -maxdepth 1); do
-		file=$(basename $filepath)
+	for filepath in $(find $repo/home -mindepth 1); do
+		file=${filepath#$repo/home/}
 		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
 			ignore 'identical' $file
 			continue
 		fi
-
+ 
 		if [[ -e $HOME/$file || -L $HOME/$file ]]; then
 			if $SKIP; then
 				ignore 'exists' $file
+				continue
+			fi
+			if [[ -d $HOME/$file && -d $repo/home/$file ]]; then
 				continue
 			fi
 			if ! $FORCE; then
@@ -28,10 +31,13 @@ function symlink {
 			fi
 			pending 'overwrite' $file
 			rm -rf "$HOME/$file"
+		elif [[ -d $repo/home/$file ]]; then
+			status $bldblu 'directory' "Creating directory $HOME/$file"
+			mkdir -p $HOME/$file
+			continue
 		else
 			pending 'symlink' $file
 		fi
-
 		ln -s $repo/home/$file $HOME/$file
 		success
 	done
