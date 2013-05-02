@@ -5,10 +5,10 @@ function setup_repo_fixtures {
 	# Create the repos for homeshick to use as test repositories
 	local rc_files="$REPO_FIXTURES/rc-files"
 	(
-		git config user.name "Bar"
-		git config user.email "Bar@bar.com"
 		git init $rc_files
 		cd $rc_files
+		git config user.name "Bar"
+		git config user.email "Bar@bar.com"
 		mkdir home
 		cd home
 		cat > .bashrc <<EOF
@@ -21,10 +21,10 @@ EOF
 
 	local deep_files="$REPO_FIXTURES/deep-files"
 	(
-		git config user.name "Bar"
-		git config user.email "Bar@bar.com"
 		git init $deep_files
 		cd $deep_files
+		git config user.name "Bar"
+		git config user.email "Bar@bar.com"
 		mkdir -p home/.config/foo.conf
 		cd home/.config
 		cat > foo.conf/a.conf <<EOF
