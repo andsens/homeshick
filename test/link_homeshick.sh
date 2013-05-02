@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 function setup_homeshick {
 	teardown_homeshick

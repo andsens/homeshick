@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 function setup_repo_fixtures {
 	teardown_repo_fixtures
