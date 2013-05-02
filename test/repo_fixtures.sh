@@ -16,6 +16,8 @@ function setup_repo_fixtures {
 PS1='\[33[01;32m\]\u@\h\[33[00m\]:\[33[01;34m\]\w\'
 EOF
 		git add .bashrc
+		git config user.email "foo@foo.com"
+		git config user.name "Foo"
 		git commit -m '.bashrc file for my new rc-files repo'
 	) > /dev/null
 

@@ -14,13 +14,12 @@ function symlink {
 			ignore 'identical' $file
 			continue
 		fi
- 
 		if [[ -e $HOME/$file || -L $HOME/$file ]]; then
-			if $SKIP; then
-				ignore 'exists' $file
+			if [[ -d $repo/home/$file && -d $HOME/$file ]]; then
 				continue
 			fi
-			if [[ -d $HOME/$file && -d $repo/home/$file ]]; then
+			if $SKIP; then
+				ignore 'exists' $file
 				continue
 			fi
 			if ! $FORCE; then
@@ -38,6 +37,7 @@ function symlink {
 		else
 			pending 'symlink' $file
 		fi
+
 		ln -s $repo/home/$file $HOME/$file
 		success
 	done
@@ -47,9 +47,12 @@ function symlink {
 function track {
 	[[ ! $1 || ! $2 ]] && help track
 	local castle=$1
-	local filename=$2
+	local filename=$(readlink -f $2)
+	if [[ $filename != $HOME/* ]]; then
+		err $EX_ERR "The file $filename must be in your home directory."
+	fi
 	local repo="$repos/$castle"
-	local newfile="$repo/home/$filename"
+	local newfile="$repo/home/${filename#$HOME/}"
 	pending "symlink" "$newfile to $filename"
 	home_exists 'track' $castle
 	if [[ ! -e $filename ]]; then
@@ -58,6 +61,10 @@ function track {
 	if [[ -e $newfile && $FORCE = false ]]; then
 		err $EX_ERR "The file $filename already exists in the castle $castle."
 	fi
+	if [[ ! -f $filename ]]; then
+		err $EX_ERR "The file $filename must be a regular file."
+	fi
+	mkdir -p $(dirname $newfile)
 	if ! $FORCE; then
 		mv "$filename" "$newfile"
 		ln -s "$newfile" $filename
