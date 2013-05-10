@@ -25,6 +25,18 @@ function testDeepLinking() {
 	assertTrue "'link' did not symlink the .config/bar.dir directory" "[ -f $HOME/.config/bar.dir ]"
 }
 
+function testLegacySymlinks() {
+	assertTrue "known_hosts file does not exist" "[ -e $HOME/.ssh/known_hosts ]"
+	rm -rf "$HOME/.ssh"
+	# Recreate the legacy scenario
+	ln -s $HOMESICK/repos/deep-files/home/.ssh $HOME/.ssh
+	$HOMESHICK_BIN --batch --force link deep-files > /dev/null
+	# Without legacy handling if we were to run `file $HOME/.ssh/known_hosts` we would get
+	# .ssh/known_hosts: symbolic link in a loop
+	# The `test -e` is sufficient though
+	assertTrue "known_hosts file is a symbolic loop or does not exist" "[ -e $HOME/.ssh/known_hosts ]"
+}
+
 function oneTimeTearDown() {
 	rm -rf "$HOMESICK/repos/deep-files"
 	find "$HOME" -mindepth 1 -not -name '.homesick' -not -name '.homeshick' -not -name '.gitconfig' -delete 

@@ -11,13 +11,21 @@ function symlink {
 	fi
 	for filepath in $(find $repo/home -mindepth 1); do
 		file=${filepath#$repo/home/}
+
+		if [[ -d $repo/home/$file && -d $HOME/$file ]]; then
+			if [[ -L $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
+				# Legacy handling for when we used to symlink directories
+				rm $HOME/$file
+			else
+				continue
+			fi
+		fi
+
 		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
 			ignore 'identical' $file
 			continue
 		fi
-		if [[ -d $repo/home/$file && -d $HOME/$file ]]; then
-			continue
-		fi
+
 		if [[ -e $HOME/$file || -L $HOME/$file ]]; then
 			if $SKIP; then
 				ignore 'exists' $file
