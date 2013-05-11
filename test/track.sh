@@ -22,6 +22,16 @@ EOF
 	assertTrue "\`track' did not symlink the .zshrc file" "[ -L $HOME/.zshrc ]"
 }
 
+function testNOutsideHomedir() {
+	cat > $NOTHOME/some_other_file <<EOF
+homeshick should refuse to track this file
+EOF
+	$HOMESHICK_BIN track rc-files $NOTHOME/some_other_file &> /dev/null
+	assertTrue "\`track' moved \`some_other_file'" "[ -e $NOTHOME/some_other_file ]"
+	assertTrue "\`track' symlinked \`some_other_file'" "[ ! -L $NOTHOME/some_other_file ]"
+	rm $NOTHOME/some_other_file
+}
+
 function testNTrackingOverwrite() {
 	cat > $HOME/.zshrc <<EOF
 homeshick --batch refresh
