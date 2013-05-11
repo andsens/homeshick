@@ -1,8 +1,7 @@
 #!/bin/bash
 
-function oneTimeSetUp() {
+function setUp() {
 	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/dotfiles > /dev/null
 }
 
 function testSimpleTrackingAbsolute() {
@@ -23,9 +22,8 @@ EOF
 	assertTrue "\`track' did not symlink the .zshrc file" "[ -L $HOME/.zshrc ]"
 }
 
-function oneTimeTearDown() {
+function tearDown() {
 	rm -rf "$HOMESICK/repos/rc-files"
-	rm -rf "$HOMESICK/repos/dotfiles"
 	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
 }
 
