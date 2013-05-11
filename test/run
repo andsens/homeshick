@@ -27,4 +27,3 @@ setup_homeshick
 
 bash $SCRIPTDIR/clone.sh
 bash $SCRIPTDIR/link.sh
-bash $SCRIPTDIR/deep_linking.sh
