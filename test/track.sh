@@ -38,6 +38,16 @@ EOF
 	assertTrue "\`track' has overwritten the new .zshrc file" "[ ! -L $HOME/.zshrc ]"
 }
 
+function testNDoubleTracking() {
+	cat > $HOME/.zshrc <<EOF
+homeshick --batch refresh
+EOF
+	$HOMESHICK_BIN track rc-files $HOME/.zshrc > /dev/null
+	assertTrue "\`track' did not symlink the .zshrc file" "[ -L $HOME/.zshrc ]"
+	$HOMESHICK_BIN track rc-files $HOME/.zshrc &> /dev/null
+	assertTrue "\`track' has double tracked the .zshrc file" "[ ! -L $HOMESICK/repos/rc-files/home/.zshrc ]"
+}
+
 function tearDown() {
 	rm -rf "$HOMESICK/repos/rc-files"
 	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
