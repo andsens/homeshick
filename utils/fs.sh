@@ -78,14 +78,9 @@ function track {
 		err $EX_ERR "The file $filename must be a regular file."
 	fi
 	mkdir -p $(dirname $newfile)
-	if ! $FORCE; then
-		mv "$filename" "$newfile"
-		ln -s "$newfile" $filename
-	else
-		mv -f "$filename" "$newfile"
-		ln -sf "$newfile" $filename
-	fi
-	if [[ -f $newfile ]]; then
+	mv -f "$filename" "$newfile"
+	ln -s "$newfile" "$filename"
+	if [[ -f "$newfile" ]]; then
 		(cd $repo; git add $newfile)
 	fi
 	success
