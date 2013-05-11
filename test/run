@@ -13,8 +13,9 @@ export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 export REPO_FIXTURES=$SCRIPTDIR/repos
 export HOME=$SCRIPTDIR/home
+export NOTHOME=$SCRIPTDIR/nothome
 
-mkdir -p $REPO_FIXTURES $HOME
+mkdir -p $REPO_FIXTURES $HOME $NOTHOME
 
 export HOMESICK=$HOME/.homesick
 export HOMESHICK_BIN=$HOMESICK/repos/homeshick/home/.homeshick

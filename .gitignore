@@ -1,3 +1,4 @@
 *.sublime-*
 test/repos
 test/home
+test/nothome
