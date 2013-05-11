@@ -80,9 +80,7 @@ function track {
 	mkdir -p $(dirname $newfile)
 	mv -f "$filename" "$newfile"
 	ln -s "$newfile" "$filename"
-	if [[ -f "$newfile" ]]; then
-		(cd $repo; git add $newfile)
-	fi
+	(cd $repo; git add "$newfile")
 	success
 }
 
