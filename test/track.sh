@@ -22,6 +22,22 @@ EOF
 	assertTrue "\`track' did not symlink the .zshrc file" "[ -L $HOME/.zshrc ]"
 }
 
+function testNTrackingOverwrite() {
+	cat > $HOME/.zshrc <<EOF
+homeshick --batch refresh
+EOF
+	$HOMESHICK_BIN track rc-files $HOME/.zshrc > /dev/null
+	assertTrue "\`track' did not symlink the .zshrc file" "[ -L $HOME/.zshrc ]"
+	rm $HOME/.zshrc
+	cat > $HOME/.zshrc <<EOF
+homeshick --batch refresh 7
+EOF
+	$HOMESHICK_BIN track rc-files $HOME/.zshrc &> /dev/null
+	local tracked_file_size=$(stat -c %s $HOMESICK/repos/rc-files/home/.zshrc)
+	assertTrue "\`track' has overwritten the previously tracked .zshrc file" "[ $tracked_file_size -eq 26 ]"
+	assertTrue "\`track' has overwritten the new .zshrc file" "[ ! -L $HOME/.zshrc ]"
+}
+
 function tearDown() {
 	rm -rf "$HOMESICK/repos/rc-files"
 	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
