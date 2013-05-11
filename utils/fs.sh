@@ -85,6 +85,9 @@ function track {
 		mv -f "$filename" "$newfile"
 		ln -sf "$newfile" $filename
 	fi
+	if [[ -f $newfile ]]; then
+		(cd $repo; git add $newfile)
+	fi
 	success
 }
 

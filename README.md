@@ -73,10 +73,10 @@ You can see your installed castles by running the `list` command.
 
 ### track ###
 If you have a new dotfile that you want to put in one of your castles, you can ask
-homeshick to do the moving and symlinking for you. Note that this does not add it
-to your castle's git repository.
+homeshick to do the moving and symlinking for you.
 To track your `.bashrc` and `.zshrc` in your `dotfiles` castle
-run `homeshick track dotfiles .bashrc .zshrc`.
+run `homeshick track dotfiles .bashrc .zshrc`,
+the files are automatically added to the git index.
 
 ### generate ###
 `generate` creates a new castle.
@@ -104,7 +104,6 @@ Assuming you have a repository at the other end, let's now enter the castle, com
 add your github remote and push to it.
 ```
 cd $HOME/.homesick/repos/dotfiles
-git add -A
 git commit -m "Initial commit, add .bashrc"
 git remote add origin git@github.com/username/dotfiles
 git push -u origin master
