@@ -25,6 +25,12 @@ setup_repo_fixtures
 source $SCRIPTDIR/link_homeshick.sh
 setup_homeshick
 
-bash $SCRIPTDIR/clone.sh
-bash $SCRIPTDIR/link.sh
-bash $SCRIPTDIR/track.sh
+if [[ -z "$1" ]]; then
+	bash $SCRIPTDIR/clone.sh
+	bash $SCRIPTDIR/link.sh
+	bash $SCRIPTDIR/track.sh
+else
+	for suite in ${@}; do
+		bash $SCRIPTDIR/$suite.sh
+	done
+fi
