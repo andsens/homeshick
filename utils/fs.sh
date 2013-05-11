@@ -56,7 +56,7 @@ function symlink {
 function track {
 	[[ ! $1 || ! $2 ]] && help track
 	local castle=$1
-	local filename=$(readlink -f $2)
+	local filename=$(readlink -f $2 2> /dev/null || realpath $2)
 	if [[ $filename != $HOME/* ]]; then
 		err $EX_ERR "The file $filename must be in your home directory."
 	fi
