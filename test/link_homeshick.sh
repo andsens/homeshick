@@ -6,5 +6,4 @@ function setup_homeshick {
 	mkdir -p $hs_repo
 	ln -s $(readlink -e $SCRIPTDIR/../home) $hs_repo/home
 	ln -s $(readlink -e $SCRIPTDIR/../utils) $hs_repo/utils
-	ln -s $hs_repo/home/.homeshick $HOMESHICK_BIN
 }

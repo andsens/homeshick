@@ -17,7 +17,7 @@ export HOME=$SCRIPTDIR/home
 mkdir -p $REPO_FIXTURES $HOME
 
 export HOMESICK=$HOME/.homesick
-export HOMESHICK_BIN=$HOME/.homeshick
+export HOMESHICK_BIN=$HOMESICK/repos/homeshick/home/.homeshick
 
 source $SCRIPTDIR/repo_fixtures.sh
 setup_repo_fixtures

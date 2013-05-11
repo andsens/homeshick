@@ -48,7 +48,7 @@ function testLegacySymlinks() {
 function oneTimeTearDown() {
 	rm -rf "$HOMESICK/repos/rc-files"
 	rm -rf "$HOMESICK/repos/dotfiles"
-	find "$HOME" -mindepth 1 -not -name '.homesick' -not -name '.homeshick' -delete
+	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
 }
 
 source $SHUNIT2
