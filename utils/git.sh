@@ -15,7 +15,7 @@ function clone {
 	local git_repo=$1
 	local repo_path="$repos/$(parse_url $git_repo)"
 	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
-		git_repo="git://github.com/$git_repo.git"
+		git_repo="https://github.com/$git_repo.git"
 	fi
 	pending 'clone' $git_repo
 	test -e $repo_path && err $EX_ERR "$repo_path already exists"

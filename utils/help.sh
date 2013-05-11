@@ -4,7 +4,7 @@ function help {
 		extended_help $1
 		exit $EX_SUCCESS
 	fi
-printf "home${bldblu}s${txtdef}hick uses git in concert with symlinks to track your precious dotfiles.
+printf "homes${bldblu}h${txtdef}ick uses git in concert with symlinks to track your precious dotfiles.
 
  Usage: homeshick [options] TASK
 

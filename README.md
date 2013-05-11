@@ -48,7 +48,6 @@ You can also run a subcommand on all castles by not specifying any arguments.
 ## Commands ##
 
 ### link ###
-You have already seen the first command in the installation procedure: `link`.
 This command symlinks all files that reside in the `home` folders of your castles into your home folder.
 You will be prompted if there are any files or folders that would be overwritten.
 
@@ -74,7 +73,8 @@ You can see your installed castles by running the `list` command.
 
 ### track ###
 If you have a new dotfile that you want to put in one of your castles, you can ask
-homeshick to do the moving and symlinking for you.
+homeshick to do the moving and symlinking for you. Note that this does not add it
+to your castle's git repository.
 To track your `.bashrc` and `.zshrc` in your `dotfiles` castle
 run `homeshick track dotfiles .bashrc .zshrc`.
 
@@ -88,6 +88,8 @@ This goes very well with your rc scripts (check out the [tutorial](#tutorial) fo
 
 
 ## Tutorial ##
+
+### Original machine ###
 
 In the installation you added an alias to the `.bashrc` file with
 ```
@@ -128,6 +130,19 @@ You can put this into your `.bashrc` file to run the check everytime you start u
 *(The `--quiet` flag makes sure your terminal is not spammed with status info on every startup)*
 
 If you prefer to update your dotfiles every other day, simply run `homeshick refresh 2` instead.
+
+### Updating your castle ###
+To make changes to one of your castles you simply use git. For example,
+if you want to update your `dotfiles` castle from a machine which 
+has it: 
+
+```
+cd $HOME/.homesick/repos/dotfiles
+git add <newdotfile>
+git commit -m "Added <newdotfile>"
+git push origin master
+homeshick link
+```
 
 ## Automatic deployment ##
 After having launched ec2 instances a lot, I got tired of installing zsh, tmux etc.
