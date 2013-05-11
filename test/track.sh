@@ -4,7 +4,7 @@ function setUp() {
 	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
 }
 
-function testSimpleTrackingAbsolute() {
+function testAbsolute() {
 	cat > $HOME/.zshrc <<EOF
 homeshick --batch refresh
 EOF
@@ -13,7 +13,7 @@ EOF
 	assertTrue "\`track' did not symlink the .zshrc file" "[ -L $HOME/.zshrc ]"
 }
 
-function testSimpleTrackingRelative() {
+function testRelative() {
 	cat > $HOME/.zshrc <<EOF
 homeshick --batch refresh
 EOF
@@ -32,7 +32,7 @@ EOF
 	rm $NOTHOME/some_other_file
 }
 
-function testNTrackingOverwrite() {
+function testNOverwrite() {
 	cat > $HOME/.zshrc <<EOF
 homeshick --batch refresh
 EOF
