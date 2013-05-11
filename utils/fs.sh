@@ -60,6 +60,10 @@ function track {
 	if [[ $filename != $HOME/* ]]; then
 		err $EX_ERR "The file $filename must be in your home directory."
 	fi
+	if [[ $filename == $repos/* ]]; then
+		err $EX_ERR "The file $filename is already being tracked."
+	fi
+
 	local repo="$repos/$castle"
 	local newfile="$repo/home/${filename#$HOME/}"
 	pending "symlink" "$newfile to $filename"
