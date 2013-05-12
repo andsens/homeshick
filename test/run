@@ -1,4 +1,5 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
+set -e
 
 if [[ -z $SHUNIT2 ]]; then
 	printf "\$SHUNIT2 not set. Specify the path to shunit2 with \`export SHUNIT2=/path/to/shunit2/src/shunit2'\n" >&2
