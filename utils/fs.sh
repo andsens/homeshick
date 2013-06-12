@@ -107,6 +107,5 @@ function abs_path {
 	if [[ ! -e $target ]]; then
 		exit $EX_ERR
 	fi
-	local file=$(cd "$(dirname -- "$target")" &>/dev/null; printf "%s/%s" "$(pwd)" "$(basename $target)")
-	printf "$file"
+	(cd "${target%/*}" &>/dev/null; printf "%s/%s" "$(pwd)" "${target##*/}")
 }
