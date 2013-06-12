@@ -104,10 +104,9 @@ function home_exists {
 
 function abs_path {
 	local target=$1
-	local file=$(cd "$(dirname -- "$target")" &>/dev/null; printf "%s/%s" "$(pwd)" "$(basename $target)")
-	if [[ -e $file ]]; then
-		printf "$file"
-	else
-		err $EX_ERR "File not found: '$target'"
+	if [[ ! -e $target ]]; then
+		exit $EX_ERR
 	fi
+	local file=$(cd "$(dirname -- "$target")" &>/dev/null; printf "%s/%s" "$(pwd)" "$(basename $target)")
+	printf "$file"
 }
