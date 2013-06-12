@@ -4,6 +4,8 @@ homeshick
 * [installation](#installation)
 * [commands](#commands)
 * [tutorial](#tutorial)
+* [automatic deployment](#automatic-deployment)
+* [homeshick and homesick](#homeshick-and-homesick)
 
 <img src="http://i.imgur.com/3zAK9.jpg">
 
