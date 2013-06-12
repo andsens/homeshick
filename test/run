@@ -1,16 +1,31 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ -z $SHUNIT2 ]]; then
-	printf "\$SHUNIT2 not set. Specify the path to shunit2 with \`export SHUNIT2=/path/to/shunit2/src/shunit2'\n" >&2
-	exit 1
+export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+
+if [[ ! -x $SHUNIT2 ]]; then
+	if [[ ! -x $SCRIPTDIR/shunit2-2.1.6/src/shunit2 ]]; then
+		printf "shunit2 not found. You can set its path with \`export SHUNIT2=/path/to/shunit2/src/shunit2'.\n"
+		printf "Alternatively you can download it automatically now.\n"
+		read -p "Download? [yN]" prompt
+		if [[ ! $prompt =~ [Yy] ]]; then
+			exit 78
+		fi
+		type wget > /dev/null
+		if [[ $? = 0 ]]; then
+			wget -qO - https://shunit2.googlecode.com/files/shunit2-2.1.6.tgz | tar -xzC $SCRIPTDIR
+		else
+			curl https://shunit2.googlecode.com/files/shunit2-2.1.6.tgz | tar -xzC $SCRIPTDIR
+		fi
+	fi
+	export SHUNIT2=$SCRIPTDIR/shunit2-2.1.6/src/shunit2
 fi
+
 if [[ ! -f $SHUNIT2 ]]; then
 	printf "File not found. \$SHUNIT2 points at \`%s'.\n" $SHUNIT2 >&2
 	exit 1
 fi
-
-export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 export REPO_FIXTURES=$SCRIPTDIR/repos
 export HOME=$SCRIPTDIR/home

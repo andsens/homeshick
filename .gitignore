@@ -2,3 +2,4 @@
 test/repos
 test/home
 test/nothome
+test/shunit2-*
