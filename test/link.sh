@@ -3,6 +3,7 @@
 function oneTimeSetUp() {
 	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
 	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/dotfiles > /dev/null
+	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/module-files > /dev/null
 }
 
 function testLinking() {
@@ -33,6 +34,12 @@ EOF
 	assertTrue "'link' did not symlink the .config/bar.dir directory" "[ -f $HOME/.config/bar.dir ]"
 }
 
+function testSymlinkDirectory() {
+	assertFalse "The .my_module existed before symlinking" "[ -e $HOME/.my_module ]"
+	$HOMESHICK_BIN --batch link module-files > /dev/null
+	assertTrue "'link' did not symlink the .my_module symlink" "[ -L $HOME/.my_module ]"
+}
+
 function testLegacySymlinks() {
 	assertTrue "known_hosts file does not exist" "[ -e $HOME/.ssh/known_hosts ]"
 	rm -rf "$HOME/.ssh"
@@ -48,6 +55,7 @@ function testLegacySymlinks() {
 function oneTimeTearDown() {
 	rm -rf "$HOMESICK/repos/rc-files"
 	rm -rf "$HOMESICK/repos/dotfiles"
+	rm -rf "$HOMESICK/repos/module-files"
 	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
 }
 

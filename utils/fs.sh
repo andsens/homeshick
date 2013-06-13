@@ -40,8 +40,8 @@ function symlink {
 			rm -rf "$HOME/$file"
 		fi
 
-		if [[ -d $repo/home/$file ]]; then
-			pending 'directory' $file
+		if [[ -d $repo/home/$file && ! -L $repo/home/$file ]]; then
+			pending $bldblu 'directory' $file
 			mkdir $HOME/$file
 		else
 			pending 'symlink' $file
