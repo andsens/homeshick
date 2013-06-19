@@ -103,9 +103,5 @@ function home_exists {
 }
 
 function abs_path {
-	local target=$1
-	if [[ ! -e $target ]]; then
-		exit $EX_ERR
-	fi
-	(cd "${target%/*}" &>/dev/null; printf "%s/%s" "$(pwd)" "${target##*/}")
+	(cd "${1%/*}" &>/dev/null; printf "%s/%s" "$(pwd)" "${1##*/}")
 }
