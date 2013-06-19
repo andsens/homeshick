@@ -41,7 +41,7 @@ function symlink {
 		fi
 
 		if [[ -d $repo/home/$file ]]; then
-			pending $bldblu 'directory' $file
+			pending 'directory' $file
 			mkdir $HOME/$file
 		else
 			pending 'symlink' $file
