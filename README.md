@@ -99,7 +99,7 @@ printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> 
 ```
 
 Let's create your first castle to hold this file. You use the [generate](#generate) command to do that:
-`homeshick generate dotfiles`. This creates an empty castle, which you can now populate.  
+`homeshick generate dotfiles`. This creates an empty castle, which you can now populate.
 Put the `.bashrc` file into your `dotfiles` castle with `homeshick track dotfiles .bashrc`.
 
 Assuming you have a repository at the other end, let's now enter the castle, commit the changes,
@@ -116,7 +116,7 @@ cd -
 
 ### Other machines ###
 To get your custom `.bashrc` file onto other machines you [install homeshick](#installation) and
-clone your castle with: `$HOME/.homesick/repos/homeshick/home/homeshick clone username/dotfiles`  
+clone your castle with: `$HOME/.homesick/repos/homeshick/home/.homeshick clone username/dotfiles`
 homeshick will ask you immediately whether you want to symlink the newly cloned castle.
 If you agree to that and also agree to it overwriting the existing `.bashrc` you can run
 `source $HOME/.bashrc` to get your `homeshick` alias running.
@@ -134,8 +134,8 @@ If you prefer to update your dotfiles every other day, simply run `homeshick ref
 
 ### Updating your castle ###
 To make changes to one of your castles you simply use git. For example,
-if you want to update your `dotfiles` castle from a machine which 
-has it: 
+if you want to update your `dotfiles` castle from a machine which
+has it:
 
 ```
 cd $HOME/.homesick/repos/dotfiles
