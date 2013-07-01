@@ -204,7 +204,11 @@ function symlink_cloned_files {
 		local castle=$(parse_url $1)
 		shift
 		local repo="$repos/$castle"
-		if [[ -d $repo/home && $(find $repo/home -mindepth 1 -maxdepth 1 | wc -l) > 0 ]]; then
+		if [[ ! -d $repo/home ]]; then
+			continue;
+		fi
+		local num_files=$(find $repo/home -mindepth 1 -maxdepth 1 | wc -l | tr -dc "0123456789")
+		if [[ $num_files > 0 ]]; then
 			cloned_castles+=($castle)
 		fi
 	done
