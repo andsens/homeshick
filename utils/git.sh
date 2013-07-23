@@ -79,16 +79,15 @@ function pull {
 }
 
 function list {
-	for repo in $(find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'); do
-		local remote_url=$(cd $repo; git config remote.origin.url)
-		local reponame=$(basename $repo)
+	for reponame in $(list_castle_names); do
+		local remote_url=$(cd $repos/$reponame; git config remote.origin.url)
 		info $reponame $remote_url
 	done
 	return $EX_SUCCESS
 }
 
 function list_castle_names {
-	for repo in $(find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g'); do
+	for repo in $(find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g' | sort); do
 		local reponame=$(basename $repo)
 		printf "$reponame\n"
 	done
