@@ -54,6 +54,26 @@ EOF
 		git commit -m 'Files added for my new module-files repo'
 	) > /dev/null
 
+	local dotfiles_vim_submodule="$REPO_FIXTURES/dotfiles_vim_submodule"
+	(
+		git init $dotfiles_vim_submodule
+		cd $dotfiles_vim_submodule
+		git config user.name $git_username
+		git config user.email $git_useremail
+
+		mkdir -p autoload
+		cat > autoload/pathogen.vim <<EOF
+dummy pathogen autloader file
+EOF
+
+		mkdir -p bundles/vim-git
+		cat > bundles/vim-git/README.md <<EOF
+Just a random README for the dummy vim-git bundle
+EOF
+		git add autoload bundles
+		git commit -m 'vim-git bundle for my vim config'
+	) > /dev/null
+
 	local dotfiles="$REPO_FIXTURES/dotfiles"
 	(
 		git init $dotfiles
@@ -84,5 +104,8 @@ EOF
 		git add .ssh
 		git commit -m 'Share known_hosts across machines'
 
+		cd $dotfiles
+		git submodule add $dotfiles_vim_submodule home/.vim
+		git commit -m 'New vim configuration submodule'
 	) > /dev/null
 }

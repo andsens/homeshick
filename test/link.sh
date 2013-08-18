@@ -52,6 +52,11 @@ function testLegacySymlinks() {
 	assertTrue "known_hosts file is a symbolic loop or does not exist" "[ -e $HOME/.ssh/known_hosts ]"
 }
 
+function testGitDirIgnore() {
+	$HOMESHICK_BIN --batch link dotfiles > /dev/null
+	assertFalse "'link' did not ignore the .git submodule file" "[ -e $HOME/.vim/.git ]"
+}
+
 function oneTimeTearDown() {
 	rm -rf "$HOMESICK/repos/rc-files"
 	rm -rf "$HOMESICK/repos/dotfiles"

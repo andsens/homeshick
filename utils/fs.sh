@@ -9,7 +9,7 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	for filepath in $(find $repo/home -mindepth 1); do
+	for filepath in $(find $repo/home -mindepth 1 -name .git -prune -o -print); do
 		file=${filepath#$repo/home/}
 
 		if [[ -d $repo/home/$file && -d $HOME/$file ]]; then
