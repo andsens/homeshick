@@ -2,6 +2,20 @@
 
 export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
+KEEP_PATH=false
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		-h | --help)
+			printf "Run homeshick unit tests\n"
+			printf " Usage: run [options]\n"
+			printf " Options:\n"
+			printf "   -p, --keep-path   # Prevent \$PATH modifications\n"
+			exit 0
+      ;;
+		-p | --keep-path) KEEP_PATH=true ; shift; continue ;;
+		*) printf "Unknown option '$1'\n" >&2; exit 64  ;; # 64=$EX_USAGE
+	esac
+done
 
 if [[ ! -x $SHUNIT2 ]]; then
 	if [[ ! -x $SCRIPTDIR/shunit2-2.1.6/src/shunit2 ]]; then
@@ -9,9 +23,9 @@ if [[ ! -x $SHUNIT2 ]]; then
 		printf "Alternatively the testrunner can download it automatically now.\n"
 		read -p "Download? [yN]" prompt
 		if [[ ! $prompt =~ [Yy] ]]; then
-			exit 78 # $EX_CONFIG
+			exit 78 # 78=$EX_CONFIG
 		fi
-		type wget 2>&1 > /dev/null
+		type wget 2>&1>/dev/null
 		if [[ $? = 0 ]]; then
 			wget -qO - https://shunit2.googlecode.com/files/shunit2-2.1.6.tgz | tar -xzC $SCRIPTDIR
 		else
@@ -24,6 +38,25 @@ fi
 if [[ ! -f $SHUNIT2 ]]; then
 	printf "File not found. \$SHUNIT2 points at \`%s'.\n" $SHUNIT2 >&2
 	exit 1
+fi
+
+# Check if coreutils is in PATH
+system=$(uname -a)
+if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
+	type brew 2>&1>/dev/null
+	if [[ $? = 0 ]]; then
+		coreutils_path=$(brew --prefix coreutils 2>/dev/null)/libexec/gnubin
+		if [[ -d $coreutils_path && $PATH == *$coreutils_path* ]]; then
+			printf "coreutils detected in \$PATH... "
+			if ! $KEEP_PATH; then
+				printf "removing (run with -p to prevent this).\n"
+				export PATH=${PATH//$coreutils_path/''}
+				export PATH=${PATH//'::'/':'} # Remove any left over colons
+			else
+				printf "not removing.\n"
+			fi
+		fi
+	fi
 fi
 
 set -e
