@@ -6,12 +6,12 @@ export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 if [[ ! -x $SHUNIT2 ]]; then
 	if [[ ! -x $SCRIPTDIR/shunit2-2.1.6/src/shunit2 ]]; then
 		printf "shunit2 not found. You can set its path with \`export SHUNIT2=/path/to/shunit2/src/shunit2'.\n"
-		printf "Alternatively you can download it automatically now.\n"
+		printf "Alternatively the testrunner can download it automatically now.\n"
 		read -p "Download? [yN]" prompt
 		if [[ ! $prompt =~ [Yy] ]]; then
-			exit 78
+			exit 78 # $EX_CONFIG
 		fi
-		type wget 2> /dev/null
+		type wget 2>&1 > /dev/null
 		if [[ $? = 0 ]]; then
 			wget -qO - https://shunit2.googlecode.com/files/shunit2-2.1.6.tgz | tar -xzC $SCRIPTDIR
 		else
