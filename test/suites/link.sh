@@ -40,13 +40,11 @@ function testSymlinkDirectory() {
 
 function testReSymlinkDirectory() {
 	$HOMESHICK_BIN --batch link module-files > /dev/null
-	local dir_ln_before=$(stat -c %Y $HOME/.my_module 2>/dev/null || \
-	                      stat -f %m $HOME/.my_module)
-	# Don't know how to get creation time in milliseconds, so let's just sleep for a while
-	sleep 2
+	local dir_ln_before=$(stat -c %i $HOME/.my_module 2>/dev/null || \
+	                      stat -f %i $HOME/.my_module)
 	$HOMESHICK_BIN --batch link module-files > /dev/null
-	local dir_ln_after=$(stat -c %Y $HOME/.my_module 2>/dev/null || \
-	                     stat -f %m $HOME/.my_module)
+	local dir_ln_after=$(stat -c %i $HOME/.my_module 2>/dev/null || \
+	                     stat -f %i $HOME/.my_module)
 	assertSame "\`link' re-linked the .my_module directory symlink" $dir_ln_before $dir_ln_after
 }
 
