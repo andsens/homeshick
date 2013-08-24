@@ -3,17 +3,24 @@
 export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 KEEP_PATH=false
+test_suites=()
 while [[ $# -gt 0 ]]; do
 	case $1 in
 		-h | --help)
 			printf "Run homeshick unit tests\n"
-			printf " Usage: run [options]\n"
+			printf " Usage: run [options] [SUITES..]\n"
 			printf " Options:\n"
 			printf "   -p, --keep-path   # Prevent \$PATH modifications\n"
 			exit 0
       ;;
-		-p | --keep-path) KEEP_PATH=true ; shift; continue ;;
-		*) printf "Unknown option '$1'\n" >&2; exit 64  ;; # 64=$EX_USAGE
+		-p | --keep-path) KEEP_PATH=true; shift; continue ;;
+		*)
+			if [[ $1 =~ ^- ]]; then
+				printf "Unknown option '$1'\n" >&2
+				exit 64 # 64=$EX_USAGE
+			fi
+			test_suites+=($1)
+			shift; continue ;;
 	esac
 done
 
@@ -76,12 +83,19 @@ setup_repo_fixtures
 source $SCRIPTDIR/link_homeshick.sh
 setup_homeshick
 
-if [[ -z "$1" ]]; then
-	bash $SCRIPTDIR/clone.sh
-	bash $SCRIPTDIR/link.sh
-	bash $SCRIPTDIR/track.sh
-else
-	for suite in ${@}; do
-		bash $SCRIPTDIR/$suite.sh
-	done
+set +e
+
+exit_status=0
+if [[ -z "$test_suites" ]]; then
+	test_suites=("clone" "link" "track")
 fi
+for test_suite in ${test_suites[*]}; do
+	printf "\nTestsuite: $test_suite\n"
+	bash $SCRIPTDIR/$test_suite.sh
+	result=$?
+	if [[ $exit_status == 0 && $result != 0 ]]; then
+		exit_status=$result
+	fi
+done
+
+exit $exit_status
