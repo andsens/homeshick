@@ -72,6 +72,7 @@ export REPO_FIXTURES=$SCRIPTDIR/repos
 export HOME=$SCRIPTDIR/home
 export NOTHOME=$SCRIPTDIR/nothome
 
+rm -rf $REPO_FIXTURES $HOME $NOTHOME
 mkdir -p $REPO_FIXTURES $HOME $NOTHOME
 
 export HOMESICK=$HOME/.homesick

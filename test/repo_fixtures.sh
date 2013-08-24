@@ -1,8 +1,6 @@
 #!/bin/bash
 
 function setup_repo_fixtures {
-	rm -rf $REPO_FIXTURES
-
 	local git_username="Homeshick user"
 	local git_useremail="homeshick@example.com"
 
