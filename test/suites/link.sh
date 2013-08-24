@@ -82,7 +82,6 @@ function testDeadSymlinkToReposymlink() {
 	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
 	local inode_after=$(get_inode_no $HOME/dead-symlink)
 	assertSymlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
-	startSkipping # Currently the -e check in fs.sh causes dead symlinks to be re-linked
 	assertSame "\`link' re-linked dead-symlink" $inode_before $inode_after
 }
 
@@ -102,6 +101,8 @@ function testLegacySymlinks() {
 ## First column: not directory
 function testFileToFile() {
 	touch $HOME/.bashrc
+	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 }
@@ -220,14 +221,17 @@ function testDirToDirSymlink() {
 }
 
 
+function testOverwritePrompt() {
+	touch $HOME/.bashrc
+	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	assertTrue "\`link' overwrote .bashrc" "[ -f $HOME/.bashrc -a ! -L $HOME/.bashrc ]"
+}
 
-
-
-
-
-
-
-
+function testOverwriteSkip() {
+	touch $HOME/.bashrc
+	$HOMESHICK_BIN --skip link rc-files > /dev/null
+	assertTrue "\`link' overwrote .bashrc" "[ -f $HOME/.bashrc -a ! -L $HOME/.bashrc ]"
+}
 
 function testReSymlinkDirectory() {
 	$HOMESHICK_BIN --batch link module-files > /dev/null

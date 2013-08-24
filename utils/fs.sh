@@ -9,43 +9,51 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	for filepath in $(find $repo/home -mindepth 1 -name .git -prune -o -print); do
-		file=${filepath#$repo/home/}
+	for remote in $(find $repo/home -mindepth 1 -name .git -prune -o -print); do
+		filename=${remote#$repo/home/}
+		local=$HOME/$filename
 
-		if [[ -d $repo/home/$file && -d $HOME/$file && ! -L $repo/home/$file ]]; then
-			if [[ -L $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
-				# Legacy handling for when we used to symlink directories
-				rm $HOME/$file
-			else
-				continue
-			fi
-		fi
-
-		if [[ -e $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
-			ignore 'identical' $file
-			continue
-		fi
-
-		if [[ -e $HOME/$file || -L $HOME/$file ]]; then
-			if $SKIP; then
-				ignore 'exists' $file
-				continue
-			fi
-			if ! $FORCE; then
-				prompt_no 'conflict' "$file exists" "overwrite?"
-				if [[ $? != 0 ]]; then
+		if [[ -e $local || -L $local  ]]; then
+			# $local exists (but may be a dead symlink)
+			if [[ -L $local && $(readlink "$local") == $remote ]]; then
+				# $local symlinks to $remote.
+				if [[ -d $remote && ! -L $remote ]]; then
+					# If $remote is a directory -> legacy handling.
+					rm $local
+				else
+					# $local points at $remote and $remote is not a directory
+					ignore 'identical' $filename
 					continue
 				fi
+			else
+				# $local does not symlink to $remote
+				if [[ -d $local && -d $remote && ! -L $remote ]]; then
+					# $remote is a real directory while
+					# $local is a directory or a symlinked directory
+					# we do not take any action regardless of which it is.
+					ignore 'identical' $filename
+					continue;
+				fi
+				if $SKIP; then
+					ignore 'exists' $filename
+					continue
+				fi
+				if ! $FORCE; then
+					prompt_no 'conflict' "$filename exists" "overwrite?" || continue
+				fi
+				# Delete $local. If $remote is a real directory,
+				# $local must be a file (because of all the previous checks)
+				rm -rf "$local"
 			fi
-			rm -rf "$HOME/$file"
 		fi
 
-		if [[ -d $repo/home/$file && ! -L $repo/home/$file ]]; then
-			pending 'directory' $file
-			mkdir $HOME/$file
+		if [[ ! -d $remote || -L $remote ]]; then
+			# $remote is not a real directory so we create a symlink to it
+			pending 'symlink' $filename
+			ln -s $remote $local
 		else
-			pending 'symlink' $file
-			ln -s $repo/home/$file $HOME/$file
+			pending 'directory' $filename
+			mkdir $local
 		fi
 
 		success
