@@ -20,6 +20,22 @@ PS1='\[33[01;32m\]\u@\h\[33[00m\]:\[33[01;34m\]\w\'
 EOF
 		git add .bashrc
 		git commit -m '.bashrc file for my new rc-files repo'
+
+		cat > $NOTHOME/some-file <<EOF
+File with some content.
+EOF
+		ln -s $NOTHOME/some-file symlinked-file
+		git add symlinked-file
+		git commit -m 'Added a symlinked file'
+
+		mkdir $NOTHOME/some-directory
+		ln -s $NOTHOME/some-directory symlinked-directory
+		git add symlinked-directory
+		git commit -m 'Added a symlinked directory'
+
+		ln -s $NOTHOME/nonexistent dead-symlink
+		git add dead-symlink
+		git commit -m 'Added a dead symlink'
 	) > /dev/null
 
 	local my_module="$REPO_FIXTURES/my_module"
