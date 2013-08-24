@@ -91,7 +91,7 @@ if [[ -z "$test_suites" ]]; then
 fi
 for test_suite in ${test_suites[*]}; do
 	printf "\nTestsuite: $test_suite\n"
-	bash $SCRIPTDIR/$test_suite.sh
+	bash $SCRIPTDIR/suites/$test_suite.sh
 	result=$?
 	if [[ $exit_status == 0 && $result != 0 ]]; then
 		exit_status=$result
