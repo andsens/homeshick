@@ -45,7 +45,7 @@ EOF
 	$HOMESHICK_BIN track rc-files $HOME/.zshrc &> /dev/null
 	local tracked_file_size=$(stat -c %s $HOMESICK/repos/rc-files/home/.zshrc 2>/dev/null || \
 	                          stat -f %z $HOMESICK/repos/rc-files/home/.zshrc)
-	assertTrue "\`track' has overwritten the previously tracked .zshrc file" "[ $tracked_file_size -eq 26 ]"
+	assertSame "\`track' has overwritten the previously tracked .zshrc file" 26 $tracked_file_size
 	assertTrue "\`track' has overwritten the new .zshrc file" "[ ! -L $HOME/.zshrc ]"
 }
 
