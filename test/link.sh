@@ -7,7 +7,6 @@ function oneTimeSetUp() {
 }
 
 function testLinking() {
-	assertFalse "The .bashrc file existed before symlinking" "[ -e $HOME/.bashrc ]"
 	$HOMESHICK_BIN --batch link rc-files > /dev/null
 	assertTrue "\`link' did not symlink the .bashrc file" "[ -e $HOME/.bashrc ]"
 }
@@ -35,14 +34,11 @@ EOF
 }
 
 function testSymlinkDirectory() {
-	assertFalse "The .my_module existed before symlinking" "[ -e $HOME/.my_module ]"
 	$HOMESHICK_BIN --batch link module-files > /dev/null
 	assertTrue "'link' did not symlink the .my_module symlink" "[ -L $HOME/.my_module ]"
 }
 
 function testLegacySymlinks() {
-	assertTrue "known_hosts file does not exist" "[ -e $HOME/.ssh/known_hosts ]"
-	rm -rf "$HOME/.ssh"
 	# Recreate the legacy scenario
 	ln -s $HOMESICK/repos/dotfiles/home/.ssh $HOME/.ssh
 	$HOMESHICK_BIN --batch --force link dotfiles > /dev/null
@@ -57,11 +53,14 @@ function testGitDirIgnore() {
 	assertFalse "'link' did not ignore the .git submodule file" "[ -e $HOME/.vim/.git ]"
 }
 
+function tearDown() {
+	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
+}
+
 function oneTimeTearDown() {
 	rm -rf "$HOMESICK/repos/rc-files"
 	rm -rf "$HOMESICK/repos/dotfiles"
 	rm -rf "$HOMESICK/repos/module-files"
-	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
 }
 
 source $SHUNIT2
