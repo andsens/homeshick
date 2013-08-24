@@ -12,7 +12,7 @@ function symlink {
 	for filepath in $(find $repo/home -mindepth 1 -name .git -prune -o -print); do
 		file=${filepath#$repo/home/}
 
-		if [[ -d $repo/home/$file && -d $HOME/$file ]]; then
+		if [[ -d $repo/home/$file && -d $HOME/$file && ! -L $repo/home/$file ]]; then
 			if [[ -L $HOME/$file && $(readlink "$HOME/$file") == $repo/home/$file ]]; then
 				# Legacy handling for when we used to symlink directories
 				rm $HOME/$file
