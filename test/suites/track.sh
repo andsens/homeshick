@@ -4,6 +4,11 @@ function setUp() {
 	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
 }
 
+function tearDown() {
+	rm -rf "$HOMESICK/repos/rc-files"
+	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
+}
+
 function testAbsolute() {
 	cat > $HOME/.zshrc <<EOF
 homeshick --batch refresh
@@ -66,11 +71,6 @@ EOF
 	$HOMESHICK_BIN track rc-files $HOME/.zshrc > /dev/null
 	local git_status=$(cd $HOMESICK/repos/rc-files; git status --porcelain)
 	assertEquals ".zshrc seems not to be staged" "A  home/.zshrc" "$git_status"
-}
-
-function tearDown() {
-	rm -rf "$HOMESICK/repos/rc-files"
-	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
 }
 
 source $SHUNIT2

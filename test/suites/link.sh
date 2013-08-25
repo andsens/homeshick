@@ -1,5 +1,21 @@
 #!/bin/bash
 
+function oneTimeSetUp() {
+	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/dotfiles > /dev/null
+	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/module-files > /dev/null
+}
+
+function oneTimeTearDown() {
+	rm -rf "$HOMESICK/repos/rc-files"
+	rm -rf "$HOMESICK/repos/dotfiles"
+	rm -rf "$HOMESICK/repos/module-files"
+}
+
+function tearDown() {
+	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
+}
+
 ## This is the linking table we are trying to verify:
 ## "not directory" can be a regular file or a symlink to either a file or a directory
 ##        $HOME\repo    | not directory | directory ##
@@ -9,12 +25,6 @@
 ## file                 | rm?&link      | rm?&mkdir ##
 ## directory            | rm?&link      | identical ##
 ## directory (symlink)  | rm?&link      | identical ##
-
-function oneTimeSetUp() {
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/dotfiles > /dev/null
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/module-files > /dev/null
-}
 
 
 ## First row: nonexistent
@@ -273,16 +283,6 @@ function testSymlinkDirectory() {
 function testGitDirIgnore() {
 	$HOMESHICK_BIN --batch link dotfiles > /dev/null
 	assertFalse "'link' did not ignore the .git submodule file" "[ -e $HOME/.vim/.git ]"
-}
-
-function tearDown() {
-	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
-}
-
-function oneTimeTearDown() {
-	rm -rf "$HOMESICK/repos/rc-files"
-	rm -rf "$HOMESICK/repos/dotfiles"
-	rm -rf "$HOMESICK/repos/module-files"
 }
 
 function get_inode_no() {

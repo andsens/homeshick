@@ -1,8 +1,13 @@
 #!/usr/bin/env bash -e
 
+function tearDown() {
+	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
+}
+
 function testCloning() {
 	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
 	assertSame "\`clone' did not exit with status 0" 0 $?
+	rm -rf "$HOMESICK/repos/rc-files"
 }
 
 function testSymlinkPrompt() {
@@ -15,9 +20,6 @@ function testSymlinkPrompt() {
 		expect EOF
 EOF
 	assertTrue 'bashrc symlinked after prompt' "[ -f $HOME/.bashrc ]"
-}
-
-function tearDown() {
 	rm -f "$HOME/.bashrc"
 	rm -rf "$HOMESICK/repos/rc-files"
 }
