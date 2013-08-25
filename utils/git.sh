@@ -80,7 +80,8 @@ function pull {
 
 function list {
 	for reponame in $(list_castle_names); do
-		local remote_url=$(cd $repos/$reponame; git config remote.origin.url)
+		local remote_name=$(cd $repos/$reponame; git config remote.$(git symbolic-ref HEAD 2>/dev/null).remote 2>/dev/null)
+		local remote_url=$(cd $repos/$reponame; git config remote.$remote_name.url)
 		info $reponame $remote_url
 	done
 	return $EX_SUCCESS
@@ -103,8 +104,8 @@ function check {
 	castle_exists 'check' $castle
 
 	local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
-	local remote_url=$(cd $repo; git config remote.origin.url 2>/dev/null)
-	local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
+	local remote_name=$(cd $repo; git config remote.$ref.remote 2>/dev/null)
+	local remote_head=$(git ls-remote -q --heads "$remote_name" "$ref" 2>/dev/null | cut -f 1)
 	if [[ $remote_head ]]; then
 		local local_head=$(cd $repo; git rev-parse HEAD)
 		if [[ $remote_head == $local_head ]]; then
