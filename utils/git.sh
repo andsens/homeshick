@@ -114,8 +114,10 @@ function check {
 			success 'up to date'
 			exit_status=$EX_SUCCESS
 		else
-			(cd $repo; git branch --contains "$remote_head" 2>/dev/null) > /dev/null
-			if [[ $? == 0 ]]; then
+			local merge_base=$(cd $repo; git merge-base "$remote_head" "$local_head" 2>/dev/null)
+			local checked_ref
+			checked_ref=$(cd $repo; git rev-parse --verify "$remote_head" 2>/dev/null)
+			if [[ $? == 0 && $merge_base != "" && $merge_base == $checked_ref ]]; then
 				fail 'ahead'
 				exit_status=$EX_AHEAD
 			else

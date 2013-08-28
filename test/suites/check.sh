@@ -18,7 +18,6 @@ EOF
 }
 
 function testBehind() {
-	startSkipping
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^1) > /dev/null
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f - > /dev/null
