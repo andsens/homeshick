@@ -13,6 +13,10 @@ ${esc}1;37m module-files${esc}0m $REPO_FIXTURES/module-files\r
 ${esc}1;37m     rc-files${esc}0m $REPO_FIXTURES/rc-files\r\n" {} default {exit 1}
 EOF
 	assertEquals "Failed verifying the list command output." 0 $?
+
+	rm -rf "$HOMESICK/repos/rc-files"
+	rm -rf "$HOMESICK/repos/dotfiles"
+	rm -rf "$HOMESICK/repos/module-files"
 }
 
 source $SHUNIT2
