@@ -47,6 +47,14 @@ if [[ ! -f $SHUNIT2 ]]; then
 	exit 1
 fi
 
+# Check if expect is installed
+type expect 2>&1>/dev/null
+if [[ $? != 0 ]]; then
+	printf "\`expect' (http://www.tcl.tk/man/expect5.31/index.html) is used by some unit tests\n"
+	printf "and must be installed. Please install \`expect' before continuing.\n"
+	exit 1 # EX_ERR
+fi
+
 # Check if coreutils is in PATH
 system=$(uname -a)
 if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
