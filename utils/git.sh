@@ -80,7 +80,9 @@ function pull {
 
 function list {
 	for reponame in $(list_castle_names); do
-		local remote_url=$(cd $repos/$reponame; git config remote.origin.url)
+		local ref=$(git symbolic-ref --short HEAD 2>/dev/null)
+		local remote_name=$(cd $repos/$reponame; git config branch.$ref.remote 2>/dev/null)
+		local remote_url=$(cd $repos/$reponame; git config remote.$remote_name.url)
 		info $reponame $remote_url
 	done
 	return $EX_SUCCESS
