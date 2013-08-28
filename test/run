@@ -32,7 +32,7 @@ if [[ ! -x $SHUNIT2 ]]; then
 		if [[ ! $prompt =~ [Yy] ]]; then
 			exit 78 # 78=$EX_CONFIG
 		fi
-		type wget 2>&1>/dev/null
+		type wget >/dev/null 2>&1
 		if [[ $? = 0 ]]; then
 			wget -qO - https://shunit2.googlecode.com/files/shunit2-2.1.6.tgz | tar -xzC $SCRIPTDIR
 		else
@@ -48,7 +48,7 @@ if [[ ! -f $SHUNIT2 ]]; then
 fi
 
 # Check if expect is installed
-type expect 2>&1>/dev/null
+type expect >/dev/null 2>&1
 if [[ $? != 0 ]]; then
 	printf "\`expect' (http://www.tcl.tk/man/expect5.31/index.html) is used by some unit tests\n"
 	printf "and must be installed. Please install \`expect' before continuing.\n"
@@ -58,7 +58,7 @@ fi
 # Check if coreutils is in PATH
 system=$(uname -a)
 if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
-	type brew 2>&1>/dev/null
+	type brew >/dev/null 2>&1
 	if [[ $? = 0 ]]; then
 		coreutils_path=$(brew --prefix coreutils 2>/dev/null)/libexec/gnubin
 		if [[ -d $coreutils_path && $PATH == *$coreutils_path* ]]; then
