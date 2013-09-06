@@ -11,6 +11,7 @@ source $homeshick/utils/fs.sh
 source $homeshick/utils/git.sh
 source $homeshick/utils/help.sh
 source $homeshick/utils/exit_status.sh
+source $homeshick/utils/storm.sh
 
 exit_status=$EX_SUCCESS
 
@@ -55,7 +56,7 @@ done
 [[ $# -gt 0 ]] || cmd="help"
 
 # Get the subcommand
-valid_commands=(clone generate list check updates refresh pull symlink link track help)
+valid_commands=(clone generate list check updates refresh pull storm symlink link track help)
 if [[ ! $cmd ]]; then
 	if [[ " ${valid_commands[*]} " =~ " $1 " ]]; then
 		cmd=$1
@@ -87,7 +88,7 @@ while [[ $# -gt 0 ]]; do
 	fi
 
 	case $cmd in
-		clone | generate | check | updates | pull | symlink | link)
+		clone | generate | check | updates | pull | storm | symlink | link)
 			params+=($1)
 			shift; continue ;;
 		refresh)
@@ -139,6 +140,7 @@ case $cmd in
 			clone)   symlink_cloned_files ${params[*]}      ;;
 			refresh) pull_outdated $threshhold ${params[*]} ;;
 			pull)    symlink_new_files ${params[*]}         ;;
+			storm)   storm ${params[*]}                     ;;
 		esac
 		result=$?
 		if [[ $exit_status == 0 && $result != 0 ]]; then
