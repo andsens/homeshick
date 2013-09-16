@@ -32,11 +32,11 @@ git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
 
 To avoid having to call homeshick with such a long path, you can alias it in your `.bashrc`:
 ```
-printf '\nalias homeshick="source $HOME/.homesick/repos/homeshick/home/.homeshick.sh"' >> $HOME/.bashrc
+printf '\nalias homeshick="source $HOME/.homesick/repos/homeshick/bin/homeshick.sh"' >> $HOME/.bashrc
 ```
 If you use csh or tcsh, you can update your `.cshrc` like this:
 ```
-printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/home/.homeshick.csh"' >> $HOME/.cshrc
+printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.csh"' >> $HOME/.cshrc
 ```
 *Note: To get the alias working right away, you will have to rerun your `.bashrc` with `source $HOME/.bashrc`, or your `.cshrc` with `source $HOME/.cshrc`.*
 
@@ -117,7 +117,7 @@ cd -
 
 ### Other machines ###
 To get your custom `.bashrc` file onto other machines you [install homeshick](#installation) and
-clone your castle with: `$HOME/.homesick/repos/homeshick/home/.homeshick clone username/dotfiles`
+clone your castle with: `$HOME/.homesick/repos/homeshick/bin/homeshick clone username/dotfiles`
 homeshick will ask you immediately whether you want to symlink the newly cloned castle.
 If you agree to that and also agree to it overwriting the existing `.bashrc` you can run
 `source $HOME/.bashrc` to get your `homeshick` alias running.

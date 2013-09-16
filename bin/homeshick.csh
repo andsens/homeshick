@@ -1,6 +1,6 @@
 # This helper script should be sourced via an alias, e.g.
 #
-#   alias homeshick "source $HOME/.homesick/repos/homeshick/home/.homeshick.csh"
+#   alias homeshick "source $HOME/.homesick/repos/homeshick/bin/homeshick.csh"
 #
 if ( "$1" == "cd" && "x$2" != "x" ) then
     if ( -d $HOME/.homesick/repos/$2/home ) then
@@ -9,5 +9,5 @@ if ( "$1" == "cd" && "x$2" != "x" ) then
         cd $HOME/.homesick/repos/$2
     endif
 else
-    $HOME/.homesick/repos/homeshick/home/.homeshick $*
+    $HOME/.homesick/repos/homeshick/bin/homeshick $*
 endif

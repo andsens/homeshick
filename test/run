@@ -84,7 +84,7 @@ rm -rf $REPO_FIXTURES $HOME $NOTHOME
 mkdir -p $REPO_FIXTURES $HOME $NOTHOME
 
 export HOMESICK=$HOME/.homesick
-export HOMESHICK_BIN=$HOMESICK/repos/homeshick/home/.homeshick
+export HOMESHICK_BIN=$HOMESICK/repos/homeshick/bin/homeshick
 
 source $SCRIPTDIR/repo_fixtures.sh
 setup_repo_fixtures
