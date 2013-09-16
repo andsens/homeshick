@@ -9,6 +9,7 @@ printf "homes${bldblu}h${txtdef}ick uses git in concert with symlinks to track y
  Usage: homeshick [options] TASK
 
  Tasks:
+  homeshick cd CASTLE                 # Enter a castle
   homeshick clone URI..               # Clone URI as a castle for homeshick
   homeshick generate CASTLE..         # Generate a castle repo
   homeshick list                      # List cloned castles
@@ -43,6 +44,11 @@ function help_err {
 
 function extended_help {
 	case $1 in
+		cd)
+      printf "Enters a castle's home directory.\n"
+      printf "NOTE: For this to work, homeshick must be invoked via homeshick.{sh,csh}.\n\n"
+      printf "Usage:\n  homeshick cd CASTLE"
+      ;;
 		clone)
       printf "Clones URI as a castle for homeshick\n"
       printf "Usage:\n  homeshick clone URL.."

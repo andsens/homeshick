@@ -55,7 +55,7 @@ done
 [[ $# -gt 0 ]] || cmd="help"
 
 # Get the subcommand
-valid_commands=(clone generate list check updates refresh pull symlink link track help)
+valid_commands=(cd clone generate list check updates refresh pull symlink link track help)
 if [[ ! $cmd ]]; then
 	if [[ " ${valid_commands[*]} " =~ " $1 " ]]; then
 		cmd=$1
@@ -87,7 +87,7 @@ while [[ $# -gt 0 ]]; do
 	fi
 
 	case $cmd in
-		clone | generate | check | updates | pull | symlink | link)
+		cd | clone | generate | check | updates | pull | symlink | link)
 			params+=($1)
 			shift; continue ;;
 		refresh)
@@ -109,7 +109,7 @@ if [[ ! $params ]]; then
 	case $cmd in
 		check | updates | refresh | pull | symlink | link) params=$(list_castle_names) ;;
 		# These commands require parameters, show the help message instead
-		clone | generate | track) help_cmd=$cmd; cmd="help"; exit_status=$EX_USAGE ;;
+		cd | clone | generate | track) help_cmd=$cmd; cmd="help"; exit_status=$EX_USAGE ;;
 	esac
 fi
 
@@ -118,6 +118,7 @@ fi
 
 case $cmd in
 	list)  list           ;;
+	cd)    help cd        ;; # cd is implemented in the homeshick.{sh,csh} helper script.
 	help)  help $help_cmd ;;
 	*)
 		for param in ${params[*]}; do
