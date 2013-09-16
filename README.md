@@ -30,11 +30,15 @@ In order to create the castle, simply clone it to the appropriate location.
 git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
 ```
 
-To avoid having to call homeshick with such a long path you can alias it in your `.bashrc`:
+To avoid having to call homeshick with such a long path, you can alias it in your `.bashrc`:
 ```
-printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> $HOME/.bashrc
+printf '\nalias homeshick="source $HOME/.homesick/repos/homeshick/bin/homeshick.sh"' >> $HOME/.bashrc
 ```
-*Note: You will have to rerun `.bashrc` with `source $HOME/.bashrc` to get the alias working right away.*
+If you use csh or tcsh, you can update your `.cshrc` like this:
+```
+printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.csh"' >> $HOME/.cshrc
+```
+*Note: To get the alias working right away, you will have to rerun your `.bashrc` with `source $HOME/.bashrc`, or your `.cshrc` with `source $HOME/.cshrc`.*
 
 You can skip the [commands](#commands) part and go to the [tutorial](#tutorial)
 if you prefer getting to know homeshick by using it.
@@ -93,10 +97,7 @@ This goes very well with your rc scripts (check out the [tutorial](#tutorial) fo
 
 ### Original machine ###
 
-In the installation you added an alias to the `.bashrc` file with
-```
-printf '\nalias homeshick="$HOME/.homesick/repos/homeshick/home/.homeshick"' >> $HOME/.bashrc
-```
+In the installation section above, you added a `homeshick` alias to your `.bashrc` file (substitute `.cshrc` for `.bashrc` if you are a csh or tcsh user).
 
 Let's create your first castle to hold this file. You use the [generate](#generate) command to do that:
 `homeshick generate dotfiles`. This creates an empty castle, which you can now populate.
@@ -116,7 +117,7 @@ cd -
 
 ### Other machines ###
 To get your custom `.bashrc` file onto other machines you [install homeshick](#installation) and
-clone your castle with: `$HOME/.homesick/repos/homeshick/home/.homeshick clone username/dotfiles`
+clone your castle with: `$HOME/.homesick/repos/homeshick/bin/homeshick clone username/dotfiles`
 homeshick will ask you immediately whether you want to symlink the newly cloned castle.
 If you agree to that and also agree to it overwriting the existing `.bashrc` you can run
 `source $HOME/.bashrc` to get your `homeshick` alias running.
