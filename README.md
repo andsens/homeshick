@@ -90,14 +90,14 @@ the files are automatically added to the git index.
 
 ### generate ###
 `generate` creates a new castle.
-All you need to do now is call `track` to fill it with your dotfiles.
+All you need to do now is call [`track`](#track) to fill it with your dotfiles.
 
 ### refresh ###
 Run this command to check if any of your repositories have not been updated the last week.
 This goes very well with your rc scripts (check out the [tutorial](#tutorial) for more about this).
 
 ### cd ###
-After you have used the `track` command, you will want to commit the changes and push them.
+After you have used the [`track`](#track) command, you will want to commit the changes and push them.
 Instead of `cd`'ing your way into the repository simply type `homeshick cd dotfiles`;
 homeshick will place you right inside the `home/` directory of your `dotfiles` castle.
 From there you can run whatever git commands you like on your castle.
@@ -129,14 +129,14 @@ cd -
 
 ### Other machines ###
 To get your custom `.bashrc` file onto other machines you [install homeshick](#installation) and
-clone your castle with: `$HOME/.homesick/repos/homeshick/bin/homeshick clone username/dotfiles`
+[`clone`](#clone) your castle with: `$HOME/.homesick/repos/homeshick/bin/homeshick clone username/dotfiles`
 homeshick will ask you immediately whether you want to symlink the newly cloned castle.
 If you agree to that and also agree to it overwriting the existing `.bashrc` you can run
 `source $HOME/.bashrc` to get your `homeshick` alias running.
 
 ### Refreshing ###
-You can run `check` to see whether your castles are up to date or need pushing/pulling.
-This is a task that is easy to forget, which is why homeshick has the `refresh` subcommand.
+You can run [`check`](#check) to see whether your castles are up to date or need pushing/pulling.
+This is a task that is easy to forget, which is why homeshick has the [`refresh`](#refresh) subcommand.
 It examines your castles to see when they were pulled the last time and prompts you to pull
 any castles that have not been pulled over the last week.
 You can put this into your `.bashrc` file to run the check everytime you start up the shell:
