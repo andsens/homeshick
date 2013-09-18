@@ -14,7 +14,7 @@ function clone {
 	[[ ! $1 ]] && help_err clone
 	local git_repo=$1
 	local repo_path="$repos/$(parse_url $git_repo)"
-	if [[ $git_repo =~ ^([A-Za-z_-]+\/[A-Za-z_-]+)$ ]]; then
+	if [[ $git_repo =~ ^([0-9A-Za-z_-]+\/[0-9A-Za-z_-]+)$ ]]; then
 		git_repo="https://github.com/$git_repo.git"
 	fi
 	pending 'clone' $git_repo
