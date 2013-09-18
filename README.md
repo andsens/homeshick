@@ -1,18 +1,35 @@
 homeshick
 =========
-* [about](#how-does-it-work)
-* [installation](#installation)
-* [commands](#commands)
-* [tutorial](#tutorial)
-* [automatic deployment](#automatic-deployment)
-* [homeshick and homesick](#homeshick-and-homesick)
-
 <img src="http://i.imgur.com/3zAK9.jpg">
 
 homeshick keeps your dotfiles up to date using only git and bash.
 It can handle many dotfile repositories at once, so you can beef up your own dotfiles
 with bigger projects like [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) and still
 keep everything organized.
+
+## Contents ##
+
+* [How does it work?](#how-does-it-work)
+* [Usage](#usage)
+* [Installation](#installation)
+* [Commands](#commands)
+  * [link](#link)
+  * [clone](#clone)
+  * [pull](#pull)
+  * [check](#check)
+  * [list](#list)
+  * [track](#track)
+  * [generate](#generate)
+  * [refresh](#refresh)
+  * [cd](#cd)
+* [Tutorial](#tutorial)
+  * [Bootstrapping](#bootstrapping)
+  * [Adding other machines](#adding-other-machines)
+  * [Refreshing](#refreshing)
+  * [Updating your castle](#updating-your-castle)
+  * [Repos with no home](#repos-with-no-home--)
+* [Automatic deployment](#automatic-deployment)
+* [homeshick and homesick](#homeshick-and-homesick)
 
 # How does it work? #
 Symlinking.
@@ -22,6 +39,14 @@ The symlinked files must however reside in a folder named `home`.
 This way you can prevent homeshick from cluttering your home folder with
 files that are only *included* from elsewhere.
 Each repo is referred to as a *castle*.
+
+# Usage #
+
+homeshick is used via subcommands, so simply typing `homeshick` will yield a helpful message
+that tersely explains all of the things you can do with it.
+
+Most subcommands accept castlenames as arguments.
+You can also run a subcommand on all castles by not specifying any arguments.
 
 # Installation #
 homeshick is installed as a castle, this way it can keep itself updated.
@@ -46,14 +71,6 @@ if it is invoked as a subprocess.*
 
 You can skip the [commands](#commands) part and go to the [tutorial](#tutorial)
 if you prefer getting to know homeshick by using it.
-
-# Usage #
-
-homeshick is used via subcommands, so simply typing `homeshick` will yield a helpful message
-that tersely explains all of the things you can do with it.
-
-Most subcommands accept castlenames as arguments.
-You can also run a subcommand on all castles by not specifying any arguments.
 
 ## Commands ##
 
@@ -107,7 +124,7 @@ after running `homeshick cd dotfiles` you can simply type `cd -` to get back to 
 
 ## Tutorial ##
 
-### Original machine ###
+### Bootstrapping ###
 
 In the installation section above, you added a `homeshick` alias to your `.bashrc` file (substitute `.cshrc` for `.bashrc` if you are a csh or tcsh user).
 
@@ -127,7 +144,7 @@ cd -
 *Note: The `.homesick/` folder is not a typo, it is named as such because of compatibility with
 [homesick](#homeshick-and-homesick), the ruby tool that inspired homeshick*
 
-### Other machines ###
+### Adding other machines ###
 To get your custom `.bashrc` file onto other machines you [install homeshick](#installation) and
 [`clone`](#clone) your castle with: `$HOME/.homesick/repos/homeshick/bin/homeshick clone username/dotfiles`
 homeshick will ask you immediately whether you want to symlink the newly cloned castle.
@@ -157,6 +174,44 @@ git commit -m "Added awesome tmux configuration"
 git push origin master
 cd -
 ```
+
+
+### Repos with no `home/` :'-( ###
+What do you do if you encounter a really cool repository that goes well with
+your existing setup, but it has no `home/` folder and needs to be linked to a
+very specific place in your `$HOME` folder?
+
+Let's say you want to add [vundle](#https://github.com/gmarik/vundle) to your Vim configuration.
+The documentation says it needs to be installed to `~/.vim/bundle/vundle`, but you are not
+very interested in forking the repository solely for the purpose of changing the directory layout
+so that all files are placed four directories deeper in `home/.vim/bundle/vundle/`.
+
+homeshick can solve this problem in two ways:
+
+1. Add vundle as a submodule to your dotfiles. This is definitely the quick and easy way.
+
+        homeshick cd dotfiles
+        cd ..
+        git submodule add https://github.com/gmarik/vundle.git home/.vim/bundle/vundle
+2. Clone vundle with homeshick and symlink to the repo from the appropriate folder in your dotfiles:
+
+        homeshick clone gmarik/vundle
+        cd ~/.homeshick/repos/dotfiles/home
+        mkdir .vim/bundle
+        cd .vim/bundle
+        ln -s ../../../../vundle vundle # symlink to the location of the cloned vundle repository
+        homeshick link dotfiles
+We use a relative path for the symlink in case we log in with different username on other machines.  
+When running the [`link`](#link) command, homeshick will create a symlink at `~/.vim/bundle/vundle`
+pointing at the symlink we just created. This means there will be a symlinked directory at
+`~/.vim/bundle/vundle`, which contains the files of the cloned vundle repository  
+*Note: You can see how homeshick decides what to do when encountering different symlink situations
+by looking at the [linking table](wiki/Linking-table).*
+
+The advantage of the second option is that you have more finegrained control over your repositories
+and can manage each them individually
+(e.g. you want to [`refresh`](#refresh) your own dotfiles every week,
+but you don't want to wait for all the submodules in your repository to refresh as well).
 
 ## Automatic deployment ##
 After having launched ec2 instances a lot, I got tired of installing zsh, tmux etc.
