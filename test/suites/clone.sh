@@ -5,7 +5,7 @@ function tearDown() {
 }
 
 function testCloning() {
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/rc-files > /dev/null
 	assertSame "\`clone' did not exit with status 0" 0 $?
 	rm -rf "$HOMESICK/repos/rc-files"
 }

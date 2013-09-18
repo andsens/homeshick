@@ -2,9 +2,9 @@
 
 
 function testList() {
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/dotfiles > /dev/null
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/module-files > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/dotfiles > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/module-files > /dev/null
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f - > /dev/null
 		spawn $HOMESHICK_BIN list
@@ -20,7 +20,7 @@ EOF
 }
 
 function testListAlteredUpstreamRemoteName() {
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/rc-files > /dev/null
 	(cd $HOMESICK/repos/rc-files; git remote rename origin nigiro)
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f - > /dev/null

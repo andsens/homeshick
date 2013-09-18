@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function setUp() {
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/rc-files > /dev/null
 }
 
 function tearDown() {

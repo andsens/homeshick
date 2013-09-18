@@ -1,9 +1,9 @@
 #!/bin/bash
 
 function oneTimeSetUp() {
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/rc-files > /dev/null
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/dotfiles > /dev/null
-	$HOMESHICK_BIN --batch clone $REPO_FIXTURES/module-files > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/dotfiles > /dev/null
+	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/module-files > /dev/null
 }
 
 function oneTimeTearDown() {
@@ -30,28 +30,28 @@ function tearDown() {
 ## First row: nonexistent
 ## First column: not directory
 function testFileToNonexistent() {
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 }
 
 function testFileSymlinkToNonexistent() {
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 }
 
 function testDirSymlinkToNonexistent() {
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 }
 
 function testDeadSymlinkToNonexistent() {
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 }
 
 ## Second column: directory
 function testDirToNonexistent() {
-	$HOMESHICK_BIN --batch link dotfiles > /dev/null
+	$HOMESHICK_SRC --batch link dotfiles > /dev/null
 	assertFalse "\`link' symlinked the .ssh directory" "[ -L $HOME/.ssh ]"
 	assertTrue "\`link' did not create the .ssh directory" "[ -d $HOME/.ssh ]"
 }
@@ -60,36 +60,36 @@ function testDirToNonexistent() {
 ## Second row: symlink to repofile
 ## First column: not directory
 function testFileToReposymlink() {
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	local inode_before=$(get_inode_no $HOME/.bashrc)
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	local inode_after=$(get_inode_no $HOME/.bashrc)
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 	assertSame "\`link' re-linked the .bashrc file" $inode_before $inode_after
 }
 
 function testFileSymlinkToReposymlink() {
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	local inode_before=$(get_inode_no $HOME/symlinked-file)
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	local inode_after=$(get_inode_no $HOME/symlinked-file)
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 	assertSame "\`link' re-linked symlinked-file" $inode_before $inode_after
 }
 
 function testDirSymlinkToReposymlink() {
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	local inode_before=$(get_inode_no $HOME/symlinked-directory)
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	local inode_after=$(get_inode_no $HOME/symlinked-directory)
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 	assertSame "\`link' re-linked symlinked-directory" $inode_before $inode_after
 }
 
 function testDeadSymlinkToReposymlink() {
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	local inode_before=$(get_inode_no $HOME/dead-symlink)
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	local inode_after=$(get_inode_no $HOME/dead-symlink)
 	assertSymlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 	assertSame "\`link' re-linked dead-symlink" $inode_before $inode_after
@@ -99,7 +99,7 @@ function testDeadSymlinkToReposymlink() {
 function testLegacySymlinks() {
 	# Recreate the legacy scenario
 	ln -s $HOMESICK/repos/dotfiles/home/.ssh $HOME/.ssh
-	$HOMESHICK_BIN --batch --force link dotfiles > /dev/null
+	$HOMESHICK_SRC --batch --force link dotfiles > /dev/null
 	# Without legacy handling if we were to run `file $HOME/.ssh/known_hosts` we would get
 	# .ssh/known_hosts: symbolic link in a loop
 	# The `test -e` is sufficient though
@@ -111,34 +111,34 @@ function testLegacySymlinks() {
 ## First column: not directory
 function testFileToFile() {
 	touch $HOME/.bashrc
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 }
 
 function testFileSymlinkToFile() {
 	touch $HOME/symlinked-file
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 }
 
 function testDirSymlinkToFile() {
 	mkdir $HOME/symlinked-directory
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 }
 
 function testDeadSymlinkToFile() {
 	touch $HOME/dead-symlink
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 }
 
 ## Second column: directory
 function testDirToFile() {
 	touch $HOME/.ssh
-	$HOMESHICK_BIN --batch --force link dotfiles > /dev/null
+	$HOMESHICK_SRC --batch --force link dotfiles > /dev/null
 	assertTrue "[ -d $HOME/.ssh ]"
 	assertFalse "[ -L $HOME/.ssh ]"
 }
@@ -148,25 +148,25 @@ function testDirToFile() {
 ## First column: not directory
 function testFileToDir() {
 	mkdir $HOME/.bashrc
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 }
 
 function testFileSymlinkToDir() {
 	mkdir $HOME/symlinked-file
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 }
 
 function testDirSymlinkToDir() {
 	mkdir $HOME/symlinked-directory
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 }
 
 function testDeadSymlinkToDir() {
 	mkdir $HOME/dead-symlink
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 }
 
@@ -174,7 +174,7 @@ function testDeadSymlinkToDir() {
 function testDirToDir() {
 	mkdir $HOME/.ssh
 	local inode_before=$(get_inode_no $HOME/.ssh)
-	$HOMESHICK_BIN --batch --force link dotfiles > /dev/null
+	$HOMESHICK_SRC --batch --force link dotfiles > /dev/null
 	local inode_after=$(get_inode_no $HOME/.ssh)
 	assertSame "\`link' recreated .ssh" $inode_before $inode_after
 	assertTrue "[ -d $HOME/.ssh ]"
@@ -187,7 +187,7 @@ function testDirToDir() {
 function testFileToDirSymlink() {
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/.bashrc
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 	rm -rf $NOTHOME/symlink-target-dir
 }
@@ -195,7 +195,7 @@ function testFileToDirSymlink() {
 function testFileSymlinkToDirSymlink() {
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/symlinked-file
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 	rm -rf $NOTHOME/symlink-target-dir
 }
@@ -203,7 +203,7 @@ function testFileSymlinkToDirSymlink() {
 function testDirSymlinkToDirSymlink() {
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/symlinked-directory
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 	rm -rf $NOTHOME/symlink-target-dir
 }
@@ -211,7 +211,7 @@ function testDirSymlinkToDirSymlink() {
 function testDeadSymlinkToDirSymlink() {
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/dead-symlink
-	$HOMESHICK_BIN --batch --force link rc-files > /dev/null
+	$HOMESHICK_SRC --batch --force link rc-files > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 	rm -rf $NOTHOME/symlink-target-dir
 }
@@ -221,7 +221,7 @@ function testDirToDirSymlink() {
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/.ssh
 	local inode_before=$(get_inode_no $HOME/.ssh)
-	$HOMESHICK_BIN --batch --force link dotfiles > /dev/null
+	$HOMESHICK_SRC --batch --force link dotfiles > /dev/null
 	local inode_after=$(get_inode_no $HOME/.ssh)
 	assertSymlink $NOTHOME/symlink-target-dir $HOME/.ssh
 	assertSame "\`link' recreated .ssh" $inode_before $inode_after
@@ -233,20 +233,20 @@ function testDirToDirSymlink() {
 
 function testOverwritePrompt() {
 	touch $HOME/.bashrc
-	$HOMESHICK_BIN --batch link rc-files > /dev/null
+	$HOMESHICK_SRC --batch link rc-files > /dev/null
 	assertTrue "\`link' overwrote .bashrc" "[ -f $HOME/.bashrc -a ! -L $HOME/.bashrc ]"
 }
 
 function testOverwriteSkip() {
 	touch $HOME/.bashrc
-	$HOMESHICK_BIN --skip link rc-files > /dev/null
+	$HOMESHICK_SRC --skip link rc-files > /dev/null
 	assertTrue "\`link' overwrote .bashrc" "[ -f $HOME/.bashrc -a ! -L $HOME/.bashrc ]"
 }
 
 function testReSymlinkDirectory() {
-	$HOMESHICK_BIN --batch link module-files > /dev/null
+	$HOMESHICK_SRC --batch link module-files > /dev/null
 	local inode_before=$(get_inode_no $HOME/.my_module)
-	$HOMESHICK_BIN --batch link module-files > /dev/null
+	$HOMESHICK_SRC --batch link module-files > /dev/null
 	local inode_after=$(get_inode_no $HOME/.my_module)
 	assertSame "\`link' re-linked the .my_module directory symlink" $inode_before $inode_after
 }
@@ -270,18 +270,18 @@ EOF
 	#.config/foo.conf should be overwritten by a directory of the same name
 	assertTrue "The .config/bar.dir/ directory did not exist before symlinking" "[ -d $HOME/.config/bar.dir ]"
 	#.config/bar.dir should be overwritten by a file of the same name
-	$HOMESHICK_BIN --batch --force link dotfiles > /dev/null
+	$HOMESHICK_SRC --batch --force link dotfiles > /dev/null
 	assertTrue "'link' did not symlink the .config/foo.conf directory" "[ -d $HOME/.config/foo.conf ]"
 	assertTrue "'link' did not symlink the .config/bar.dir directory" "[ -f $HOME/.config/bar.dir ]"
 }
 
 function testSymlinkDirectory() {
-	$HOMESHICK_BIN --batch link module-files > /dev/null
+	$HOMESHICK_SRC --batch link module-files > /dev/null
 	assertTrue "'link' did not symlink the .my_module symlink" "[ -L $HOME/.my_module ]"
 }
 
 function testGitDirIgnore() {
-	$HOMESHICK_BIN --batch link dotfiles > /dev/null
+	$HOMESHICK_SRC --batch link dotfiles > /dev/null
 	assertFalse "'link' did not ignore the .git submodule file" "[ -e $HOME/.vim/.git ]"
 }
 
