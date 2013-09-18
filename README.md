@@ -38,7 +38,11 @@ If you use csh or tcsh, you can update your `.cshrc` like this:
 ```
 printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.csh"' >> $HOME/.cshrc
 ```
-*Note: To get the alias working right away, you will have to rerun your `.bashrc` with `source $HOME/.bashrc`, or your `.cshrc` with `source $HOME/.cshrc`.*
+To get the alias working right away, you will have to rerun your `.bashrc` with `source $HOME/.bashrc`, or your `.cshrc` with `source $HOME/.cshrc`.
+
+*Note: The reason you should use alias="source ..." and not a simple invocation like alias="$HOME/..."
+is because of the [cd](#cd) command. homeshick cannot change the working directory of your current shell
+if it is invoked as a subprocess.*
 
 You can skip the [commands](#commands) part and go to the [tutorial](#tutorial)
 if you prefer getting to know homeshick by using it.
@@ -92,6 +96,14 @@ All you need to do now is call `track` to fill it with your dotfiles.
 Run this command to check if any of your repositories have not been updated the last week.
 This goes very well with your rc scripts (check out the [tutorial](#tutorial) for more about this).
 
+### cd ###
+After you have used the `track` command, you will want to commit the changes and push them.
+Instead of `cd`'ing your way into the repository simply type `homeshick cd dotfiles`;
+homeshick will place you right inside the `home/` directory of your `dotfiles` castle.
+From there you can run whatever git commands you like on your castle.
+
+*Tip: `cd -` places you in your previous directory, so if you did not change directories
+after running `homeshick cd dotfiles` you can simply type `cd -` to get back to where you left off.*
 
 ## Tutorial ##
 
@@ -106,7 +118,7 @@ Put the `.bashrc` file into your `dotfiles` castle with `homeshick track dotfile
 Assuming you have a repository at the other end, let's now enter the castle, commit the changes,
 add your github remote and push to it.
 ```
-cd $HOME/.homesick/repos/dotfiles
+homeshick cd dotfiles
 git commit -m "Initial commit, add .bashrc"
 git remote add origin git@github.com/username/dotfiles
 git push -u origin master
@@ -134,16 +146,16 @@ You can put this into your `.bashrc` file to run the check everytime you start u
 If you prefer to update your dotfiles every other day, simply run `homeshick refresh 2` instead.
 
 ### Updating your castle ###
-To make changes to one of your castles you simply use git. For example,
-if you want to update your `dotfiles` castle from a machine which
-has it:
+To make changes to one of your castles you simply use git.
+For example, if you want to update your `dotfiles` castle
+on a machine where you have a nice tmux configuration:
 
 ```
-cd $HOME/.homesick/repos/dotfiles
-git add <newdotfile>
-git commit -m "Added <newdotfile>"
+homeshick add dotfiles .tmux.conf
+homeshick cd dotfiles
+git commit -m "Added awesome tmux configuration"
 git push origin master
-homeshick link
+cd -
 ```
 
 ## Automatic deployment ##
