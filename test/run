@@ -85,6 +85,9 @@ mkdir -p $REPO_FIXTURES $HOME $NOTHOME
 
 export HOMESICK=$HOME/.homesick
 export HOMESHICK_BIN=$HOMESICK/repos/homeshick/bin/homeshick
+export HOMESHICK_SH=$HOMESICK/repos/homeshick/bin/homeshick.sh
+export HOMESHICK_CSH=$HOMESICK/repos/homeshick/bin/homeshick.csh
+export HOMESHICK_SRC="source $HOMESHICK_SH"
 
 source $SCRIPTDIR/repo_fixtures.sh
 setup_repo_fixtures
@@ -96,7 +99,7 @@ set +e
 
 exit_status=0
 if [[ -z "$test_suites" ]]; then
-	test_suites=("clone" "link" "track" "list" "check")
+	test_suites=("clone" "link" "track" "list" "check" "cd")
 fi
 for test_suite in ${test_suites[*]}; do
 	printf "\nTestsuite: $test_suite\n"
