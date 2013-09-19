@@ -82,9 +82,10 @@ function pull {
 
 function list {
 	for reponame in $(list_castle_names); do
-		local ref=$(git symbolic-ref --short HEAD 2>/dev/null)
-		local remote_name=$(cd $repos/$reponame; git config branch.$ref.remote 2>/dev/null)
-		local remote_url=$(cd $repos/$reponame; git config remote.$remote_name.url)
+		local ref=$(cd $repos/$reponame; git symbolic-ref HEAD 2>/dev/null)
+		local branch=$(basename $ref 2>/dev/null)
+		local remote_name=$(cd $repos/$reponame; git config branch.$branch.remote 2>/dev/null)
+		local remote_url=$(cd $repos/$reponame; git config remote.$remote_name.url 2>/dev/null)
 		info $reponame $remote_url
 	done
 	return $EX_SUCCESS
@@ -106,10 +107,11 @@ function check {
 	pending 'checking' $castle
 	castle_exists 'check' $castle
 
-	local ref=$(cd $repo; git symbolic-ref --short HEAD 2>/dev/null)
-	local remote_name=$(cd $repo; git config branch.$ref.remote 2>/dev/null)
+	local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
+	local branch=$(basename $ref 2>/dev/null)
+	local remote_name=$(cd $repo; git config branch.$branch.remote 2>/dev/null)
 	local remote_url=$(cd $repo; git config remote.$remote_name.url 2>/dev/null)
-	local remote_head=$(git ls-remote -q --heads "$remote_url" "$ref" 2>/dev/null | cut -f 1)
+	local remote_head=$(git ls-remote -q --heads "$remote_url" "$branch" 2>/dev/null | cut -f 1)
 	if [[ $remote_head ]]; then
 		local local_head=$(cd $repo; git rev-parse HEAD)
 		if [[ $remote_head == $local_head ]]; then
