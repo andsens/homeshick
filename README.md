@@ -209,9 +209,14 @@ pointing at the symlink we just created. This means there will be a symlinked di
 by looking at the [linking table](wiki/Linking-table).*
 
 The advantage of the second option is that you have more finegrained control over your repositories
-and can manage each them individually
+and can manage each of them individually
 (e.g. you want to [`refresh`](#refresh) your own dotfiles every week,
 but you don't want to wait for all the submodules in your repository to refresh as well).
+
+The downside of not using submodules is that you will need to add the additional repositories
+with `homeshick clone` on every machine.
+However, you can use the [automatic deployment](#automatic-deployment) script to avoid having
+to do this manually.
 
 ## Automatic deployment ##
 After having launched ec2 instances a lot, I got tired of installing zsh, tmux etc.
