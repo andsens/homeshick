@@ -36,6 +36,10 @@ EOF
 		ln -s $NOTHOME/nonexistent dead-symlink
 		git add dead-symlink
 		git commit -m 'Added a dead symlink'
+
+		# Create a branch with a slash in it.
+		# Used for list suite unit test testSlashInBranch()
+		git branch branch/with/slash
 	) > /dev/null
 
 	local my_module="$REPO_FIXTURES/my_module"
