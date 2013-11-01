@@ -1,19 +1,9 @@
 #!/bin/bash
 
-# Get the repo name from an URL
-function parse_url {
-	local regexp_extended_flag='r'
-	local system=$(uname -a)
-	if [[ $system =~ Darwin && ! $system =~ AppleTV ]]; then
-		regexp_extended_flag='E'
-	fi
-	printf -- "$1" | sed -$regexp_extended_flag 's#^.*/([^/.]+)(\.git)?$#\1#'
-}
-
 function clone {
 	[[ ! $1 ]] && help_err clone
 	local git_repo=$1
-	local repo_path="$repos/$(parse_url $git_repo)"
+	local repo_path="$repos/$(basename $git_repo '.git')"
 	if [[ $git_repo =~ ^([0-9A-Za-z_-]+\/[0-9A-Za-z_-]+)$ ]]; then
 		git_repo="https://github.com/$git_repo.git"
 	fi
@@ -209,7 +199,7 @@ function ask_pull {
 function symlink_cloned_files {
 	local cloned_castles=()
 	while [[ $# -gt 0 ]]; do
-		local castle=$(parse_url $1)
+		local castle=$(basename $1 '.git')
 		shift
 		local repo="$repos/$castle"
 		if [[ ! -d $repo/home ]]; then
