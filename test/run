@@ -99,7 +99,10 @@ set +e
 
 exit_status=0
 if [[ -z "$test_suites" ]]; then
-	test_suites=("clone" "link" "track" "list" "check" "cd" "git_url_basename")
+	test_suites=()
+	for file in $SCRIPTDIR/suites/*.sh; do
+		test_suites+=($(basename $file .sh))
+	done
 fi
 for test_suite in ${test_suites[*]}; do
 	printf "\nTestsuite: $test_suite\n"
