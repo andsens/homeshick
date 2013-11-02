@@ -206,7 +206,7 @@ When running the [`link`](#link) command, homeshick will create a symlink at `~/
 pointing at the symlink we just created. This means there will be a symlinked directory at
 `~/.vim/bundle/vundle`, which contains the files of the cloned vundle repository  
 *Note: You can see how homeshick decides what to do when encountering different symlink situations
-by looking at the [linking table](wiki/Linking-table).*
+by looking at the [linking table](https://github.com/andsens/homeshick/wiki/Linking-table).*
 
 The advantage of the second option is that you have more finegrained control over your repositories
 and can manage each of them individually
