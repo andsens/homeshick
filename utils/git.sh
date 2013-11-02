@@ -13,10 +13,10 @@ function parse_url {
 function clone {
 	[[ ! $1 ]] && help_err clone
 	local git_repo=$1
-	local repo_path="$repos/$(parse_url $git_repo)"
 	if [[ $git_repo =~ ^([0-9A-Za-z-]+/[0-9A-Za-z_-\.]+)$ ]]; then
 		git_repo="https://github.com/$git_repo.git"
 	fi
+	local repo_path="$repos/$(parse_url $git_repo)"
 	pending 'clone' $git_repo
 	test -e $repo_path && err $EX_ERR "$repo_path already exists"
 
