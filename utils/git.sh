@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Get the repo name from an URL
-function parse_url {
-	local regexp_extended_flag='r'
-	local system=$(uname -a)
-	if [[ $system =~ Darwin && ! $system =~ AppleTV ]]; then
-		regexp_extended_flag='E'
+function repo_basename {
+	if [[ $1 =~ ^(ssh://)?[^@]+@ ]]; then
+		local no_proto=${1#ssh://}
+		printf "%s" "$(basename ${no_proto#*:} .git)"
+	else
+		printf -- "$(basename ${1##*:*/} .git)"
 	fi
-	printf -- "$1" | sed -$regexp_extended_flag 's#^.*/([^/.]+)(\.git)?$#\1#'
 }
 
 function clone {
@@ -16,7 +16,7 @@ function clone {
 	if [[ $git_repo =~ ^([0-9A-Za-z-]+/[0-9A-Za-z_-\.]+)$ ]]; then
 		git_repo="https://github.com/$git_repo.git"
 	fi
-	local repo_path="$repos/$(parse_url $git_repo)"
+	local repo_path="$repos/$(repo_basename $git_repo)"
 	pending 'clone' $git_repo
 	test -e $repo_path && err $EX_ERR "$repo_path already exists"
 
@@ -209,7 +209,7 @@ function ask_pull {
 function symlink_cloned_files {
 	local cloned_castles=()
 	while [[ $# -gt 0 ]]; do
-		local castle=$(parse_url $1)
+		local castle=$(repo_basename $1)
 		shift
 		local repo="$repos/$castle"
 		if [[ ! -d $repo/home ]]; then
