@@ -84,6 +84,8 @@ rm -rf $REPO_FIXTURES $HOME $NOTHOME
 mkdir -p $REPO_FIXTURES $HOME $NOTHOME
 
 export HOMESICK=$HOME/.homesick
+export HOMESHICK_FN="homeshick"
+export HOMESHICK_FN_SRC=$HOMESICK/repos/homeshick/homeshick.sh
 export HOMESHICK_BIN=$HOMESICK/repos/homeshick/bin/homeshick
 export HOMESHICK_SH=$HOMESICK/repos/homeshick/bin/homeshick.sh
 export HOMESHICK_CSH=$HOMESICK/repos/homeshick/bin/homeshick.csh

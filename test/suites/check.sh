@@ -1,7 +1,11 @@
 #!/bin/bash
 
+function oneTimeSetUp() {
+	source $HOMESHICK_FN_SRC
+}
+
 function setUp() {
-	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_FN --batch clone $REPO_FIXTURES/rc-files > /dev/null
 }
 
 function tearDown() {

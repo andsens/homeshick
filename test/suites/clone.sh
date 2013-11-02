@@ -1,11 +1,15 @@
 #!/usr/bin/env bash -e
 
+function oneTimeSetUp() {
+	source $HOMESHICK_FN_SRC
+}
+
 function tearDown() {
 	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
 }
 
 function testCloning() {
-	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_FN --batch clone $REPO_FIXTURES/rc-files > /dev/null
 	assertSame "\`clone' did not exit with status 0" 0 $?
 	rm -rf "$HOMESICK/repos/rc-files"
 }
@@ -29,7 +33,7 @@ EOF
 }
 
 function testDotInRepoName() {
-	$HOMESHICK_SRC --batch clone $REPO_FIXTURES/135.abc > /dev/null
+	$HOMESHICK_FN --batch clone $REPO_FIXTURES/135.abc > /dev/null
 	assertSame "\`clone' did not exit with status 0" 0 $?
 	assertTrue "The cloned repo was not named 135.abc" "[ -e \"$HOMESICK/repos/135.abc\" ]"
 	rm -rf "$HOMESICK/repos/135.abc"
