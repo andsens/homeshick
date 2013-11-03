@@ -1,1 +1,10 @@
-../bin/homeshick
+#!/usr/bin/env bash
+cat >&2 <<EOM
+You are invoking homeshick by calling \$HOME/.homeshick
+This method of invocation is deprecated and will soon be removed.
+Please consider adding \`source \$HOME/.homesick/repos/homeshick/homeshick.sh'
+to your .bashrc or .zshrc instead, this will define a homeshick() function
+that you can run instead.
+(Read more here: https://github.com/andsens/homeshick/issues/58)
+EOM
+$HOME/.homesick/repos/homeshick/bin/homeshick "$@"
