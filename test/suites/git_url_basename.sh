@@ -21,7 +21,7 @@ function testSSHWithDot() {
 }
 
 function testSSHWithDotWithProtocol() {
-	assertSame "ebnf.vim" $(repo_basename 'ssh://git@github.com:vim-scripts/ebnf.vim.git')
+	assertSame "ebnf.vim" $(repo_basename 'ssh://git@github.com/vim-scripts/ebnf.vim.git')
 }
 
 function testHTTPWithDot() {
@@ -65,11 +65,11 @@ function testSSHNoExtensionNoSubfolderRepoHasColon() {
 }
 
 function testSSHWithProtocolNoExtensionNoSubfolder() {
-	assertSame "repo" $(repo_basename 'ssh://git@gitolite.example.com:repo')
+	assertSame "repo" $(repo_basename 'ssh://git@gitolite.example.com/repo')
 }
 
 function testSSHWithProtocolNoExtensionNoSubfolderRepoHasColon() {
-	assertSame "dotfiles:emacs" $(repo_basename 'ssh://git@gitolite.example.com:dotfiles:emacs')
+	assertSame "dotfiles:emacs" $(repo_basename 'ssh://git@gitolite.example.com/dotfiles:emacs')
 }
 
 function testHTTPWithPort() {

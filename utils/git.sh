@@ -2,12 +2,13 @@
 
 # Get the repo name from an URL
 function repo_basename {
-	if [[ $1 =~ ^(ssh://)?[^@]+@ ]]; then
-		local no_proto=${1#ssh://}
-		printf "%s" "$(basename ${no_proto#*:} .git)"
-	else
-		printf -- "$(basename ${1##*:*/} .git)"
-	fi
+if [[ $1 =~ ^[^/:]+: ]]; then
+	# For scp-style syntax like '[user@]host.xz:path/to/repo.git/',
+	# remove the '[user@]host.xz:' part.
+	basename "${1#*:}" .git
+else
+	basename "$1" .git
+fi
 }
 
 # Convert username/repo into https://github.com/username/repo.git
