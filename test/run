@@ -50,9 +50,10 @@ fi
 # Check if expect is installed
 type expect >/dev/null 2>&1
 if [[ $? != 0 ]]; then
-	printf "\`expect' (http://www.tcl.tk/man/expect5.31/index.html) is used by some unit tests\n"
-	printf "and must be installed. Please install \`expect' before continuing.\n"
-	exit 1 # EX_ERR
+	export EXPECT_INSTALLED=false
+	printf "\`expect' executable not found. Skipping all tests using expect.\n"
+else
+	export EXPECT_INSTALLED=true
 fi
 
 # Check if coreutils is in PATH

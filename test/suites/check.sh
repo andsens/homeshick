@@ -14,20 +14,28 @@ function tearDown() {
 
 function testUpToDate() {
 	esc="\\u001b\\u005b"
-	cat <<EOF | expect -f - > /dev/null
-		spawn $HOMESHICK_BIN check rc-files
-		expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;32m   up to date${esc}0m rc-files\r\n" {} default {exit 1}
+	if $EXPECT_INSTALLED; then
+		cat <<EOF | expect -f - > /dev/null
+			spawn $HOMESHICK_BIN check rc-files
+			expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;32m   up to date${esc}0m rc-files\r\n" {} default {exit 1}
 EOF
+	else
+		startSkipping
+	fi
 	assertEquals "Failed verifying the check command output." 0 $?
 }
 
 function testBehind() {
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^1) > /dev/null
 	esc="\\u001b\\u005b"
-	cat <<EOF | expect -f - > /dev/null
-		spawn $HOMESHICK_BIN check rc-files
-		expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;31m       behind${esc}0m rc-files\r\n" {} default {exit 1}
+	if $EXPECT_INSTALLED; then
+		cat <<EOF | expect -f - > /dev/null
+			spawn $HOMESHICK_BIN check rc-files
+			expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;31m       behind${esc}0m rc-files\r\n" {} default {exit 1}
 EOF
+	else
+		startSkipping
+	fi
 	assertEquals "Failed verifying the check command output." 0 $?
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD@{1}) > /dev/null
 }
@@ -47,10 +55,14 @@ EOF
 		git commit -m 'Added homeshick refresh check to .bashrc'
 	) > /dev/null
 	esc="\\u001b\\u005b"
-	cat <<EOF | expect -f - > /dev/null
-		spawn $HOMESHICK_BIN check rc-files
-		expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;31m        ahead${esc}0m rc-files\r\n" {} default {exit 1}
+	if $EXPECT_INSTALLED; then
+		cat <<EOF | expect -f - > /dev/null
+			spawn $HOMESHICK_BIN check rc-files
+			expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;31m        ahead${esc}0m rc-files\r\n" {} default {exit 1}
 EOF
+	else
+		startSkipping
+	fi
 	assertEquals "Failed verifying the check command output." 0 $?
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^1) > /dev/null
 }
