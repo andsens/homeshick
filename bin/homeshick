@@ -88,13 +88,13 @@ while [[ $# -gt 0 ]]; do
 
 	case $cmd in
 		cd | clone | generate | check | updates | pull | symlink | link)
-			params+=($1)
+			params+=("$1")
 			shift; continue ;;
 		refresh)
-			[[ ! $threshhold ]] && threshhold=$[$1*86400] || params+=($1)
+			[[ ! $threshhold ]] && threshhold=$[$1*86400] || params+=("$1")
 			shift; continue ;;
 		track)
-			[[ ! $castle ]] && castle=$1 || params+=($1)
+			[[ ! $castle ]] && castle=$1 || params+=("$1")
 			shift; continue ;;
 		list) err $EX_USAGE "The 'list' command does not take any arguments" ;;
 		help)
@@ -121,15 +121,15 @@ case $cmd in
 	cd)    help cd        ;; # cd is implemented in the homeshick.{sh,csh} helper script.
 	help)  help $help_cmd ;;
 	*)
-		for param in ${params[*]}; do
+		for param in "${params[@]}"; do
 			case $cmd in
-				clone)         clone $param               ;;
-				generate)      generate $param            ;;
-				check|updates) check $param               ;;
-				refresh)       refresh $threshhold $param ;;
-				pull)          pull $param                ;;
-				symlink|link)  symlink $param             ;;
-				track)         track $castle $param       ;;
+				clone)         clone "$param"               ;;
+				generate)      generate "$param"            ;;
+				check|updates) check "$param"               ;;
+				refresh)       refresh $threshhold "$param" ;;
+				pull)          pull "$param"                ;;
+				symlink|link)  symlink "$param"             ;;
+				track)         track "$castle" "$param"     ;;
 			esac
 			result=$?
 			if [[ $exit_status == 0 && $result != 0 ]]; then

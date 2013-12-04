@@ -64,7 +64,7 @@ function symlink {
 function track {
 	[[ ! $1 || ! $2 ]] && help track
 	local castle=$1
-	local filename=$(abs_path $2)
+	local filename=$(abs_path "$2")
 	if [[ $filename != $HOME/* ]]; then
 		err $EX_ERR "The file $filename must be in your home directory."
 	fi
@@ -85,7 +85,7 @@ function track {
 	if [[ ! -f $filename ]]; then
 		err $EX_ERR "The file $filename must be a regular file."
 	fi
-	mkdir -p $(dirname $newfile)
+	mkdir -p $(dirname "$newfile")
 	mv -f "$filename" "$newfile"
 	ln -s "$newfile" "$filename"
 	(cd $repo; git add "$newfile")
