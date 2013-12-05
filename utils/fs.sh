@@ -85,8 +85,7 @@ function track {
 	if [[ ! -f $filename ]]; then
 		err $EX_ERR "The file $filename must be a regular file."
 	fi
-	local newfolder=$(dirname "$newfile")
-	mkdir -p "$newfolder"
+	mkdir -p $(dirname "$newfile")
 	mv -f "$filename" "$newfile"
 	ln -s "$newfile" "$filename"
 	(cd $repo; git add "$newfile")
