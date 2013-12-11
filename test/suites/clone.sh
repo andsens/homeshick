@@ -14,6 +14,14 @@ function testCloning() {
 	rm -rf "$HOMESICK/repos/rc-files"
 }
 
+function testCloningSpacesInName() {
+	$HOMESHICK_FN --batch clone $REPO_FIXTURES/repo\ with\ spaces\ in\ name > /dev/null
+	local repo_path="$HOMESICK/repos/repo with spaces in name"
+	assertSame "\`clone' did not exit with status 0" 0 $?
+	assertTrue "\`clone' did not clone to \`$repo_path'" "[ -d \"$repo_path\" ]"
+	rm -rf "$HOMESICK/repos/repo with spaces in name"
+}
+
 function testSymlinkPrompt() {
 	open_bracket="\\u005b"
 	close_bracket="\\u005d"
