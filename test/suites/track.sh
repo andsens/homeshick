@@ -22,6 +22,28 @@ EOF
 	assertTrue "\`track' did not symlink the .zshrc file" "[ -L $HOME/.zshrc ]"
 }
 
+function testPathWithSpaces() {
+	cat > $HOME/.path\ with\ spaces <<EOF
+homeshick --batch refresh
+EOF
+	$HOMESHICK_FN track rc-files $HOME/.path\ with\ spaces > /dev/null
+	assertEquals "\`track' did not exit with status 0" 0 $?
+	assertTrue "\`track' did not move the \`.path with spaces' file" "[ -f $HOMESICK/repos/rc-files/home/.path\ with\ spaces ]"
+	assertTrue "\`track' did not symlink the \`.path with spaces' file" "[ -L $HOME/.path\ with\ spaces ]"
+}
+
+function testPathWithSpaces2() {
+	mkdir -p $HOME/deep\ folder/structure/with\ spaces
+	local file=$HOME/deep\ folder/structure/with\ spaces/.file\ with\ spaces
+	cat > "$file" <<EOF
+homeshick --batch refresh
+EOF
+	$HOMESHICK_FN track rc-files $HOME/deep\ folder/structure/with\ spaces/.file\ with\ spaces > /dev/null
+	assertEquals "\`track' did not exit with status 0" 0 $?
+	assertTrue "\`track' did not move the \`.file with spaces' file" "[ -f $HOMESICK/repos/rc-files/home/deep\ folder/structure/with\ spaces/.file\ with\ spaces ]"
+	assertTrue "\`track' did not symlink the \`.file with spaces' file" "[ -L \"$file\" ]"
+}
+
 function testRelative() {
 	cat > $HOME/.zshrc <<EOF
 homeshick --batch refresh
