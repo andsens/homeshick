@@ -61,7 +61,7 @@ function generate {
 
 	mkdir "$repo"
 	local git_out
-	git_out=$(cd $repo; git init 2>&1)
+	git_out=$(cd "$repo"; git init 2>&1)
 	[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to initialize repository $repo. Git says:" "$git_out"
 	mkdir "$repo/home"
 	success

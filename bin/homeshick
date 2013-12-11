@@ -128,7 +128,7 @@ case $cmd in
 		for param in "${params[@]}"; do
 			case $cmd in
 				clone)         clone "$param"             ;;
-				generate)      generate $param            ;;
+				generate)      generate "$param"          ;;
 				check|updates) check $param               ;;
 				refresh)       refresh $threshhold $param ;;
 				pull)          pull $param                ;;
