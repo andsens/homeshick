@@ -75,7 +75,7 @@ function track {
 	local repo="$repos/$castle"
 	local newfile="$repo/home/${filename#$HOME/}"
 	pending "symlink" "$newfile to $filename"
-	home_exists 'track' $castle
+	home_exists 'track' "$castle"
 	if [[ ! -e $filename ]]; then
 		err $EX_ERR "The file $filename does not exist."
 	fi
@@ -89,7 +89,7 @@ function track {
 	mkdir -p "$newfolder"
 	mv -f "$filename" "$newfile"
 	ln -s "$newfile" "$filename"
-	(cd $repo; git add "$newfile")
+	(cd "$repo"; git add "$newfile")
 	success
 }
 

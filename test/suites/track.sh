@@ -6,10 +6,12 @@ function oneTimeSetUp() {
 
 function setUp() {
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/rc-files > /dev/null
+	$HOMESHICK_FN --batch clone "$REPO_FIXTURES/repo with spaces in name" > /dev/null
 }
 
 function tearDown() {
 	rm -rf "$HOMESICK/repos/rc-files"
+	rm -rf "$HOMESICK/repos/repo with spaces in name"
 	find "$HOME" -mindepth 1 -not -path "${HOMESICK}*" -delete
 }
 
@@ -51,6 +53,16 @@ EOF
 	(cd $HOME; $HOMESHICK_FN track rc-files .zshrc) > /dev/null
 	assertTrue "\`track' did not move the .zshrc file" "[ -f $HOMESICK/repos/rc-files/home/.zshrc ]"
 	assertTrue "\`track' did not symlink the .zshrc file" "[ -L $HOME/.zshrc ]"
+}
+
+function testRepoWithSpaces() {
+	cat > $HOME/.vimrc <<EOF
+My empty vim config
+EOF
+	(cd $HOME; $HOMESHICK_FN track repo\ with\ spaces\ in\ name .vimrc) > /dev/null
+	local file="$HOMESICK/repos/repo with spaces in name/home/.vimrc"
+	assertTrue "\`track' did not move the .vimrc file" "[ -f \"$file\" ]"
+	assertTrue "\`track' did not symlink the .vimrc file" "[ -L $HOME/.vimrc ]"
 }
 
 function testNOutsideHomedir() {
