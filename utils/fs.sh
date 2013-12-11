@@ -3,7 +3,7 @@
 function symlink {
 	[[ ! $1 ]] && help symlink
 	local castle=$1
-	castle_exists $castle
+	castle_exists "$castle"
 	local repo="$repos/$castle"
 	if [[ ! -d $repo/home ]]; then
 		ignore 'ignored' "$castle"
@@ -13,7 +13,7 @@ function symlink {
 		filename=${remote#$repo/home/}
 		local=$HOME/$filename
 
-		if [[ -e $local || -L $local  ]]; then
+		if [[ -e $local || -L $local ]]; then
 			# $local exists (but may be a dead symlink)
 			if [[ -L $local && $(readlink "$local") == $remote ]]; then
 				# $local symlinks to $remote.
@@ -57,7 +57,7 @@ function symlink {
 		fi
 
 		success
-	done < <(find $repo/home -mindepth 1 -name .git -prune -o -print0)
+	done < <(find "$repo/home" -mindepth 1 -name .git -prune -o -print0)
 	return $EX_SUCCESS
 }
 
@@ -74,7 +74,7 @@ function track {
 
 	local repo="$repos/$castle"
 	local newfile="$repo/home/${filename#$HOME/}"
-	pending "symlink" "$newfile to $filename"
+	pending 'symlink' "$newfile to $filename"
 	home_exists 'track' "$castle"
 	if [[ ! -e $filename ]]; then
 		err $EX_ERR "The file $filename does not exist."

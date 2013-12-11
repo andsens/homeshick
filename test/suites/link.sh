@@ -74,16 +74,24 @@ function testGitDirIgnore() {
 	assertFalse "'link' did not ignore the .git submodule file" "[ -e $HOME/.vim/.git ]"
 }
 
+function testCastleWithSpacesInName() {
+	$HOMESHICK_FN --batch link repo\ with\ spaces\ in\ name > /dev/null
+	assertSame "\`link' did not exit with status 0" 0 $?
+	assertTrue "'link' did not symlink the .repowithspacesfile file" "[ -f $HOME/.repowithspacesfile ]"
+}
+
 function testMultipleCastles() {
-	$HOMESHICK_FN --batch link rc-files dotfiles > /dev/null
+	$HOMESHICK_FN --batch link rc-files dotfiles repo\ with\ spaces\ in\ name > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 	assertSymlink $HOMESICK/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
+	assertSymlink "$HOMESICK/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
 }
 
 function testAllCastles() {
 	$HOMESHICK_FN --batch link > /dev/null
 	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 	assertSymlink $HOMESICK/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
+	assertSymlink "$HOMESICK/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
 }
 
 function get_inode_no() {
@@ -98,7 +106,7 @@ function assertSymlink() {
 	fi
 	expected=$1
 	path=$2
-	target=$(readlink $path)
+	target=$(readlink "$path")
 	assertTrue "The file $path does not exist." "[ -e $path -o -L $path ]"
 	[ -e $path -o -L $path ] || startSkipping
 	assertTrue "The file $path is not a symlink." "[ -L $path ]"

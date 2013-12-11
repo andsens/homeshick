@@ -103,10 +103,10 @@ function list {
 }
 
 function list_castle_names {
-	for repo in $(find $repos -mindepth 2 -maxdepth 2 -name .git -type d | sed 's#/.git$##g' | sort); do
-		local reponame=$(basename $repo)
+	while IFS= read -d $'\0' -r repo ; do
+		local reponame=$(basename "${repo%/.git}")
 		printf "$reponame\n"
-	done
+	done < <(find $repos -mindepth 2 -maxdepth 2 -name .git -type d -print0 | sort -z)
 	return $EX_SUCCESS
 }
 
