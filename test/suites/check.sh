@@ -25,6 +25,21 @@ EOF
 	assertEquals "Failed verifying the check command output." 0 $?
 }
 
+function testUpToDateWithSpacesInRepoName() {
+	$HOMESHICK_FN --batch clone "$REPO_FIXTURES/repo with spaces in name" > /dev/null
+	esc="\\u001b\\u005b"
+	if $EXPECT_INSTALLED; then
+		cat <<EOF | expect -f - > /dev/null
+			spawn $HOMESHICK_BIN check "repo with spaces in name"
+			expect -ex "${esc}1;36m     checking${esc}0m repo with spaces in name\r${esc}1;32m   up to date${esc}0m repo with spaces in name\r\n" {} default {exit 1}
+EOF
+	else
+		startSkipping
+	fi
+	assertEquals "Failed verifying the check command output." 0 $?
+	rm -rf "$HOMESICK/repos/repo with spaces in name"
+}
+
 function testBehind() {
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^1) > /dev/null
 	esc="\\u001b\\u005b"
