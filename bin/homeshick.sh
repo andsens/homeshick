@@ -12,10 +12,10 @@ that you can run instead.
 (Read more here: https://github.com/andsens/homeshick/issues/57)
 EOM
 if [ "$1" = "cd" ] && [ -n "$2" ]; then
-    if [ -d $HOME/.homesick/repos/$2/home ]; then
-        cd $HOME/.homesick/repos/$2/home
+    if [ -d "$HOME/.homesick/repos/$2/home" ]; then
+        cd "$HOME/.homesick/repos/$2/home"
     else
-        cd $HOME/.homesick/repos/$2
+        cd "$HOME/.homesick/repos/$2"
     fi
 else
     $HOME/.homesick/repos/homeshick/bin/homeshick "$@"

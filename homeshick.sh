@@ -5,7 +5,7 @@
 
 function homeshick() {
 	if [ "$1" = "cd" ] && [ -n "$2" ]; then
-		cd $HOME/.homesick/repos/$2
+		cd "$HOME/.homesick/repos/$2"
 	else
 		$HOME/.homesick/repos/homeshick/bin/homeshick "$@"
 	fi
