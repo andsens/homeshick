@@ -68,7 +68,7 @@ fi
 
 # Get the arguments for the subcommand, also parse flags if there are any left
 while [[ $# -gt 0 ]]; do
-	if [[ "$1" =~ ^- ]]; then
+	if [[ $1 =~ ^- ]]; then
 		# Convert combined short options into multiples short options (e.g. `-qb' to `-q -b')
 		if [[ $1 =~ ^-[a-z]{2,} ]]; then
 			param=$1
@@ -91,7 +91,7 @@ while [[ $# -gt 0 ]]; do
 			params+=("$1")
 			shift; continue ;;
 		refresh)
-			[[ ! $threshhold ]] && threshhold=$[$1*86400] || params+=($1)
+			[[ ! $threshhold ]] && threshhold=$[$1*86400] || params+=("$1")
 			shift; continue ;;
 		track)
 			[[ ! $castle ]] && castle=$1 || params+=("$1")

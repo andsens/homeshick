@@ -76,15 +76,15 @@ function pull {
 	castle_exists 'pull' $castle
 
 	local git_out
-	git_out=$(cd $repo; git pull 2>&1)
+	git_out=$(cd "$repo"; git pull 2>&1)
 	[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to pull $repo. Git says:" "$git_out"
 
 	version_compare $GIT_VERSION 1.6.5
 	if [[ $? != 2 ]]; then
-		git_out=$(cd $repo; git submodule update --recursive --init 2>&1)
+		git_out=$(cd "$repo"; git submodule update --recursive --init 2>&1)
 		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
 	else
-		git_out=$(cd $repo; git submodule update --init 2>&1)
+		git_out=$(cd "$repo"; git submodule update --init 2>&1)
 		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
 	fi
 	success
@@ -93,11 +93,11 @@ function pull {
 
 function list {
 	for reponame in $(list_castle_names); do
-		local ref=$(cd $repos/$reponame; git symbolic-ref HEAD 2>/dev/null)
+		local ref=$(cd "$repos/$reponame"; git symbolic-ref HEAD 2>/dev/null)
 		local branch=${ref#refs/heads/}
-		local remote_name=$(cd $repos/$reponame; git config branch.$branch.remote 2>/dev/null)
-		local remote_url=$(cd $repos/$reponame; git config remote.$remote_name.url 2>/dev/null)
-		info $reponame $remote_url
+		local remote_name=$(cd "$repos/$reponame"; git config branch.$branch.remote 2>/dev/null)
+		local remote_url=$(cd "$repos/$reponame"; git config remote.$remote_name.url 2>/dev/null)
+		info "$reponame" "$remote_url"
 	done
 	return $EX_SUCCESS
 }
@@ -106,7 +106,7 @@ function list_castle_names {
 	while IFS= read -d $'\0' -r repo ; do
 		local reponame=$(basename "${repo%/.git}")
 		printf "$reponame\n"
-	done < <(find $repos -mindepth 2 -maxdepth 2 -name .git -type d -print0 | sort -z)
+	done < <(find "$repos" -mindepth 2 -maxdepth 2 -name .git -type d -print0 | sort -z)
 	return $EX_SUCCESS
 }
 
@@ -115,23 +115,23 @@ function check {
 	[[ ! $1 ]] && help_err check
 	local castle=$1
 	local repo="$repos/$castle"
-	pending 'checking' $castle
-	castle_exists 'check' $castle
+	pending 'checking' "$castle"
+	castle_exists 'check' "$castle"
 
-	local ref=$(cd $repo; git symbolic-ref HEAD 2>/dev/null)
+	local ref=$(cd "$repo"; git symbolic-ref HEAD 2>/dev/null)
 	local branch=${ref#refs/heads/}
-	local remote_name=$(cd $repo; git config branch.$branch.remote 2>/dev/null)
-	local remote_url=$(cd $repo; git config remote.$remote_name.url 2>/dev/null)
+	local remote_name=$(cd "$repo"; git config branch.$branch.remote 2>/dev/null)
+	local remote_url=$(cd "$repo"; git config remote.$remote_name.url 2>/dev/null)
 	local remote_head=$(git ls-remote -q --heads "$remote_url" "$branch" 2>/dev/null | cut -f 1)
 	if [[ $remote_head ]]; then
-		local local_head=$(cd $repo; git rev-parse HEAD)
+		local local_head=$(cd "$repo"; git rev-parse HEAD)
 		if [[ $remote_head == $local_head ]]; then
 			success 'up to date'
 			exit_status=$EX_SUCCESS
 		else
-			local merge_base=$(cd $repo; git merge-base "$remote_head" "$local_head" 2>/dev/null)
+			local merge_base=$(cd "$repo"; git merge-base "$remote_head" "$local_head" 2>/dev/null)
 			local checked_ref
-			checked_ref=$(cd $repo; git rev-parse --verify "$remote_head" 2>/dev/null)
+			checked_ref=$(cd "$repo"; git rev-parse --verify "$remote_head" 2>/dev/null)
 			if [[ $? == 0 && $merge_base != "" && $merge_base == $checked_ref ]]; then
 				fail 'ahead'
 				exit_status=$EX_AHEAD
@@ -153,10 +153,10 @@ function refresh {
 	local threshhold=$1
 	local castle=$2
 	local fetch_head="$repos/$castle/.git/FETCH_HEAD"
-	pending 'checking' $castle
-	castle_exists 'check freshness' $castle
+	pending 'checking' "$castle"
+	castle_exists 'check freshness' "$castle"
 
-	if [[ -e "$fetch_head" ]]; then
+	if [[ -e $fetch_head ]]; then
 		local last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
 		local time_now=$(date +%s)
 		if [[ $((time_now-last_mod)) -gt $threshhold ]]; then
@@ -181,15 +181,15 @@ function pull_outdated {
 		# When in interactive mode:
 		# No matter if we are going to pull the castles or not
 		# we reset the outdated ones by touching FETCH_HEAD
-		if [[ -e "$fetch_head" ]]; then
+		if [[ -e $fetch_head ]]; then
 			local last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
 			local time_now=$(date +%s)
 			if [[ $((time_now-last_mod)) -gt $threshhold ]]; then
-				outdated_castles+=($castle)
+				outdated_castles+=("$castle")
 				! $BATCH && touch "$fetch_head"
 			fi
 		else
-			outdated_castles+=($castle)
+			outdated_castles+=("$castle")
 			! $BATCH && touch "$fetch_head"
 		fi
 	done
@@ -210,7 +210,7 @@ function ask_pull {
 		prompt_no 'refresh' "$msg" 'pull?'
 		if [[ $? = 0 ]]; then
 			for castle in $*; do
-				pull $castle
+				pull "$castle"
 			done
 		fi
 	fi
@@ -220,16 +220,16 @@ function ask_pull {
 function symlink_cloned_files {
 	local cloned_castles=()
 	while [[ $# -gt 0 ]]; do
-		local git_repo=$(git_shorthand $1)
-		local castle=$(repo_basename $git_repo)
+		local git_repo=$(git_shorthand "$1")
+		local castle=$(repo_basename "$git_repo")
 		shift
 		local repo="$repos/$castle"
 		if [[ ! -d $repo/home ]]; then
 			continue;
 		fi
-		local num_files=$(find $repo/home -mindepth 1 -maxdepth 1 | wc -l | tr -dc "0123456789")
+		local num_files=$(find "$repo/home" -mindepth 1 -maxdepth 1 | wc -l | tr -dc "0123456789")
 		if [[ $num_files > 0 ]]; then
-			cloned_castles+=($castle)
+			cloned_castles+=("$castle")
 		fi
 	done
 	ask_symlink ${cloned_castles[*]}
@@ -244,10 +244,10 @@ function symlink_new_files {
 		local repo="$repos/$castle"
 		local git_out
 		local now=$(date +%s)
-		git_out=$(cd $repo; git diff --name-only --diff-filter=A HEAD@{$[$now-$T_START+1].seconds.ago} HEAD -- home 2>/dev/null | wc -l 2>&1)
+		git_out=$(cd "$repo"; git diff --name-only --diff-filter=A HEAD@{$[$now-$T_START+1].seconds.ago} HEAD -- home 2>/dev/null | wc -l 2>&1)
 		[[ $? == 0 ]] || continue # Ignore errors, this operation is not mission critical
 		if [[ $git_out > 0 ]]; then
-			updated_castles+=($castle)
+			updated_castles+=("$castle")
 		fi
 	done
 	ask_symlink ${updated_castles[*]}
@@ -267,7 +267,7 @@ function ask_symlink {
 		prompt_no 'updates' "$msg" 'symlink?'
 		if [[ $? = 0 ]]; then
 			for castle in $*; do
-				symlink $castle
+				symlink "$castle"
 			done
 		fi
 	fi
