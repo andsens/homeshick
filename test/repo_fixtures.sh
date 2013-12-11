@@ -122,6 +122,22 @@ EOF
 		git add .ssh
 		git commit -m 'Share known_hosts across machines'
 
+		local st3_settings="Library/Application Support/Sublime Text 3/Packages/User"
+		mkdir -p "$st3_settings"
+		cat > "$st3_settings/Preferences.sublime-settings" <<EOF
+{
+	"caret_style": "wide",
+	"default_line_ending": "unix",
+	"ensure_newline_at_eof_on_save": true,
+	"font_face": "Inconsolata-dz",
+	"rulers": [110],
+	"shift_tab_unindent": true,
+	"tab_size": 2
+}
+EOF
+		git add "$st3_settings/Preferences.sublime-settings"
+		git commit -m 'Added my Sublime Text 3 settings'
+
 		cd $dotfiles
 		git submodule add $dotfiles_vim_submodule home/.vim
 		git commit -m 'New vim configuration submodule'
