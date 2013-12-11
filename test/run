@@ -107,13 +107,28 @@ if [[ -z "$test_suites" ]]; then
 		test_suites+=($(basename $file .sh))
 	done
 fi
+
+output=""
 for test_suite in ${test_suites[*]}; do
 	printf "\nTestsuite: $test_suite\n"
-	bash $SCRIPTDIR/suites/$test_suite.sh
-	result=$?
+	output="$output\n\nTestsuite: $test_suite"
+	tests_done=false
+	while IFS= read -d $'\n' -r line ; do
+		printf "$line\n"
+		if $tests_done; then
+			if [[ -n $line ]]; then
+				result=0
+				[[ $line =~ "FAILED" ]] && result=1
+				output="$output\n$line"
+			fi
+		fi
+		if [[ -z $line ]]; then
+			tests_done=true
+		fi
+	done < <(bash $SCRIPTDIR/suites/$test_suite.sh)
 	if [[ $exit_status == 0 && $result != 0 ]]; then
 		exit_status=$result
 	fi
 done
-
+printf -- "--------\nRESULTS:$output\n"
 exit $exit_status
