@@ -2,15 +2,12 @@
 
 function oneTimeSetUp() {
 	source $HOMESHICK_FN_SRC
-}
-
-function setUp() {
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/dotfiles > /dev/null
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/my_module > /dev/null
 	$HOMESHICK_FN --batch clone "$REPO_FIXTURES/repo with spaces in name" > /dev/null
 }
 
-function tearDown() {
+function oneTimeTearDown() {
 	rm -rf "$HOMESICK/repos/dotfiles"
 	rm -rf "$HOMESICK/repos/my_module"
 	rm -rf "$HOMESICK/repos/repo with spaces in name"
