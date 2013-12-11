@@ -286,6 +286,18 @@ function testGitDirIgnore() {
 	assertFalse "'link' did not ignore the .git submodule file" "[ -e $HOME/.vim/.git ]"
 }
 
+function testMultipleCastles() {
+	$HOMESHICK_FN --batch link rc-files dotfiles > /dev/null
+	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
+	assertSymlink $HOMESICK/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
+}
+
+function testAllCastles() {
+	$HOMESHICK_FN --batch link > /dev/null
+	assertSymlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
+	assertSymlink $HOMESICK/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
+}
+
 function get_inode_no() {
 	stat -c %i $1 2>/dev/null || stat -f %i $1
 }
