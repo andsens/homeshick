@@ -62,7 +62,7 @@ EOF
 		git config user.name $git_username
 		git config user.email $git_useremail
 
-		git submodule add $my_module
+		git submodule add $my_module 2>/dev/null
 		git commit -m 'my_module (git submodule) added for my new module-files repo'
 
 		mkdir home
@@ -139,7 +139,7 @@ EOF
 		git commit -m 'Added my Sublime Text 3 settings'
 
 		cd $dotfiles
-		git submodule add $dotfiles_vim_submodule home/.vim
+		git submodule add $dotfiles_vim_submodule home/.vim 2>/dev/null
 		git commit -m 'New vim configuration submodule'
 	) > /dev/null
 
