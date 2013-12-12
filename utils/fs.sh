@@ -9,7 +9,10 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	while IFS= read -d $'\0' -r remote ; do
+	oldIFS=$IFS
+	IFS=$'\n'
+	for remote in $(find "$repo/home" -mindepth 1 -name .git -prune -o -print); do
+		IFS=$oldIFS
 		filename=${remote#$repo/home/}
 		local=$HOME/$filename
 
@@ -32,7 +35,7 @@ function symlink {
 					# $local is a directory or a symlinked directory
 					# we do not take any action regardless of which it is.
 					ignore 'identical' "$filename"
-					continue;
+					continue
 				fi
 				if $SKIP; then
 					ignore 'exists' "$filename"
@@ -57,7 +60,7 @@ function symlink {
 		fi
 
 		success
-	done < <(find "$repo/home" -mindepth 1 -name .git -prune -o -print0)
+	done
 	return $EX_SUCCESS
 }
 

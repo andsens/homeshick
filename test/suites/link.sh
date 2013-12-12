@@ -26,6 +26,25 @@ function testOverwritePrompt() {
 	assertTrue "\`link' overwrote .bashrc" "[ -f $HOME/.bashrc -a ! -L $HOME/.bashrc ]"
 }
 
+function testOverwriteAnswerYes() {
+	open_bracket="\\u005b"
+	close_bracket="\\u005d"
+	esc="\\u001b$open_bracket"
+	if $EXPECT_INSTALLED; then
+		touch $HOME/.bashrc
+		cat <<EOF | expect -f - > /dev/null
+			spawn $HOMESHICK_BIN link rc-files
+			expect -ex "${esc}1;37m     conflict${esc}0m .bashrc exists\r
+${esc}1;36m   overwrite?${esc}0m ${open_bracket}yN${close_bracket}"
+			send "y\n"
+			expect EOF
+EOF
+	else
+		startSkipping
+	fi
+	assertTrue "\`link' did not overwrite .bashrc" "[ -L $HOME/.bashrc ]"
+}
+
 function testOverwriteSkip() {
 	touch $HOME/.bashrc
 	$HOMESHICK_FN --skip link rc-files > /dev/null
