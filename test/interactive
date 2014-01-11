@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -e
+export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+KEEP_PATH=false
+setup_script='test/setup.sh'
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		-h | --help)
+			printf "Run homeshick working copy interactively\n"
+			printf " Usage: interactive [options] [shell]\n"
+			printf " Options:\n"
+			printf "   -p, --keep-path           # Prevent \$PATH modifications\n"
+			printf "   -s, --setup-script SCRIPT # Run script first [default: test/setup.sh]\n"
+			exit 0
+      ;;
+		-p | --keep-path) KEEP_PATH=true; shift; continue ;;
+		-s | --setup-script)
+			shift;
+			setup_script=$1;
+			shift; continue ;;
+		*)
+			if [[ -n $_shell ]]; then
+				printf "only one SHELL argument allowed\n" >&2
+				exit 64 # 64=$EX_USAGE
+			fi
+			_shell=$1
+			shift; continue ;;
+	esac
+done
+
+if [[ -z $_shell ]]; then
+	_shell=$SHELL
+fi
+
+# Check if coreutils is in PATH
+system=$(uname -a)
+if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
+	type brew >/dev/null 2>&1
+	if [[ $? = 0 ]]; then
+		coreutils_path=$(brew --prefix coreutils 2>/dev/null)/libexec/gnubin
+		if [[ -d $coreutils_path && $PATH == *$coreutils_path* ]]; then
+			printf "coreutils detected in \$PATH... "
+			if ! $KEEP_PATH; then
+				printf "removing (run with -p to prevent this).\n"
+				export PATH=${PATH//$coreutils_path/''}
+				export PATH=${PATH//'::'/':'} # Remove any left over colons
+			else
+				printf "not removing.\n"
+			fi
+		fi
+	fi
+fi
+
+export HOME=$SCRIPTDIR/home
+export HOMESICK=$HOME/.homesick
+
+rm -rf $HOME
+mkdir -p $HOME
+
+source $SCRIPTDIR/link_homeshick.sh
+setup_homeshick
+
+if [[ -f $setup_script ]]; then
+	$setup_script
+fi
+
+cd $HOME
+
+exec /usr/bin/env $_shell
