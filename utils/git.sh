@@ -17,7 +17,7 @@ function git_shorthand {
 		printf -- "$1"
 		return
 	fi
-	if [[ $1 =~ ^([0-9A-Za-z-]+/[0-9A-Za-z_-\.]+)$ ]]; then
+	if [[ $1 =~ ^([0-9A-Za-z-]+/[0-9A-Za-z_\.-]+)$ ]]; then
 		printf -- "https://github.com/$1.git"
 		return
 	fi
