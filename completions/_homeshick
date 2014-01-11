@@ -34,7 +34,7 @@ _homeshick () {
 				(track)
 					_arguments \
 						'1: :_homeshick_castles' \
-						"*: :_homeshick_home_files" \
+						"*: :_path_files" \
 					&& ret=0
 				;;
 				(help)
@@ -61,10 +61,6 @@ _homeshick_castles()
 		castles+=($(_homeshick_basename "${repo%/.git}"))
 	done
 	_describe -t castles 'castle' castles && ret=0
-}
-
-_homeshick_home_files() {
-	_path_files -W $HOME
 }
 
 _homeshick_basename()
