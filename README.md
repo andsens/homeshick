@@ -28,5 +28,5 @@ printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.
 fish user:
 
 ```sh
-echo \n'source "$HOME/.homesick/repos/homeshick/bin/homeshick.fish"' >> "$HOME/.config/fish/config.fish"
+echo \n'source "$HOME/.homesick/repos/homeshick/homeshick.fish"' >> "$HOME/.config/fish/config.fish"
 ```
