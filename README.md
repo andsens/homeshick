@@ -25,7 +25,7 @@ csh and derivatives (i.e. tcsh):
 printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.csh"' >> $HOME/.cshrc
 ```
 
-fish user:
+fish shell:
 
 ```sh
 echo \n'source "$HOME/.homesick/repos/homeshick/homeshick.fish"' >> "$HOME/.config/fish/config.fish"
