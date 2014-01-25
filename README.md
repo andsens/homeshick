@@ -16,11 +16,17 @@ homeshick is installed to your own home directory and does not require root priv
 git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
 ```
 
-To invoke homeshick from sh and its derivates (bash, zsh, fish etc.) source the `homeshick.sh` script from your rc-script:
+To invoke homeshick from sh and its derivates (bash, zsh etc.) source the `homeshick.sh` script from your rc-script:
 ```sh
 printf '\nsource "$HOME/.homesick/repos/homeshick/homeshick.sh"' >> $HOME/.bashrc
 ```
 csh and derivatives (i.e. tcsh):
 ```sh
 printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.csh"' >> $HOME/.cshrc
+```
+
+fish user:
+
+```sh
+echo \n'source "$HOME/.homesick/repos/homeshick/bin/homeshick.fish"' >> "$HOME/.config/fish/config.fish"
 ```

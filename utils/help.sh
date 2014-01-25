@@ -46,7 +46,7 @@ function extended_help {
 	case $1 in
 		cd)
       printf "Enters a castle's home directory.\n"
-      printf "NOTE: For this to work, homeshick must be invoked via homeshick.{sh,csh}.\n\n"
+      printf "NOTE: For this to work, homeshick must be invoked via homeshick.{sh,csh,fish}.\n\n"
       printf "Usage:\n  homeshick cd CASTLE"
       ;;
 		clone)
