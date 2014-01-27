@@ -274,7 +274,99 @@ function ask_symlink {
 	return $EX_SUCCESS
 }
 
-# Snatched from http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format 
+function install_cloned_castle {
+	local cloned_castles=()
+	while [[ $# -gt 0 ]]; do
+		local git_repo=$(git_shorthand "$1")
+		local castle=$(repo_basename "$git_repo")
+		shift
+		local repo="$repos/$castle"
+		if [ ! -f $repo/install ]; then
+			continue;
+		fi
+		cloned_castles+=("$castle")
+	done
+	ask_install ${cloned_castles[*]}
+	return $EX_SUCCESS
+}
+
+function update_updated_castle {
+	local updated_castles=()
+	while [[ $# -gt 0 ]]; do
+		local castle=$1
+		shift
+		local repo="$repos/$castle"
+		if [ -f $repo/update ]; then
+			updated_castles+=("$castle");
+		fi
+	done
+	ask_update ${updated_castles[*]}
+	return $EX_SUCCESS
+}
+
+function ask_update {
+	if [[ $# -gt 0 ]]; then
+		if [[ $# == 1 ]]; then
+			msg="The castle $1 can be updated."
+		else
+			OIFS=$IFS
+			IFS=,
+			msg="The castles $* can be updated."
+			IFS=$OIFS
+		fi
+		prompt_no 'updates' "$msg" 'update?'
+		if [[ $? = 0 ]]; then
+			for castle in $*; do
+				update "$castle"
+			done
+		fi
+	fi
+	return $EX_SUCCESS
+}
+
+function ask_install {
+	if [[ $# -gt 0 ]]; then
+		if [[ $# == 1 ]]; then
+			msg="The castle $1 can be installed."
+		else
+			OIFS=$IFS
+			IFS=,
+			msg="The castles $* can be installed."
+			IFS=$OIFS
+		fi
+		prompt_no 'NEW ' "$msg" 'install?'
+		if [[ $? = 0 ]]; then
+			for castle in $*; do
+				install "$castle"
+			done
+		fi
+	fi
+	return $EX_SUCCESS
+}
+
+function update {
+	local castle=$1
+        	castle_exists "$castle"
+        	local repo="$repos/$castle"
+        	if [ -f $repo/update ]; then
+        		$repo/update;
+        	else
+        		echo $castle " doesn't contain an update file!";
+        	fi
+}
+
+function install {
+	local castle=$1
+        	castle_exists "$castle"
+        	local repo="$repos/$castle"
+        	if [ -f $repo/install ]; then
+        		$repo/install;
+        	else
+        		echo $castle " doesn't contain an install file";
+        	fi
+}
+
+# Snatched from http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
 function version_compare {
 	if [[ $1 == $2 ]]; then
 		return 0

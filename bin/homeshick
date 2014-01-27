@@ -55,7 +55,7 @@ done
 [[ $# -gt 0 ]] || cmd="help"
 
 # Get the subcommand
-valid_commands=(cd clone generate list check updates refresh pull symlink link track help)
+valid_commands=(cd clone generate list check updates refresh pull symlink link track help install update)
 if [[ ! $cmd ]]; then
 	if [[ " ${valid_commands[*]} " =~ " $1 " ]]; then
 		cmd=$1
@@ -87,7 +87,7 @@ while [[ $# -gt 0 ]]; do
 	fi
 
 	case $cmd in
-		cd | clone | generate | check | updates | pull | symlink | link)
+		cd | clone | generate | check | updates | pull | symlink | link |install | update)
 			params+=("$1")
 			shift; continue ;;
 		refresh)
@@ -107,7 +107,7 @@ done
 # If no additional arguments are given, run the subcommand for every castle
 if [[ ! $params ]]; then
 	case $cmd in
-		check | updates | refresh | pull | symlink | link)
+		check | updates | refresh | pull | symlink | link | install | update)
 			while IFS= read -d $'\n' -r name ; do
 				params+=("$name")
 			done < <(list_castle_names) ;;
@@ -133,6 +133,8 @@ case $cmd in
 				pull)          pull "$param"                ;;
 				symlink|link)  symlink "$param"             ;;
 				track)         track "$castle" "$param"     ;;
+				install)	     install "$param" 	;;
+				update)	update "$param"	;;
 			esac
 			result=$?
 			if [[ $exit_status == 0 && $result != 0 ]]; then
@@ -140,9 +142,9 @@ case $cmd in
 			fi
 		done
 		case $cmd in
-			clone)   symlink_cloned_files ${params[*]}      ;;
-			refresh) pull_outdated $threshhold ${params[*]} ;;
-			pull)    symlink_new_files ${params[*]}         ;;
+			clone)   install_cloned_castle ${params[*]} ; symlink_cloned_files ${params[*]}     ;;
+			refresh) update_updated_castle ${params[*]} ; pull_outdated $threshhold ${params[*]} 	;;
+			pull)   iupdate_updated_castle ${params[*]} ;  symlink_new_files ${params[*]} ;         ;;
 		esac
 		result=$?
 		if [[ $exit_status == 0 && $result != 0 ]]; then

@@ -103,18 +103,18 @@ EOF
 
 		mkdir -p .config/foo.conf
 		cat > .config/foo.conf/a.conf <<EOF
-#I am just a regular config file 
+#I am just a regular config file
 [A]
 LikesIceCream=True
 EOF
 		cat > .config/bar.dir <<EOF
-#And I am just a regular config file with a weird name 
+#And I am just a regular config file with a weird name
 [B]
 LikesCucumber=False
 EOF
 		git add .config
 		git commit -m 'Files added for my new dotfiles repo'
-		
+
 		mkdir .ssh
 		cat > .ssh/known_hosts <<EOF
 github.com,207.97.227.239 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
@@ -167,5 +167,17 @@ EOF
 
 		git add .repowithspacesfile
 		git commit -m 'Add file to repo with spaces in name'
+	) > /dev/null
+
+	local install_update="$REPO_FIXTURES/install_update"
+	(
+		git init $install_update
+		cd $install_update
+		git config user.name $git_username
+		git config user.email $git_useremail
+		echo "#!/bin/bash" > install
+		echo "cp install update" >> install
+		git add install
+		git commit -m 'Add file to repo with install script'
 	) > /dev/null
 }
