@@ -19,6 +19,8 @@ printf "homes${bldblu}h${txtdef}ick uses git in concert with symlinks to track y
   homeshick link [CASTLE..]           # Symlinks all dotfiles from a castle
   homeshick track CASTLE FILE..       # Add a file to a castle
   homeshick help [TASK]               # Show usage of a task
+  homeshick install CASTLE            # Install the castle
+  homeshick update CASTLE             # Update the castle
 
  Aliases:
   symlink # Alias to link
@@ -87,6 +89,15 @@ function extended_help {
       printf "Shows usage of a task\n"
       printf "Usage:\n  homeshick help [TASK]"
       ;;
+              install)
+      printf "Installs the castle if the install file exists.\n"
+      printf "Usage:\n  homeshick install CASTLE"
+      ;;
+              update)
+      printf "Updates the castle if the update file exists.\n"
+      printf "Usage:\n  homeshick update CASTLE"
+      ;;
+
 		*)    help  ;;
 		esac
 	printf "\n\n"
