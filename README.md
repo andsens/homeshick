@@ -1,9 +1,19 @@
 homeshick
 =========
-homeshick keeps your dotfiles up to date using only git and bash.
-It can handle many dotfile repositories at once, so you can beef up your own dotfiles
-with bigger projects like [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) and still
-keep everything organized.
+In Unix, configuration files are king.  
+Tailoring tools to suit your needs through configuration can be empowering.  
+An immense number of hours is spent on getting these adjustments just right,
+but once you leave the confines of your own computer, these local optimizations are left behind.
+
+By the power of git, homeshick enables you to bring the symphony of settings
+you have poured your heart into with you to remote computers.
+With it you can begin to focus even more energy on bettering your work environment
+since the benefits are reaped on whichever machine you are using.
+
+However bare bones these machines are, provided that at least bash 3 and git 1.5 are available you can use homeshick.
+homeshick can handle multiple dotfile repositories. This means that you can install
+larger frameworks like [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
+or a multitude of emacs or vim plugins alongside your own customizations without clutter.
 
 For detailed [installation instructions](https://github.com/andsens/homeshick/wiki/Installation), [tutorials](https://github.com/andsens/homeshick/wiki/Tutorials) and [tips](https://github.com/andsens/homeshick/wiki/Automatic-deployment) & [tricks](https://github.com/andsens/homeshick/wiki/Symlinking) have a look at the [wiki](https://github.com/andsens/homeshick/wiki).
 
