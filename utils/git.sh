@@ -78,14 +78,20 @@ function pull {
 	local git_out
 	git_out=$(cd "$repo"; git pull 2>&1)
 	[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to pull $repo. Git says:" "$git_out"
-
-	version_compare $GIT_VERSION 1.6.5
+	
+	version_compare $GIT_VERSION 1.8.2
 	if [[ $? != 2 ]]; then
-		git_out=$(cd "$repo"; git submodule update --recursive --init 2>&1)
+		git_out=$(cd "$repo"; git submodule update --remote --recursive --init 2>&1)
 		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
 	else
-		git_out=$(cd "$repo"; git submodule update --init 2>&1)
-		[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
+		version_compare $GIT_VERSION 1.6.5
+		if [[ $? != 2 ]]; then
+			git_out=$(cd "$repo"; git submodule update --recursive --init 2>&1)
+			[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
+		else
+			git_out=$(cd "$repo"; git submodule update --init 2>&1)
+			[[ $? == 0 ]] || err $EX_SOFTWARE "Unable update submodules for $repo. Git says:" "$git_out"
+		fi
 	fi
 	success
 	return $EX_SUCCESS
