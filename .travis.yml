@@ -1,5 +1,8 @@
 language: c
-install: git clone https://github.com/sstephenson/bats.git
+install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq expect
+  - git clone https://github.com/sstephenson/bats.git
 script: bats/bin/bats --tap test/suites
 notifications:
   email:
