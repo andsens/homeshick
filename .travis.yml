@@ -1,0 +1,6 @@
+language: c
+install: git clone https://github.com/sstephenson/bats.git
+script: bats/bin/bats --tap test/suites
+notifications:
+  email:
+    on_success: never
