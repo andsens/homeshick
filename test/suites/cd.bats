@@ -9,6 +9,13 @@ load ../helper
 	[[ $dotfiles_dir == $result ]]
 }
 
+@test 'cd to dotfiles castle subdirectory' {
+	castle 'dotfiles'
+	local dotfiles_dir=$HOMESICK/repos/dotfiles/home/.config/foo.conf
+	local result=$($HOMESHICK_FN cd dotfiles/home/.config/foo.conf && pwd)
+	[[ $dotfiles_dir == $result ]]
+}
+
 @test 'cd to my_module castle' {
 	castle 'module-files'
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/my_module
