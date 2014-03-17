@@ -20,6 +20,22 @@ if [[ -z $_shell ]]; then
 	_shell=$SHELL
 fi
 
+# Replacement function for the run fn in bats
+run() {
+	local e E T
+	[[ ! "$-" =~ e ]] || e=1
+	[[ ! "$-" =~ E ]] || E=1
+	[[ ! "$-" =~ T ]] || T=1
+	set +e
+	set +E
+	set +T
+	output="$("$@" 2>&1)"
+	status="$?"
+	IFS=$'\n' lines=($output)
+	[ -z "$e" ] || set -e
+	[ -z "$E" ] || set -E
+	[ -z "$T" ] || set -T
+}
 source $SCRIPTDIR/helper.bash
 export_env_vars
 setup_env
