@@ -36,4 +36,11 @@ EOF
 	# Create a branch with a slash in it.
 	# Used for list suite unit test testSlashInBranch()
 	git branch branch/with/slash
+
+	cat > .gitignore <<EOF
+.DS_Store
+*.swp
+EOF
+	git add .gitignore
+	git commit -m 'Added .gitignore file'
 ) > /dev/null

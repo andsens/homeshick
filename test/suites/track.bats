@@ -123,3 +123,65 @@ EOF
 	local git_status=$(cd $HOMESICK/repos/rc-files; git status --porcelain)
 	[[ "A  home/.zshrc" == "$git_status" ]]
 }
+
+@test 'track folder' {
+	castle 'rc-files'
+	mkdir -p $HOME/.somefolder/subfolder/stuff
+	touch $HOME/.somefolder/file1
+	touch $HOME/.somefolder/subfolder/file2
+	touch $HOME/.somefolder/subfolder/file3
+	touch $HOME/.somefolder/subfolder/stuff/file4
+	$HOMESHICK_FN track rc-files $HOME/.somefolder
+	[[ -e $HOMESICK/repos/rc-files/home/.somefolder/file1 ]]
+	[[ -e $HOMESICK/repos/rc-files/home/.somefolder/subfolder/file2 ]]
+	[[ -e $HOMESICK/repos/rc-files/home/.somefolder/subfolder/file3 ]]
+	[[ -e $HOMESICK/repos/rc-files/home/.somefolder/subfolder/stuff/file4 ]]
+}
+
+@test "don't track ignored file" {
+	castle 'rc-files'
+	mkdir $HOME/.folder
+	touch $HOME/.folder/somefile.swp
+	$HOMESHICK_FN track rc-files $HOME/.folder/somefile.swp
+	[[ ! -e $HOMESICK/repos/rc-files/home/.folder/somefile.swp ]]
+}
+
+@test "don't track ignored files in folder" {
+	castle 'rc-files'
+	mkdir $HOME/.folder
+	touch $HOME/.folder/somefile.swp
+	touch $HOME/.folder/trackthisthough
+	$HOMESHICK_FN track rc-files $HOME/.folder/
+	[[ ! -e $HOMESICK/repos/rc-files/home/.folder/somefile.swp ]]
+	[[ -e $HOMESICK/repos/rc-files/home/.folder/trackthisthough ]]
+}
+
+@test 'track folder with spaces in name' {
+	castle 'rc-files'
+	mkdir -p $HOME/.some\ folder/sub\ folder/stuff
+	touch $HOME/.some\ folder/file
+	touch $HOME/.some\ folder/sub\ folder/stuff/other\ file
+	$HOMESHICK_FN track rc-files $HOME/.some\ folder
+	[[ -e $HOMESICK/repos/rc-files/home/.some\ folder/file ]]
+	[[ -e $HOMESICK/repos/rc-files/home/.some\ folder/sub\ folder/stuff/other\ file ]]
+}
+
+
+@test 'track with globbing' {
+	castle 'rc-files'
+	mkdir -p $HOME/.folder/subfolder $HOME/.folder/subfolder2
+	touch $HOME/.folder/ignored.swp
+	touch $HOME/.folder/notglobbed.bash
+	touch $HOME/.folder/globbed2.exclude
+	touch $HOME/.folder/subfolder/this_as_well.bash
+	touch $HOME/.folder/subfolder2/and_this.bash
+	$HOMESHICK_FN track rc-files $HOME/.folder/**/*.bash
+	[[ ! -e $HOMESICK/repos/rc-files/home/.folder/ignored.swp ]]
+	# The next line is rather weird. You can actually write both lines
+	# on OSX and the test still passes. Haven't figured out why...
+	# [[ -e $HOMESICK/repos/rc-files/home/.folder/notglobbed.bash ]]
+	[[ ! -e $HOMESICK/repos/rc-files/home/.folder/notglobbed.bash ]]
+	[[ ! -e $HOMESICK/repos/rc-files/home/.folder/globbed2.exclude ]]
+	[[ -e $HOMESICK/repos/rc-files/home/.folder/subfolder/this_as_well.bash ]]
+	[[ -e $HOMESICK/repos/rc-files/home/.folder/subfolder2/and_this.bash ]]
+}
