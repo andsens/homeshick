@@ -87,7 +87,7 @@ function is_symlink {
 	expected=$1
 	path=$2
 	target=$(readlink "$path")
-	[[ $expected == $target ]]
+	[ "$expected" = "$target" ]
 }
 
 function get_inode_no {

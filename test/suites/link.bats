@@ -6,7 +6,7 @@ load ../helper
 	castle 'rc-files'
 	touch $HOME/.bashrc
 	$HOMESHICK_FN --batch link rc-files
-	[[ -f $HOME/.bashrc && ! -L $HOME/.bashrc ]]
+	[ -f "$HOME/.bashrc" -a ! -L "$HOME/.bashrc" ]
 }
 
 @test 'overwrite file with link when the prompt is answered with yes' {
@@ -24,14 +24,14 @@ ${esc}1;36m   overwrite?${esc}0m ${open_bracket}yN${close_bracket}"
 			send "y\n"
 			expect EOF
 EOF
-	[[ -L $HOME/.bashrc ]]
+	[ -L "$HOME/.bashrc" ]
 }
 
 @test "don't overwrite file or prompt for it when linking and --skip is on" {
 	castle 'rc-files'
 	touch $HOME/.bashrc
 	$HOMESHICK_FN --skip link rc-files
-	[[ -f $HOME/.bashrc && ! -L $HOME/.bashrc ]]
+	[ -f "$HOME/.bashrc" -a ! -L "$HOME/.bashrc" ]
 }
 
 @test 'existing symlinks are not relinked when running link' {
@@ -40,7 +40,7 @@ EOF
 	local inode_before=$(get_inode_no $HOME/.my_module)
 	$HOMESHICK_FN --batch link module-files
 	local inode_after=$(get_inode_no $HOME/.my_module)
-	[[ $inode_before == $inode_after ]]
+	[ "$inode_before" -eq "$inode_after" ]
 }
 
 @test 'traverse into the folder structure when linking' {
@@ -57,31 +57,31 @@ EOF
 A=True
 EOF
 	
-	[[ -f $HOME/.config/foo.conf ]]
+	[ -f "$HOME/.config/foo.conf" ]
 	#.config/foo.conf should be overwritten by a directory of the same name
-	[[ -d $HOME/.config/bar.dir ]]
+	[ -d "$HOME/.config/bar.dir" ]
 	#.config/bar.dir should be overwritten by a file of the same name
 	$HOMESHICK_FN --batch --force link dotfiles
-	[[ -d $HOME/.config/foo.conf ]]
-	[[ -f $HOME/.config/bar.dir ]]
+	[ -d "$HOME/.config/foo.conf" ]
+	[ -f "$HOME/.config/bar.dir" ]
 }
 
 @test 'treat symlinked directories in the castle like files when linking' {
 	castle 'module-files'
 	$HOMESHICK_FN --batch link module-files
-	[[ -L $HOME/.my_module ]]
+	[ -L "$HOME/.my_module" ]
 }
 
 @test '.git directories are not symlinked' {
 	castle 'dotfiles'
 	$HOMESHICK_FN --batch link dotfiles
-	[[ ! -e $HOME/.vim/.git ]]
+	[ ! -e "$HOME/.vim/.git" ]
 }
 
 @test 'link a castle with spaces in its name' {
 	castle 'repo with spaces in name'
 	$HOMESHICK_FN --batch link repo\ with\ spaces\ in\ name
-	[[ -f $HOME/.repowithspacesfile ]]
+	[ -f "$HOME/.repowithspacesfile" ]
 }
 
 @test 'pass multiple castlenames to link' {

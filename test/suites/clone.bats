@@ -10,7 +10,7 @@ load ../helper
 @test 'clone a repo with spaces in name' {
 	fixture 'repo with spaces in name'
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/repo\ with\ spaces\ in\ name
-	[[ -d "$HOMESICK/repos/repo with spaces in name" ]]
+	[ -d "$HOMESICK/repos/repo with spaces in name" ]
 }
 
 @test 'prompt for symlinking after clone' {
@@ -28,11 +28,11 @@ ${esc}1;36m     symlink?${esc}0m ${open_bracket}yN${close_bracket} " {} default 
 			send "y\n"
 			expect EOF
 EOF
-	[[ -f $HOME/.bashrc ]]
+	[ -f "$HOME/.bashrc" ]
 }
 
 @test 'clone repo with dot in its name' {
 	fixture '135.abc'
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/135.abc
-	[[ -e "$HOMESICK/repos/135.abc" ]]
+	[ -e "$HOMESICK/repos/135.abc" ]
 }
