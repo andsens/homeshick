@@ -115,5 +115,7 @@ function home_exists {
 }
 
 function abs_path {
-	(cd "${1%/*}" &>/dev/null; printf "%s/%s" "$(pwd)" "${1##*/}")
+	local dir=$(dirname "$1")
+	local base=$(basename "$1")
+	(cd "$dir" &>/dev/null; printf "%s/%s" "$(pwd)" "$base")
 }
