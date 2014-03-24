@@ -54,7 +54,7 @@ function mk_structure {
 
 function rm_structure {
 	# Make sure _TMPDIR wasn't unset
-	[[ -n $_TMPDIR ]] && find "${_TMPDIR}" -mindepth 1 -delete
+	[[ -n $_TMPDIR ]] && rm -rf $_TMPDIR
 }
 
 function setup_env {
