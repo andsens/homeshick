@@ -103,3 +103,14 @@ EOF
 	is_symlink $HOMESICK/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
 	is_symlink "$HOMESICK/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
 }
+
+@test 'fail when linking file with newline' {
+	castle 'rc-files'
+	touch "$HOMESICK/repos/rc-files/home/filename
+newline"
+	$HOMESHICK_FN --batch link rc-files
+	[ -L "$HOME/filename" ]
+	[ -L "$HOME/newline" ]
+	is_symlink $HOMESICK/repos/rc-files/home/filename $HOME/filename
+	is_symlink newline $HOME/newline
+}
