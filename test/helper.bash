@@ -93,3 +93,48 @@ function is_symlink {
 function get_inode_no {
 	stat -c %i $1 2>/dev/null || stat -f %i $1
 }
+
+# Snatched from http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format 
+function version_compare {
+	if [[ $1 == $2 ]]; then
+		return 0
+	fi
+	local IFS=.
+	local i ver1=($1) ver2=($2)
+	# fill empty fields in ver1 with zeros
+	for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do
+		ver1[i]=0
+	done
+	for ((i=0; i<${#ver1[@]}; i++)); do
+		if [[ -z ${ver2[i]} ]]; then
+			# fill empty fields in ver2 with zeros
+			ver2[i]=0
+		fi
+		if ((10#${ver1[i]} > 10#${ver2[i]})); then
+			return 1
+		fi
+		if ((10#${ver1[i]} < 10#${ver2[i]})); then
+			return 2
+		fi
+	done
+	return 0
+}
+
+function mock_git_version {
+	# To mock a git version we simply create a function wrapper for it
+	# and forward all calls to git except `git --version`
+	local real_git=$(which git)
+	eval "
+		function git {
+			if [[ \$1 == '--version' ]]; then
+					echo "git version $1"
+					return 0
+				else
+					$real_git "\$@"
+					return \$?
+			fi
+		}
+	"
+	# The function needs to be exported for it to work in child processes
+	export -f git
+}

@@ -182,3 +182,28 @@ EOF
 	[ -e $HOMESICK/repos/rc-files/home/.folder/subfolder/this_as_well.bash ]
 	[ -e $HOMESICK/repos/rc-files/home/.folder/subfolder2/and_this.bash ]
 }
+
+@test 'track file in new folder with git version >= 1.8.2' {
+	castle 'rc-files'
+	GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
+	[[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]] && skip 'could not detect git version'
+	run version_compare $GIT_VERSION 1.8.2
+	[[ $? == 2 ]] && skip 'git version too low'
+
+	mkdir $HOME/.folder
+	touch $HOME/.folder/ignored.swp
+	$HOMESHICK_FN track rc-files $HOME/.folder/ignored.swp
+	[ ! -e $HOMESICK/repos/rc-files/home/.folder/ignored.swp ]
+	[ ! -e $HOMESICK/repos/rc-files/home/.folder ]
+}
+
+@test 'track file in new folder with mocked git version < 1.8.2' {
+	castle 'rc-files'
+	mock_git_version 1.8.0
+
+	mkdir $HOME/.folder
+	touch $HOME/.folder/ignored.swp
+	$HOMESHICK_FN track rc-files $HOME/.folder/ignored.swp
+	[ ! -e $HOMESICK/repos/rc-files/home/.folder/ignored.swp ]
+	[ -e $HOMESICK/repos/rc-files/home/.folder ]
+}
