@@ -44,3 +44,4 @@ EX_SIGTERM=130    # Script terminated by Control-C          ## source: A
 EX_AHEAD=85       # local HEAD is ahead of its upstream branch
 EX_BEHIND=86      # local HEAD is behind its upstream branch
 EX_TH_EXCEEDED=87 # Time since last repository update is larger than the threshhold
+EX_MODIFIED=88    # local working directory has modified files
