@@ -46,5 +46,5 @@ if [[ -f $setup_script ]]; then
 fi
 
 cd $HOME
-
-exec /usr/bin/env $_shell
+/usr/bin/env $_shell
+rm_structure
