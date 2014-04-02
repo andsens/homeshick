@@ -2,7 +2,7 @@
 
 load ../helper
 
-@test 'check and up to date castle' {
+@test 'check an up to date castle' {
 	$EXPECT_INSTALLED || skip 'expect not installed'
 
 	castle 'rc-files'
