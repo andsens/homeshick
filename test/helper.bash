@@ -130,8 +130,15 @@ function mock_git_version {
 					echo "git version $1"
 					return 0
 				else
+					local res
+					# Some variable expansions used by git internally may break,
+					# if we just forward the arguments with '\$@',
+					# so we unset this function until the execution is completed.
+					unset git
 					$real_git "\$@"
-					return \$?
+					res=\$?
+					mock_git_version $1
+					return \$res
 			fi
 		}
 	"
