@@ -25,7 +25,7 @@ function export_env_vars {
 	fi
 }
 
-function remove_path {
+function remove_coreutils_from_path {
 	# Check if coreutils is in PATH
 	system=$(uname -a)
 	if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
@@ -58,8 +58,8 @@ function rm_structure {
 }
 
 function setup_env {
+	remove_coreutils_from_path
 	export_env_vars
-	remove_path
 	mk_structure
 	source $HOMESHICK_FN_SRC
 }
