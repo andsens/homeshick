@@ -6,7 +6,7 @@ function export_env_vars {
 	else
 		export TESTDIR=$(cd "${SCRIPTDIR}"; printf "$(pwd)")
 	fi
-	export _TMPDIR=$(mktemp -d)
+	export _TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t homeshick)
 	export REPO_FIXTURES="${_TMPDIR}/repos"
 	export HOME="${_TMPDIR}/home"
 	export NOTHOME="${_TMPDIR}/nothome"
