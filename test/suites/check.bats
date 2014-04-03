@@ -3,17 +3,22 @@
 load ../helper
 
 function add_new_file_to_castle {
-	cd "$HOMESICK/repos/rc-files";
+	cd "$HOMESICK/repos/rc-files"
 	touch homeshick_new_file_bats_test
 }
 
+function add_empty_folder_to_castle {
+	cd "$HOMESICK/repos/rc-files"
+	mkdir homeshick_new_folder_bats_test
+}
+
 function modify_file_in_castle {
-	cd "$HOMESICK/repos/rc-files";
+	cd "$HOMESICK/repos/rc-files"
 	echo modify >> $(find home -type f | head -1)
 }
 
 function delete_file_in_castle {
-	cd "$HOMESICK/repos/rc-files";
+	cd "$HOMESICK/repos/rc-files"
 	rm $(find home -type f | head -1)
 }
 
@@ -199,6 +204,37 @@ EOF
 @test 'check a castle with a deleted file' {
 	castle 'rc-files'
 	(delete_file_in_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 88 ] # EX_MODIFIED
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
+	esc="\\u001b\\u005b"
+	cat <<EOF | expect -f -
+			spawn $HOMESHICK_BIN check rc-files
+			expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;31m     modified${esc}0m rc-files\r\n" {} default {exit 1}
+EOF
+}
+
+@test 'check a castle with a new empty folder' {
+	castle 'rc-files'
+	(add_empty_folder_to_castle)
+	$HOMESHICK_FN check rc-files
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
+	esc="\\u001b\\u005b"
+	cat <<EOF | expect -f -
+			spawn $HOMESHICK_BIN check rc-files
+			expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;32m   up to date${esc}0m rc-files\r\n" {} default {exit 1}
+EOF
+}
+
+@test 'check a castle with a new folder and file in it' {
+	castle 'rc-files'
+	(
+		add_empty_folder_to_castle
+		cd "$HOMESICK/repos/rc-files"
+		touch homeshick_new_folder_bats_test/some_file
+	)
 	run $HOMESHICK_FN check rc-files
 	[ $status -eq 88 ] # EX_MODIFIED
 
