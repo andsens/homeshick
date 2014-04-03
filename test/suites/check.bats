@@ -32,9 +32,10 @@ EOF
 }
 
 @test 'check an up to date castle' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
+	$HOMESHICK_FN check rc-files
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -43,9 +44,10 @@ EOF
 }
 
 @test 'check an up to date castle with spaces in castle name' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'repo with spaces in name'
+	$HOMESHICK_FN check 'repo with spaces in name'
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check "repo with spaces in name"
@@ -54,10 +56,12 @@ EOF
 }
 
 @test 'check a castle that is behind upstream' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^1)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 86 ] # EX_BEHIND
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -66,10 +70,12 @@ EOF
 }
 
 @test 'check a castle that is behind upstream with a new file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^; add_new_file_to_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 86 ] # EX_BEHIND
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -78,10 +84,12 @@ EOF
 }
 
 @test 'check a castle that is behind upstream with a modified file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^1; modify_file_in_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 86 ] # EX_BEHIND
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -90,10 +98,12 @@ EOF
 }
 
 @test 'check a castle that is behind upstream with a deleted file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^1; delete_file_in_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 86 ] # EX_BEHIND
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -102,10 +112,12 @@ EOF
 }
 
 @test 'check a castle that is ahead of upstream' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(add_commit_to_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 85 ] # EX_AHEAD
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -114,10 +126,12 @@ EOF
 }
 
 @test 'check a castle that is ahead of upstream with a new file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(add_commit_to_castle; add_new_file_to_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 85 ] # EX_AHEAD
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -126,10 +140,12 @@ EOF
 }
 
 @test 'check a castle that is ahead of upstream with a modified file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(add_commit_to_castle; modify_file_in_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 85 ] # EX_AHEAD
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -138,10 +154,12 @@ EOF
 }
 
 @test 'check a castle that is ahead of upstream with a deleted file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(add_commit_to_castle; delete_file_in_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 85 ] # EX_AHEAD
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -151,10 +169,12 @@ EOF
 
 
 @test 'check a castle with a new file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(add_new_file_to_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 88 ] # EX_MODIFIED
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -163,10 +183,12 @@ EOF
 }
 
 @test 'check a castle with a modified file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(modify_file_in_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 88 ] # EX_MODIFIED
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
@@ -175,10 +197,12 @@ EOF
 }
 
 @test 'check a castle with a deleted file' {
-	$EXPECT_INSTALLED || skip 'expect not installed'
-
 	castle 'rc-files'
 	(delete_file_in_castle)
+	run $HOMESHICK_FN check rc-files
+	[ $status -eq 88 ] # EX_MODIFIED
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
 	esc="\\u001b\\u005b"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN check rc-files
