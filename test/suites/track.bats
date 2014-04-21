@@ -207,3 +207,19 @@ EOF
 	[ ! -e $HOMESICK/repos/rc-files/home/.folder/ignored.swp ]
 	[ -e $HOMESICK/repos/rc-files/home/.folder ]
 }
+
+@test 'track should create link with same access permissions as file' {
+	castle 'rc-files'
+	file=$HOMESICK/repos/rc-files/home/.zshrc
+	link=$HOME/.zshrc
+	cat > $link <<EOF
+homeshick --batch refresh
+EOF
+	chmod 0600 $link
+	$HOMESHICK_FN track rc-files $HOME/.zshrc
+
+	is_symlink $file $link
+	file_octal=$(octal_access $file)
+	link_octal=$(octal_access $link)
+	[ $link_octal = $file_octal ]
+}

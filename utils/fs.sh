@@ -53,7 +53,7 @@ function symlink {
 		if [[ ! -d $remote || -L $remote ]]; then
 			# $remote is not a real directory so we create a symlink to it
 			pending 'symlink' "$filename"
-			ln -s "$remote" "$local"
+			link "$remote" "$local"
 		else
 			pending 'directory' "$filename"
 			mkdir "$local"
@@ -117,7 +117,7 @@ function track {
 		local remote_folder=$(dirname "$remote")
 		mkdir -p "$remote_folder"
 		mv -f "$local" "$remote"
-		ln -s "$remote" "$local"
+		link "$remote" "$local"
 
 		local git_out
 		git_out=$(cd "$repo"; git add "$rel_remote" 2>&1)
@@ -134,6 +134,34 @@ function track {
 		success
 	done
 	return $EX_SUCCESS
+}
+
+function link {
+	local file=$1
+	local link=$2
+
+	local octal=$(octal_access "$file")
+
+	local orig_umask=$(umask)
+
+	local local_umask=$(expr 0777 - $octal)
+	umask $local_umask
+
+	ln -s "$file" "$link"
+
+	umask $orig_umask
+}
+
+function octal_access {
+	local stat=$(which stat)
+	local file=$1
+	# Main linux stat variant
+	local octal=$($stat -c '%a' "$file" 2> /dev/null)
+	if [[ -z $octal ]]; then
+		# Gets octal access on Mac
+		octal=$($stat -f '%Mp%Lp' "$file")
+	fi
+	echo $octal
 }
 
 function castle_exists {

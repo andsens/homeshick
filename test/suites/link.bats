@@ -114,3 +114,15 @@ newline"
 	is_symlink $HOMESICK/repos/rc-files/home/filename $HOME/filename
 	is_symlink newline $HOME/newline
 }
+
+@test 'link should have same access permissions as file' {
+	castle 'rc-files'
+	file="$HOMESICK/repos/rc-files/home/filename"
+	touch $file
+	chmod 0600 $file
+	$HOMESHICK_FN --batch link rc-files
+	is_symlink $file $HOME/filename
+	file_octal=$(octal_access $file)
+	link_octal=$(octal_access $HOME/filename)
+	[ $link_octal = $file_octal ]
+}
