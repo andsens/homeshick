@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source "$BATS_TEST_DIRNAME/../../utils/fs.sh"
+
 function export_env_vars {
 	if [[ -n $BATS_TEST_DIRNAME ]]; then
 		export TESTDIR=$(cd "${BATS_TEST_DIRNAME}/.."; printf "$(pwd)")
