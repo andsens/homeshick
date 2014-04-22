@@ -35,3 +35,9 @@ printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.
 # fish shell
 echo \n'source "$HOME/.homesick/repos/homeshick/homeshick.fish"' >> "$HOME/.config/fish/config.fish"
 ```
+
+Contributing
+------------
+
+Before submitting pull requests or reporting bugs, please make sure to read
+the [contribution guidelines](CONTRIBUTING.md).
