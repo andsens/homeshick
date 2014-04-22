@@ -21,22 +21,23 @@ Quick install
 -------------
 
 homeshick is installed to your own home directory and does not require root privileges to be installed.
-
 ```sh
 git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
 ```
+*Note: If you'd like to help testing new features before they are released use `git clone --branch testing git://...`*
 
-To invoke homeshick from sh and its derivates (bash, zsh etc.) source the `homeshick.sh` script from your rc-script:
+To invoke homeshick, source the `homeshick.sh` script from your rc-script:
 ```sh
+# from sh and its derivates (bash, zsh etc.) 
 printf '\nsource "$HOME/.homesick/repos/homeshick/homeshick.sh"' >> $HOME/.bashrc
-```
-csh and derivatives (i.e. tcsh):
-```sh
+# csh and derivatives (i.e. tcsh)
 printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.csh"' >> $HOME/.cshrc
-```
-
-fish shell:
-
-```sh
+# fish shell
 echo \n'source "$HOME/.homesick/repos/homeshick/homeshick.fish"' >> "$HOME/.config/fish/config.fish"
 ```
+
+Contributing
+------------
+
+Before submitting pull requests or reporting bugs, please make sure to read
+the [contribution guidelines](CONTRIBUTING.md).
