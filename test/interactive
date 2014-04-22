@@ -43,6 +43,8 @@ setup_env
 setup_script="${SCRIPTDIR}/setup.sh"
 if [[ -f $setup_script ]]; then
 	$setup_script
+else
+	"${SCRIPTDIR}/setup-default.sh"
 fi
 
 cd $HOME
