@@ -40,23 +40,3 @@ function symlink_new_files {
 	ask_symlink ${updated_castles[*]}
 	return $EX_SUCCESS
 }
-
-function ask_symlink {
-	if [[ $# -gt 0 ]]; then
-		if [[ $# == 1 ]]; then
-			msg="The castle $1 has new files."
-		else
-			OIFS=$IFS
-			IFS=,
-			msg="The castles $* have new files."
-			IFS=$OIFS
-		fi
-		prompt_no 'updates' "$msg" 'symlink?'
-		if [[ $? = 0 ]]; then
-			for castle in $*; do
-				symlink "$castle"
-			done
-		fi
-	fi
-	return $EX_SUCCESS
-}
