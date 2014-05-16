@@ -48,7 +48,7 @@ function mk_structure {
 	mkdir -p $hs_repo
 	ln -s $(cd "${TESTDIR}/.."; printf "$(pwd)")/homeshick.sh "${hs_repo}/homeshick.sh"
 	ln -s $(cd "${TESTDIR}/../bin"; printf "$(pwd)") "${hs_repo}/bin"
-	ln -s $(cd "${TESTDIR}/../utils"; printf "$(pwd)") "${hs_repo}/utils"
+	ln -s $(cd "${TESTDIR}/../lib"; printf "$(pwd)") "${hs_repo}/lib"
 	ln -s $(cd "${TESTDIR}/../completions"; printf "$(pwd)") "${hs_repo}/completions"
 }
 
@@ -74,7 +74,7 @@ function teardown {
 
 function fixture {
 	local name=$1
-	[[ -e "${REPO_FIXTURES}/$name" ]] || source "${TESTDIR}/fixtures/${name}.bash"
+	[[ -e "${REPO_FIXTURES}/$name" ]] || source "${TESTDIR}/fixtures/${name}.sh"
 }
 
 function castle {

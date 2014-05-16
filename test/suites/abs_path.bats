@@ -4,7 +4,7 @@ load ../helper
 
 function setup() {
 	setup_env
-	source $HOMESICK/repos/homeshick/utils/fs.sh
+	source $HOMESICK/repos/homeshick/lib/fs.sh
 }
 
 @test 'test simple filepath' {

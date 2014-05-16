@@ -6,11 +6,9 @@ homeshick="$repos/homeshick"
 # scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # The install script however symlinks us. So $0 changes.
 
-source $homeshick/utils/log.sh
-source $homeshick/utils/fs.sh
-source $homeshick/utils/git.sh
-source $homeshick/utils/help.sh
-source $homeshick/utils/exit_status.sh
+for file in $(find -H $homeshick/lib); do
+	source $file
+done
 
 exit_status=$EX_SUCCESS
 
