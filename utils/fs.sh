@@ -11,9 +11,9 @@ function symlink {
 	fi
 	oldIFS=$IFS
 	IFS=$'\n'
-	for remote in $(find "$repo/home" -mindepth 1 -name .git -prune -o -print); do
+	for filename in $(get_repo_files $repo); do
+		remote="$repo/home/$filename"
 		IFS=$oldIFS
-		filename=${remote#$repo/home/}
 		local=$HOME/$filename
 
 		if [[ -e $local || -L $local ]]; then
@@ -134,6 +134,25 @@ function track {
 		success
 	done
 	return $EX_SUCCESS
+}
+
+function get_repo_files {
+	local repo=$1
+	local dirs=""
+	local files=""
+	for file in $(cd $repo/home && git ls-files); do
+		if [[ -n $dirs ]]; then
+			dirs="$dirs\n"
+		fi
+		dirs="$dirs${file%/*}"
+
+		if [[ -n $files ]]; then
+			files="$files\n"
+		fi
+		files="$files$file"
+	done;
+
+	echo "$(echo -e "$dirs\n$files" | sort | uniq)"
 }
 
 function castle_exists {

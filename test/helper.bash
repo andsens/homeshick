@@ -145,3 +145,14 @@ function mock_git_version {
 	# The function needs to be exported for it to work in child processes
 	export -f git
 }
+
+function commit_repo_state {
+	local repo=$1
+	(
+		cd $repo
+		git config user.name "Homeshick user"
+		git config user.email "homeshick@example.com"
+		git add -A
+		git commit -m "Commiting Repo State from test helper.bash."
+	)
+}

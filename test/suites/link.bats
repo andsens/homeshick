@@ -108,9 +108,21 @@ EOF
 	castle 'rc-files'
 	touch "$HOMESICK/repos/rc-files/home/filename
 newline"
+	commit_repo_state $HOMESICK/repos/rc-files
 	$HOMESHICK_FN --batch link rc-files
-	[ -L "$HOME/filename" ]
-	[ -L "$HOME/newline" ]
-	is_symlink $HOMESICK/repos/rc-files/home/filename $HOME/filename
-	is_symlink newline $HOME/newline
+	[ -L "$HOME/\"filename" ]
+	[ -L "$HOME/newline\"" ]
+	is_symlink $HOMESICK/repos/rc-files/home/\"filename $HOME/\"filename
+	is_symlink $HOMESICK/repos/rc-files/home/newline\" $HOME/newline\"
+}
+
+@test 'files ignored by git should not be linked' {
+	castle 'dotfiles'
+	touch "$HOMESICK/repos/dotfiles/home/shouldBeIgnored.txt"
+	cat > $HOMESICK/repos/dotfiles/.gitignore <<EOF
+shouldBeIgnored.txt
+EOF
+	commit_repo_state $HOMESICK/repos/dotfiles
+	$HOMESHICK_FN --batch link dotfiles
+	[ ! -L "$HOME/shouldBeIgnored.txt" ]
 }
