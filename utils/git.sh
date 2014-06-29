@@ -106,7 +106,7 @@ function list_castle_names {
 	while IFS= read -d $'\0' -r repo ; do
 		local reponame=$(basename "${repo%/.git}")
 		printf "$reponame\n"
-	done < <(find "$repos" -mindepth 2 -maxdepth 2 -name .git -type d -print0 | sort -z)
+	done < <(find -L "$repos" -mindepth 2 -maxdepth 2 -name .git -type d -print0 | sort -z)
 	return $EX_SUCCESS
 }
 
