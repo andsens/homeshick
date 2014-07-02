@@ -53,3 +53,18 @@ EOF
 			expect -ex "${esc}1;37m     rc-files${esc}0m $REPO_FIXTURES/rc-files\r\n" {} default {exit 1}
 EOF
 }
+
+@test 'list symlinks to castles' {
+$EXPECT_INSTALLED || skip 'expect not installed'
+	castle 'rc-files'
+	(
+		cd $HOMESICK/repos/
+		mv rc-files ${_TMPDIR}/rc-files
+		ln -s ${_TMPDIR}/rc-files ./rc-files
+	)
+	esc="\\u001b\\u005b"
+	cat <<EOF | expect -f -
+			spawn $HOMESHICK_BIN list
+			expect -ex "${esc}1;37m     rc-files${esc}0m $REPO_FIXTURES/rc-files\r\n" {} default {exit 1}
+EOF
+}
