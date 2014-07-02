@@ -56,3 +56,26 @@ ${esc}1;36m        pull?${esc}0m ${open_bracket}yN${close_bracket} " {} default 
 			expect EOF
 EOF
 }
+
+
+@test 'refresh a castle and check that it is up to date' {
+	castle 'rc-files'
+
+	local current_head=$(cd "$HOMESICK/repos/rc-files"; git rev-parse HEAD)
+	(cd "$HOMESICK/repos/rc-files"; git reset --hard HEAD^1)
+
+	$EXPECT_INSTALLED || skip 'expect not installed'
+	open_bracket="\\u005b"
+	close_bracket="\\u005d"
+	esc="\\u001b$open_bracket"
+	cat <<EOF | expect -f -
+			spawn $HOMESHICK_BIN refresh rc-files
+			expect -ex "${esc}1;36m     checking${esc}0m rc-files\r${esc}1;31m     outdated${esc}0m rc-files\r
+${esc}1;37m      refresh${esc}0m The castle rc-files is outdated.\r
+${esc}1;36m        pull?${esc}0m ${open_bracket}yN${close_bracket} " {} default {exit 1}
+			send "y\n"
+			expect EOF
+EOF
+	local pulled_head=$(cd "$HOMESICK/repos/rc-files"; git rev-parse HEAD)
+	[ "$current_head" = "$pulled_head" ]
+}

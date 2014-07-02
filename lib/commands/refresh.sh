@@ -62,6 +62,7 @@ function ask_pull {
 		fi
 		prompt_no 'refresh' "$msg" 'pull?'
 		if [[ $? = 0 ]]; then
+			source $homeshick/lib/commands/pull.sh
 			for castle in $*; do
 				pull "$castle"
 			done
