@@ -24,7 +24,7 @@ EOF
 @test 'refresh a castle that was just pulled' {
 	castle 'rc-files'
 	$HOMESHICK_FN pull rc-files
-	$HOMESHICK_FN refresh -b rc-files
+	$HOMESHICK_FN -b refresh 7 rc-files
 }
 
 @test 'refresh a castle that was pulled 8 days ago' {

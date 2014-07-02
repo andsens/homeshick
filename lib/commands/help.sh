@@ -14,7 +14,7 @@ printf "homes${bldblu}h${txtdef}ick uses git in concert with symlinks to track y
   homeshick generate CASTLE..         # Generate a castle repo
   homeshick list                      # List cloned castles
   homeshick check [CASTLE..]          # Check a castle for updates
-  homeshick refresh [DAYS] [CASTLE..] # Check if a castle needs refreshing
+  homeshick refresh [DAYS [CASTLE..]] # Check if a castle needs refreshing
   homeshick pull [CASTLE..]           # Update a castle
   homeshick link [CASTLE..]           # Symlinks all dotfiles from a castle
   homeshick track CASTLE FILE..       # Add a file to a castle
