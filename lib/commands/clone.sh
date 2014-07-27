@@ -2,7 +2,16 @@
 
 function clone {
 	[[ ! $1 ]] && help_err clone
-	local git_repo=$(git_shorthand "$1")
+	local git_repo=$1
+	is_github_shorthand $git_repo
+	if [[ $? == 0 ]]; then
+		if [[ -e "$git_repo/.git" ]]; then
+			local msg="$git_repo also exists as a filesystem path,"
+			msg="${msg} use \`homeshick clone ./$git_repo' to circumvent the github shorthand"
+			warn 'clone' "$msg"
+		fi
+		git_repo="https://github.com/$git_repo.git"
+	fi
 	local repo_path=$repos"/"$(repo_basename "$git_repo")
 	pending 'clone' "$git_repo"
 	test -e "$repo_path" && err $EX_ERR "$repo_path already exists"
@@ -29,7 +38,9 @@ function clone {
 function symlink_cloned_files {
 	local cloned_castles=()
 	while [[ $# -gt 0 ]]; do
-		local git_repo=$(git_shorthand "$1")
+		local git_repo=$1
+		is_github_shorthand $git_repo
+		[[ $? == 0 ]] && git_repo="https://github.com/$git_repo.git"
 		local castle=$(repo_basename "$git_repo")
 		shift
 		local repo="$repos/$castle"
@@ -46,16 +57,11 @@ function symlink_cloned_files {
 }
 
 # Convert username/repo into https://github.com/username/repo.git
-function git_shorthand {
-	if [[ $1 =~ \.git$ ]]; then
-		printf -- "$1"
-		return
+function is_github_shorthand {
+	if [[ ! $1 =~ \.git$ && $1 =~ ^([0-9A-Za-z-]+/[0-9A-Za-z_\.-]+)$ ]]; then
+		return 0
 	fi
-	if [[ $1 =~ ^([0-9A-Za-z-]+/[0-9A-Za-z_\.-]+)$ ]]; then
-		printf -- "https://github.com/$1.git"
-		return
-	fi
-	printf -- "$1"
+	return 1
 }
 
 # Get the repo name from an URL

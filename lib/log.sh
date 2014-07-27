@@ -4,6 +4,7 @@
 txtdef="\e[0m"    # Revert to default
 bldred="\e[1;31m" # Red - error
 bldgrn="\e[1;32m" # Green - success
+bldylw="\e[1;33m" # Yellow - warning
 bldblu="\e[1;34m" # Blue - no action/ignored
 bldcyn="\e[1;36m" # Cyan - pending action
 bldwht="\e[1;37m" # White - info
@@ -26,6 +27,10 @@ function status {
 	if $TALK; then
 		printf "$1%13s$txtdef %s\n" "$2" "$3"
 	fi
+}
+
+function warn {
+	status "$bldylw" "$1" "$2"
 }
 
 function info {
