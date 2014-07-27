@@ -8,10 +8,13 @@ function check {
 	pending 'checking' "$castle"
 	castle_exists 'check' "$castle"
 
+	# Fetch the current branch name
 	local ref=$(cd "$repo"; git symbolic-ref HEAD 2>/dev/null)
 	local branch=${ref#refs/heads/}
+	# Get the upstream remote of that branch
 	local remote_name=$(cd "$repo"; git config branch.$branch.remote 2>/dev/null)
 	local remote_url=$(cd "$repo"; git config remote.$remote_name.url 2>/dev/null)
+	# Get the HEAD of the current branch on the upstream remote
 	local remote_head=$(git ls-remote -q --heads "$remote_url" "$branch" 2>/dev/null | cut -f 1)
 	if [[ $remote_head ]]; then
 		local local_head=$(cd "$repo"; git rev-parse HEAD)
