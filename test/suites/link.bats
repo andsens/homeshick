@@ -2,6 +2,13 @@
 
 load ../helper
 
+@test 'symlink to a relative symlink' {
+	castle 'symlinks'
+	echo "test" > $HOME/file_in_homedir
+	$HOMESHICK_FN --batch link symlinks
+	[ "$(cat $HOME/link_to_homedir_file)" = 'test' ]
+}
+
 @test 'overwrite prompt skipped when linking and --batch is on' {
 	castle 'rc-files'
 	touch $HOME/.bashrc
