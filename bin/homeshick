@@ -6,11 +6,10 @@ homeshick="$repos/homeshick"
 # scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # The install script however symlinks us. So $0 changes.
 
-source $homeshick/utils/log.sh
-source $homeshick/utils/fs.sh
-source $homeshick/utils/git.sh
-source $homeshick/utils/help.sh
-source $homeshick/utils/exit_status.sh
+# Include all helper functions. We will include the required command function later on.
+for file in $homeshick/lib/*.sh; do
+	source $file
+done
 
 exit_status=$EX_SUCCESS
 
@@ -118,6 +117,14 @@ fi
 
 # Default param for refresh is 7
 [[ ! $threshhold ]] && threshhold=$[7*86400]
+
+# Include the file that implements the invoked command
+case $cmd in
+	cd) ;;
+	symlink) source $homeshick/lib/commands/link.sh ;;
+	updates) source $homeshick/lib/commands/check.sh ;;
+	*)       source $homeshick/lib/commands/$cmd.sh ;;
+esac
 
 case $cmd in
 	list)  list           ;;

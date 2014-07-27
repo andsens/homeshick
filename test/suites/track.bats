@@ -2,6 +2,65 @@
 
 load ../helper
 
+@test 'track non-existent file' {
+	castle 'symlinks'
+	run $HOMESHICK_FN track symlinks $HOME/non-existent-file
+	[ $status -eq 1 ] # EX_ERR
+}
+
+@test 'track relative symlink in $HOME' {
+	castle 'symlinks'
+	echo "test" > $HOME/some_file
+	(cd $HOME; ln -s some_file link_to_some_file)
+	$HOMESHICK_FN track symlinks $HOME/link_to_some_file
+	[ "$(cat $HOME/link_to_some_file)" = 'test' ]
+	is_symlink ../../../../some_file $HOMESICK/repos/symlinks/home/link_to_some_file
+}
+
+@test 'track absolute symlink' {
+	castle 'symlinks'
+	echo "test" > $HOME/some_file
+	(cd $HOME; ln -s $HOME/some_file link_to_some_file)
+	$HOMESHICK_FN track symlinks $HOME/link_to_some_file
+	[ "$(cat $HOME/link_to_some_file)" = 'test' ]
+	is_symlink $HOME/some_file $HOMESICK/repos/symlinks/home/link_to_some_file
+}
+
+@test 'track relative symlink in deep folder structure to file outside $HOME' {
+	castle 'symlinks'
+	mkdir -p $NOTHOME/some/folder/outside/home
+	echo "test" > $NOTHOME/some/folder/outside/home/some_file
+	mkdir -p $HOME/somedir/someotherdir/deep
+	(cd $HOME; ln -s ../../../../nothome/some/folder/outside/home/some_file $HOME/somedir/someotherdir/deep/link_to_some_file)
+	$HOMESHICK_FN track symlinks $HOME/somedir/someotherdir/deep/link_to_some_file
+	[ "$(cat $HOME/somedir/someotherdir/deep/link_to_some_file)" = 'test' ]
+	local relpath='../../../../../../../../nothome/some/folder/outside/home/some_file'
+	echo $(readlink $HOMESICK/repos/symlinks/home/somedir/someotherdir/deep/link_to_some_file) >&2
+	is_symlink $relpath $HOMESICK/repos/symlinks/home/somedir/someotherdir/deep/link_to_some_file
+}
+
+@test 'track relative snakelike symlink' {
+	castle 'symlinks'
+	mkdir -p $HOME/some/folder
+	mkdir -p $HOME/someother/folder
+	echo "test" > $HOME/someother/folder/some_file
+	mkdir -p $HOME/somethird/folder
+	(cd $HOME; ln -s ../../some/folder/../../someother/folder/some_file $HOME/somethird/folder/link_to_some_file)
+	ls -al $HOME/somethird/folder/ >&2
+	$HOMESHICK_FN track symlinks $HOME/somethird/folder/link_to_some_file
+	[ "$(cat $HOME/somethird/folder/link_to_some_file)" = 'test' ]
+	local relpath='../../../../../../someother/folder/some_file'
+	is_symlink $relpath $HOMESICK/repos/symlinks/home/somethird/folder/link_to_some_file
+}
+
+@test 'track dead symlink' {
+	castle 'symlinks'
+	(cd $HOME; ln -s some_file link_to_some_file)
+	$HOMESHICK_FN track symlinks $HOME/link_to_some_file
+	[ ! -e $HOME/link_to_some_file ]
+	is_symlink ../../../../some_file $HOMESICK/repos/symlinks/home/link_to_some_file
+}
+
 @test 'track absolute path' {
 	castle 'rc-files'
 	cat > $HOME/.zshrc <<EOF
