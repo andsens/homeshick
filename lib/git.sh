@@ -25,3 +25,18 @@ function version_compare {
 	done
 	return 0
 }
+
+function repo_has_upstream {
+	local repo=$1
+
+	# Check if the castle has an upstream remote
+	# Fetch the current branch name
+	local ref=$(cd "$repo"; git symbolic-ref HEAD 2>/dev/null)
+	local branch=${ref#refs/heads/}
+	# Get the upstream remote of that branch
+	local remote_name=$(cd "$repo"; git config branch.$branch.remote 2>/dev/null)
+	if [[ -z $remote_name ]]; then
+		return $EX_ERR
+	fi
+	return $EX_SUCCESS
+}

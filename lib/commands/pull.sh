@@ -7,6 +7,12 @@ function pull {
 	pending 'pull' $castle
 	castle_exists 'pull' $castle
 
+	$(repo_has_upstream $repo)
+	if [[ $? != 0 ]]; then
+		ignore 'no upstream' "Could not pull $castle, it has no upstream"
+		return $EX_SUCCESS
+	fi
+
 	local git_out
 	git_out=$(cd "$repo"; git pull 2>&1)
 	[[ $? == 0 ]] || err $EX_SOFTWARE "Unable to pull $repo. Git says:" "$git_out"
