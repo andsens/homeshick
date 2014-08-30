@@ -4,7 +4,7 @@ load ../helper
 
 function setup() {
 	setup_env
-	source $HOMESICK/repos/homeshick/utils/git.sh
+	source $HOMESICK/repos/homeshick/lib/commands/clone.sh
 }
 
 @test 'git url basename: git@... .git' {
