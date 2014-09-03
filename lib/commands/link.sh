@@ -68,17 +68,20 @@ function get_repo_files {
 	local repo=$1
 	local dirs=""
 	local files=""
-	for file in $(cd $repo/home && git ls-files); do
-		if [[ -n $dirs ]]; then
-			dirs="$dirs\n"
-		fi
-		dirs="$dirs${file%/*}"
-
-		if [[ -n $files ]]; then
-			files="$files\n"
-		fi
-		files="$files$file"
-	done;
-
-	echo "$(echo -e "$dirs\n$files" | sort | uniq)"
+	# Loop through the files tracked by git and compute
+	# a list of their parent directories.
+	for path in $(cd $repo/home && git ls-files); do
+		files="${files}\n${path}"
+		# Get all directory paths up to the root.
+		# We won't ever hit '/' here since ls-files
+		# always shows paths relative to the repo root.
+		while [[ $path =~ '/' ]]; do
+			path=$(dirname $path)
+			dirs="${path}\n${dirs}"
+		done
+	done
+	# The "printf" swallows the newline at the end of $dirs
+	dirs=$(printf $dirs | sort | uniq)
+	# The newline at the beginning of $files is used as a separator
+	printf "${dirs}${files}"
 }

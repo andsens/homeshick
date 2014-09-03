@@ -21,6 +21,11 @@ EOF
 [B]
 LikesCucumber=False
 EOF
+	# Do not put anything in .config/foo
+	# it is meant to be a directory
+	# only containing other directories
+	mkdir -p .config/foo/bar
+	touch .config/foo/bar/baz.conf
 	git add .config
 	git commit -m 'Files added for my new dotfiles repo'
 	
