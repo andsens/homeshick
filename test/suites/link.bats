@@ -2,6 +2,12 @@
 
 load ../helper
 
+@test 'create parent directories' {
+	castle 'dotfiles'
+	$HOMESHICK_FN --batch link dotfiles
+	[ -d "$HOME/.config/foo/bar" ]
+}
+
 @test 'symlink to a relative symlink' {
 	castle 'symlinks'
 	echo "test" > $HOME/file_in_homedir
