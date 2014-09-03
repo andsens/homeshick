@@ -56,7 +56,7 @@ function symlink {
 			ln -s "$remote" "$local"
 		else
 			pending 'directory' "$filename"
-			mkdir "$local"
+			mkdir -p "$local"
 		fi
 
 		success

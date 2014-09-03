@@ -21,6 +21,8 @@ EOF
 [B]
 LikesCucumber=False
 EOF
+	mkdir -p .config/foo/bar
+	touch .config/foo/bar/baz.conf
 	git add .config
 	git commit -m 'Files added for my new dotfiles repo'
 	
