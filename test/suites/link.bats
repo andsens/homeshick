@@ -2,6 +2,18 @@
 
 load ../helper
 
+@test 'link repo with no dirs in home/' {
+	castle 'nodirs'
+	$HOMESHICK_FN --batch link nodirs
+	[ -f "$HOME/.file1" ]
+}
+
+@test 'create file-less parent directories' {
+	castle 'dotfiles'
+	$HOMESHICK_FN --batch link dotfiles
+	[ -d "$HOME/.config/foo/bar" ]
+}
+
 @test 'symlink to a relative symlink' {
 	castle 'symlinks'
 	echo "test" > $HOME/file_in_homedir
