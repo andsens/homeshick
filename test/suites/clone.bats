@@ -56,8 +56,7 @@ EOF
 
 @test 'recursive clone with git version >= 1.6.5' {
 	fixture 'nested-submodules'
-	GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
-	[[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]] && skip 'could not detect git version'
+	GIT_VERSION=$(get_git_version)
 	run version_compare $GIT_VERSION 1.6.5
 	[[ $status == 2 ]] && skip 'git version too low'
 
