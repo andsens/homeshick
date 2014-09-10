@@ -2,6 +2,18 @@
 
 load ../helper
 
+@test 'link submodule files recursively' {
+	fixture 'nested-submodules'
+	GIT_VERSION=$(get_git_version)
+	run version_compare $GIT_VERSION 1.6.5
+	[[ $status == 2 ]] && skip 'git version too low'
+
+	$HOMESHICK_FN --batch clone $REPO_FIXTURES/nested-submodules
+	$HOMESHICK_FN --batch link nested-submodules
+	[ -f "$HOME/.info" ]
+	[ -f "$HOME/.subdir/.info2" ]
+}
+
 @test 'link repo with no dirs in home/' {
 	castle 'nodirs'
 	$HOMESHICK_FN --batch link nodirs
