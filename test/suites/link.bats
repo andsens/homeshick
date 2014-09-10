@@ -2,6 +2,19 @@
 
 load ../helper
 
+@test "don't fail when linking uninitialized subrepos" {
+	fixture 'nested-submodules'
+	GIT_VERSION=$(get_git_version)
+	run version_compare $GIT_VERSION 1.6.5
+	[[ $status == 2 ]] && skip 'git version too low'
+
+	git clone "$REPO_FIXTURES/nested-submodules" "$HOMESICK/repos/nested-submodules"
+	[ -f "$HOMESICK/repos/nested-submodules/info" ]
+	$HOMESHICK_FN --batch link nested-submodules
+	[ ! -f "$HOMESICK/repos/nested-submodules/home/.info" ]
+	[ ! -f "$HOME/.info" ]
+}
+
 @test 'link submodule files recursively' {
 	fixture 'nested-submodules'
 	GIT_VERSION=$(get_git_version)
