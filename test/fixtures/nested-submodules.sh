@@ -10,8 +10,8 @@
 		cat > info <<EOF
 This is level0 of the nested submodule repo
 EOF
-		git add info
-		git commit -m 'Add info file for level0 repo'
+	git add info
+	git commit -m 'Add info file for level0 repo'
 
 	local level1="$REPO_FIXTURES/level1"
 	(
