@@ -85,9 +85,11 @@ function get_repo_files {
 			path=$(dirname $path)
 			paths="$prefix$path\n$paths"
 		done
-		for submodule in $(cd $dir; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
-			paths="$(get_repo_files $dir $submodule)\n$paths"
-		done
 	done
+
+	for submodule in $(cd $dir; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
+		paths="$(get_repo_files $dir $submodule)\n$paths"
+	done
+
 	printf "$paths" | sort | uniq
 }
