@@ -10,8 +10,8 @@
 		cat > info <<EOF
 This is level0 of the nested submodule repo
 EOF
-		git add info
-		git commit -m 'Add info file for level0 repo'
+	git add info
+	git commit -m 'Add info file for level0 repo'
 
 	local level1="$REPO_FIXTURES/level1"
 	(
@@ -44,4 +44,36 @@ EOF
 
 	git submodule add $level1 level1
 	git commit -m 'level1 submodule added for level0'
+
+	local home="$REPO_FIXTURES/home-for-nested-submodule"
+	(
+		git init $home
+		cd $home
+		git config user.name $git_username
+		git config user.email $git_useremail
+		cat > .info <<EOF
+This is level "home" of the nested submodule repo
+EOF
+		git add .info
+		git commit -m 'Add info file for home repo'
+
+		local homesub="$REPO_FIXTURES/home-subdir-for-nested-submodule"
+		(
+			git init $homesub
+			cd $homesub
+			git config user.name $git_username
+			git config user.email $git_useremail
+			cat > .info2 <<EOF
+This is level "homesub" of the nested submodule repo
+EOF
+			git add .info2
+			git commit -m 'Add info file for homesub repo'
+		)
+
+		git submodule add $homesub .subdir
+		git commit -m 'homesub submodule added for level1'
+	)
+
+	git submodule add $home home
+	git commit -m 'home submodule added for level0'
 ) > /dev/null
