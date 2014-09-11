@@ -78,15 +78,17 @@ function get_repo_files {
 		# Don't add a newline to the beginning of the list
 		[[ -n $paths ]] && paths="$paths\n"
 		paths="$paths$prefix$path"
+
+		if [[ -d "$dir/$path" ]]; then
+			paths="$(get_repo_files "$dir" "$path")\n$paths"
+		fi
+
 		# Get all directory paths up to the root.
 		# We won't ever hit '/' here since ls-files
 		# always shows paths relative to the repo root.
 		while [[ $path =~ '/' ]]; do
 			path=$(dirname $path)
 			paths="$prefix$path\n$paths"
-		done
-		for submodule in $(cd $dir; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
-			paths="$(get_repo_files $dir $submodule)\n$paths"
 		done
 	done
 	printf "$paths" | sort | uniq
