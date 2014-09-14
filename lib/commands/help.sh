@@ -25,10 +25,11 @@ printf "homes${bldblu}h${txtdef}ick uses git in concert with symlinks to track y
   updates # Alias to check
 
  Runtime options:
-   -q, [--quiet]    # Suppress status output
-   -s, [--skip]     # Skip files that already exist
-   -f, [--force]    # Overwrite files that already exist
-   -b, [--batch]    # Batch-mode: Skip interactive prompts / Choose the default
+   -q, [--quiet]     # Suppress status output
+   -s, [--skip]      # Skip files that already exist
+   -f, [--force]     # Overwrite files that already exist
+   -b, [--batch]     # Batch-mode: Skip interactive prompts / Choose the default
+   -u, [--untracked] # Link untracked files
 
  Note:
   To check, refresh, pull or symlink all your castles

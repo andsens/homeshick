@@ -72,9 +72,16 @@ function get_repo_files {
 		prefix="$2/"
 	fi
 	local paths=""
+
+	if $UNTRACKED; then
+		files=$(cd $dir && git ls-files ; git ls-files --others --exclude-standard)
+	else
+		files=$(cd $dir && git ls-files)
+	fi
+
 	# Loop through the files tracked by git and compute
 	# a list of their parent directories.
-	for path in $(cd $dir && git ls-files); do
+	for path in $files; do
 		# Don't add a newline to the beginning of the list
 		[[ -n $paths ]] && paths="$paths\n"
 		paths="$paths$prefix$path"
