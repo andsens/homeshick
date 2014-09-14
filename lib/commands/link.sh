@@ -25,7 +25,9 @@ function symlink {
 					rm "$local"
 				else
 					# $local points at $remote and $remote is not a directory
-					ignore 'identical' "$filename"
+					if $VERBOSE; then
+						ignore 'identical' "$filename"
+					fi
 					continue
 				fi
 			else
@@ -34,7 +36,9 @@ function symlink {
 					# $remote is a real directory while
 					# $local is a directory or a symlinked directory
 					# we do not take any action regardless of which it is.
-					ignore 'identical' "$filename"
+					if $VERBOSE; then
+						ignore 'identical' "$filename"
+					fi
 					continue
 				fi
 				if $SKIP; then

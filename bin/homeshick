@@ -27,6 +27,7 @@ TALK=true
 SKIP=false
 FORCE=false
 BATCH=false
+VERBOSE=false
 
 # Retrieve all the flags preceeding a subcommand
 while [[ $# -gt 0 ]]; do
@@ -44,6 +45,7 @@ while [[ $# -gt 0 ]]; do
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
 			-b | --batch) BATCH=true ; shift; continue ;;
+			-v | --verbose) VERBOSE=true ; shift; continue ;;
 			*)     err $EX_USAGE "Unknown option '$1'" ;;
 		esac
 	else
@@ -81,6 +83,7 @@ while [[ $# -gt 0 ]]; do
 			-s | --skip)  SKIP=true  ; shift; continue ;;
 			-f | --force) FORCE=true ; shift; continue ;;
 			-b | --batch) BATCH=true ; shift; continue ;;
+			-v | --verbose) VERBOSE=true ; shift; continue ;;
 			*)     err $EX_USAGE "Unknown option '$1'" ;;
 		esac
 	fi
