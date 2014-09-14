@@ -91,16 +91,16 @@ EOF
 	castle 'dotfiles'
 	mkdir -p $HOME/.config/bar.dir
 	cat > $HOME/.config/foo.conf <<EOF
-#I am just a regular foo.conf file 
+#I am just a regular foo.conf file
 [foo]
 A=True
 EOF
 	cat > $HOME/.config/bar.dir/bar.conf <<EOF
-#I am just a regular bar.conf file 
+#I am just a regular bar.conf file
 [bar]
 A=True
 EOF
-	
+
 	[ -f "$HOME/.config/foo.conf" ]
 	#.config/foo.conf should be overwritten by a directory of the same name
 	[ -d "$HOME/.config/bar.dir" ]
@@ -169,4 +169,11 @@ EOF
 	commit_repo_state $HOMESICK/repos/dotfiles
 	$HOMESHICK_FN --batch link dotfiles
 	[ ! -L "$HOME/shouldBeIgnored.txt" ]
+}
+
+@test 'link untracked files when the -u option is passed' {
+	castle 'dotfiles'
+	touch "$HOMESICK/repos/dotfiles/home/untracked"
+	$HOMESHICK_FN --batch -u link dotfiles
+	[ -L "$HOME/untracked" ]
 }
