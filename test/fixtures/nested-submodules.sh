@@ -63,11 +63,27 @@ EOF
 			cd $homesub
 			git config user.name $git_username
 			git config user.email $git_useremail
-			cat > .info2 <<EOF
+			cat > .info1 <<EOF
 This is level "homesub" of the nested submodule repo
 EOF
-			git add .info2
+			git add .info1
 			git commit -m 'Add info file for homesub repo'
+
+			local subsub="$REPO_FIXTURES/sub-subdir-for-nested-submodule"
+			(
+				git init $subsub
+				cd $subsub
+				git config user.name $git_username
+				git config user.email $git_useremail
+				cat > .info2 <<EOF
+This is level "subsub" of the nested submodule repo
+EOF
+				git add .info2
+				git commit -m 'Add info file for subsub repo'
+			)
+
+			git submodule add $subsub .subdir
+			git commit -m 'subsub submodule added for level2'
 		)
 
 		git submodule add $homesub .subdir
