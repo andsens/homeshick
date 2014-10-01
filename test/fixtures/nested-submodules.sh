@@ -82,11 +82,11 @@ EOF
 				git commit -m 'Add info file for subsub repo'
 			)
 
-			git submodule add $subsub .subdir
+			git submodule add $subsub .subdir2
 			git commit -m 'subsub submodule added for level2'
 		)
 
-		git submodule add $homesub .subdir
+		git submodule add $homesub .subdir1
 		git commit -m 'homesub submodule added for level1'
 	)
 
