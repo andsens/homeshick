@@ -65,6 +65,7 @@ function symlink {
 }
 
 function get_repo_files {
+	local topdir=$1
 	local dir=$1
 	local prefix=''
 	if [[ -n $2 ]]; then
@@ -88,7 +89,7 @@ function get_repo_files {
 	done
 
 	for submodule in $(cd $dir; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
-		paths="$(get_repo_files $dir $submodule)\n$paths"
+		paths="$(get_repo_files $topdir $prefix$submodule)\n$paths"
 	done
 
 	printf "$paths" | sort | uniq

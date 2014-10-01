@@ -24,7 +24,8 @@ load ../helper
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/nested-submodules
 	$HOMESHICK_FN --batch link nested-submodules
 	[ -f "$HOME/.info" ]
-	[ -f "$HOME/.subdir/.info2" ]
+	[ -f "$HOME/.subdir/.info1" ]
+	[ -f "$HOME/.subdir/.subdir/.info2" ]
 }
 
 @test 'link repo with no dirs in home/' {
