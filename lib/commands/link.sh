@@ -11,14 +11,14 @@ function symlink {
 	fi
 	oldIFS=$IFS
 	IFS=$'\n'
-	for filename in $(get_repo_files $repo/home); do
-		remote="$repo/home/$filename"
+	for filename in $(get_repo_files "$repo/home"); do
 		IFS=$oldIFS
+		remote="$repo/home/$filename"
 		local=$HOME/$filename
 
 		if [[ -e $local || -L $local ]]; then
 			# $local exists (but may be a dead symlink)
-			if [[ -L $local && $(readlink "$local") == $remote ]]; then
+			if [[ -L $local && $(readlink "$local") == "$remote" ]]; then
 				# $local symlinks to $remote.
 				if [[ -d $remote && ! -L $remote ]]; then
 					# If $remote is a directory -> legacy handling.
@@ -64,32 +64,50 @@ function symlink {
 	return $EX_SUCCESS
 }
 
-function get_repo_files {
+function get_repo_dirs {
+	# Loop through the files tracked by git and compute
+	# a list of their parent directories.
 	local dir=$1
 	local prefix=''
 	if [[ -n $2 ]]; then
 		dir="$dir/$2"
 		prefix="$2/"
 	fi
-	local paths=""
-	# Loop through the files tracked by git and compute
-	# a list of their parent directories.
-	for path in $(cd $dir && git ls-files); do
-		# Don't add a newline to the beginning of the list
-		[[ -n $paths ]] && paths="$paths\n"
-		paths="$paths$prefix$path"
-		# Get all directory paths up to the root.
-		# We won't ever hit '/' here since ls-files
-		# always shows paths relative to the repo root.
-		while [[ $path =~ '/' ]]; do
-			path=$(dirname $path)
-			paths="$prefix$path\n$paths"
+	(
+		local path
+		while read path; do
+			printf "%s\n" "$prefix$path"
+			# Get all directory paths up to the root.
+			# We won't ever hit '/' here since ls-files
+			# always shows paths relative to the repo root.
+			while [[ $path =~ '/' ]]; do
+				path=$(dirname "$path")
+				printf "%s\n" "$prefix$path"
+			done
+		done < <(cd "$dir" && git ls-files | xargs -I{} dirname "{}" | sort | uniq)
+	) | sort | uniq
+}
+
+function get_repo_files {
+	# Get all files tracked by git & include parent directories + submodules.
+	local dir=$1 local prefix=''
+	if [[ -n $2 ]]; then
+		dir="$dir/$2"
+		prefix="$2/"
+	fi
+	(
+		# Get files (+ submodule path prefix).
+		local path
+		while read path; do
+			printf "%s\n" "$prefix$path"
+		done < <(cd "$dir" && git ls-files)
+
+		# Get any and all intermediate directories.
+		get_repo_dirs "$dir" "$prefix"
+
+		# Recurse on submodules.
+		for submodule in $(cd "$dir"; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
+			get_repo_files "$dir" "$submodule"
 		done
-	done
-
-	for submodule in $(cd $dir; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
-		paths="$(get_repo_files $dir $submodule)\n$paths"
-	done
-
-	printf "$paths" | sort | uniq
+	) | sort | uniq
 }
