@@ -27,8 +27,9 @@ Otherwise attach the commands you executed in that environment to the issue.
 
 ## Pull requests ##
 
-### Branch
+### Branching
 **Work from and create pull requests on the `development` branch, not `master`.**
+
 `master` always represents the latest release since that is the way homeshick updates itself. The
 `development` branch is where work is done for the next release version of homeshick.
 
