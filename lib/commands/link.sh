@@ -65,30 +65,44 @@ function symlink {
 }
 
 function get_repo_files {
-	local dir=$1
-	local prefix=''
+	# This function descends recursively through all submodules
+	# of a repository and makes the paths returned by `git ls-files`
+	# relative to the root repo.
+	# All directory paths are computed as well.
+
+	# The root of repo we are looking at, will not change.
+	local root=$1
+	# Check if this is the root invocation
 	if [[ -n $2 ]]; then
-		dir="$dir/$2"
-		prefix="$2/"
+		# The path to the current repo we are looking at
+		repo_dir="$root/$2"
+		# The relative path to the submodule
+		relpath="$2/"
+	else
+		# First invocation, the repo dir is just the root
+		local repo_dir=$root
+		local relpath=''
 	fi
 	local paths=""
 	# Loop through the files tracked by git and compute
 	# a list of their parent directories.
-	for path in $(cd $dir && git ls-files); do
+	for path in $(cd $repo_dir && git ls-files); do
 		# Don't add a newline to the beginning of the list
 		[[ -n $paths ]] && paths="$paths\n"
-		paths="$paths$prefix$path"
+		paths="$paths$relpath$path"
 		# Get all directory paths up to the root.
 		# We won't ever hit '/' here since ls-files
 		# always shows paths relative to the repo root.
 		while [[ $path =~ '/' ]]; do
 			path=$(dirname $path)
-			paths="$prefix$path\n$paths"
+			paths="$relpath$path\n$paths"
 		done
 	done
 
-	for submodule in $(cd $dir; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
-		paths="$(get_repo_files $dir $submodule)\n$paths"
+	# Loop through all submodule children (not descendants, i.e. immediate children)
+	# and invoke the function again, passing the relative path to the submodule as the 2nd arg
+	for submodule in $(cd $repo_dir; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
+		paths="$(get_repo_files $root $relpath$submodule)\n$paths"
 	done
 
 	printf "$paths" | sort | uniq

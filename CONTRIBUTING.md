@@ -18,14 +18,20 @@ and which shell you used (type `echo $SHELL` in your terminal if you are unsure)
 
 
 ### Reproducing ###
-Unless you ran in to a [heisenbug](http://en.wikipedia.org/wiki/Heisenbug), 
-it should be possible to reproduce the bug in a testing environment.  
-To that end run `$HOME/.homesick/repos/homeshick/test/interactive` and reproduce the bug.  
+Unless you ran in to a [heisenbug](http://en.wikipedia.org/wiki/Heisenbug),
+it should be possible to reproduce the bug in a testing environment.
+To that end run `$HOME/.homesick/repos/homeshick/test/interactive` and reproduce the bug.
 This script drops you into a new shell where `$HOME` is set to an (almost) empty temporary folder.
 If you cannot reproduce the bug there, the error is likely with your setup and not homeshick.
 Otherwise attach the commands you executed in that environment to the issue.
 
 ## Pull requests ##
+
+### Branching
+**Work from and create pull requests on the `development` branch, not `master`.**
+
+`master` always represents the latest release since that is the way homeshick updates itself. The
+`development` branch is where work is done for the next release version of homeshick.
 
 ### Code style ###
 * Indent with tabs and align with spaces.
@@ -42,8 +48,8 @@ The PR should clearly describe what problem the change fixes.
 A feature addition with no justification and use-case will be rejected.
 
 ### Testing ###
-Unless the code-change is a refactor, you should always add unit tests.  
-When fixing a bug there should be a new test case that fails with the old code and succeeds with the new code.  
+Unless the code-change is a refactor, you should always add unit tests.
+When fixing a bug there should be a new test case that fails with the old code and succeeds with the new code.
 When introducing a new feature, it should be tested extensively, a single test case will not suffice.
 
 Note that bats does not fail a test case when using double brackets.

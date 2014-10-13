@@ -2,6 +2,17 @@
 
 load ../helper
 
+@test 'link files of nested submodules' {
+	fixture 'nested-submodules'
+	GIT_VERSION=$(get_git_version)
+	run version_compare $GIT_VERSION 1.6.5
+	[[ $status == 2 ]] && skip 'git version too low'
+
+	$HOMESHICK_FN --batch clone $REPO_FIXTURES/nested-submodules
+	$HOMESHICK_FN --batch link nested-submodules
+	[ -f "$HOME/.subdir1/.subdir2/.info2" ]
+}
+
 @test "don't fail when linking uninitialized subrepos" {
 	fixture 'nested-submodules'
 	GIT_VERSION=$(get_git_version)
@@ -15,7 +26,7 @@ load ../helper
 	[ ! -f "$HOME/.info" ]
 }
 
-@test 'link submodule files recursively' {
+@test 'link submodule files' {
 	fixture 'nested-submodules'
 	GIT_VERSION=$(get_git_version)
 	run version_compare $GIT_VERSION 1.6.5
@@ -24,7 +35,7 @@ load ../helper
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/nested-submodules
 	$HOMESHICK_FN --batch link nested-submodules
 	[ -f "$HOME/.info" ]
-	[ -f "$HOME/.subdir/.info2" ]
+	[ -f "$HOME/.subdir1/.info1" ]
 }
 
 @test 'link repo with no dirs in home/' {
