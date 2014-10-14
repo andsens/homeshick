@@ -9,16 +9,13 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	oldIFS=$IFS
-	IFS=$'\n'
-	for filename in $(get_repo_files $repo/home); do
+	for filename in $(get_repo_files "$repo/home"); do
 		remote="$repo/home/$filename"
-		IFS=$oldIFS
-		local=$HOME/$filename
+		local="$HOME/$filename"
 
 		if [[ -e $local || -L $local ]]; then
 			# $local exists (but may be a dead symlink)
-			if [[ -L $local && $(readlink "$local") == $remote ]]; then
+			if [[ -L $local && $(readlink "$local") == "$remote" ]]; then
 				# $local symlinks to $remote.
 				if [[ -d $remote && ! -L $remote ]]; then
 					# If $remote is a directory -> legacy handling.
