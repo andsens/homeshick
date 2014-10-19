@@ -16,7 +16,6 @@ As with bug reports everywhere else:
 You will also need to report which operating system you encountered the issue on
 and which shell you used (type `echo $SHELL` in your terminal if you are unsure).
 
-
 ### Reproducing ###
 Unless you ran in to a [heisenbug](http://en.wikipedia.org/wiki/Heisenbug),
 it should be possible to reproduce the bug in a testing environment.
@@ -36,6 +35,9 @@ Otherwise attach the commands you executed in that environment to the issue.
 ### Code style ###
 * Indent with tabs and align with spaces.
 * Always use double brackets for `if` blocks
+
+An [editorconfig](http://editorconfig.org) file is supplied. Most editors have [plugins](http://editorconfig.org/#download)
+to apply these settings.
 
 ### Content ###
 **Every PR should only contain one feature change, bug fix or typo correction.**
