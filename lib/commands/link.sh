@@ -104,9 +104,9 @@ function get_repo_files {
 	# Check if this is the root invocation.
 	if [[ -n $2 ]]; then
 		# The path to the current repo we are looking at:
-		repo_dir="$root/$2"
+		local repo_dir="$root/$2"
 		# The relative path to the submodule:
-		relpath="$2/"
+		local relpath="$2/"
 	else
 		# First invocation, the repo_dir is just the root.
 		local repo_dir=$root
