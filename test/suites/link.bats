@@ -2,6 +2,15 @@
 
 load ../helper
 
+@test 'only link submodule files inside home/' {
+	castle 'submodule-outside-home'
+	# '!' inverts the return value
+	! $HOMESHICK_FN --batch link submodule-outside-home 2>&1 | grep 'No such file or directory'
+	# This is the best I can do for testing.
+	# The failure does not cause any files to be created
+	# Ostensibly homeshick should exit with $? != 0 when linking fails, but it doesn't
+}
+
 @test 'link files of nested submodules' {
 	fixture 'nested-submodules'
 	GIT_VERSION=$(get_git_version)
@@ -166,8 +175,8 @@ newline"
 	touch "$HOMESICK/repos/rc-files/home/$test_filename"
 	commit_repo_state $HOMESICK/repos/rc-files
 	$HOMESHICK_FN --batch link rc-files
-	[ -L "$HOME/\"filenamennewline\"" ]
-	is_symlink "$HOMESICK/repos/rc-files/home/\"filenamennewline\"" "$HOME/\"filenamennewline\""
+	[ -L "$HOME/filenamennewline" ]
+	is_symlink "$HOMESICK/repos/rc-files/home/filenamennewline" "$HOME/filenamennewline"
 }
 
 @test 'files ignored by git should not be linked' {

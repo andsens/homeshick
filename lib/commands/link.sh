@@ -9,7 +9,7 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	for filename in $(get_repo_files "$repo/home"); do
+	for filename in $(get_repo_files "$repo"); do
 		remote="$repo/home/$filename"
 		local="$HOME/$filename"
 
@@ -65,69 +65,50 @@ function symlink {
 	return $EX_SUCCESS
 }
 
-function get_repo_dirs {
-	# Loop through the files tracked by git and compute
-	# a list of their parent directories.
-	# The root of repo we are looking at, will not change.
-	local root=$1
-	# Check if this is the root invocation.
-	if [[ -n $2 ]]; then
-		# The relative path to the submodule:
-		relpath="$2/"
-	else
-		# First invocation, the repo_dir is just the root.
-		local repo_dir=$root
-		local relpath=''
-	fi
-	(
-		local path
-		while read path; do
-			printf "%s\n" "$relpath$path"
-			# Get all directory paths up to the root.
-			# We won't ever hit '/' here since ls-files
-			# always shows paths relative to the repo root.
-			while [[ $path =~ '/' ]]; do
-				path=$(dirname "$path")
-				printf "%s\n" "$relpath$path"
-			done
-		done < <(cd "$repo_dir" && git ls-files | xargs -I{} dirname "{}" | sort | uniq)
-	) | sort | uniq
-}
-
+# Fetches all files and folders in a repository that are tracked by git
+# Works recursively on submodules as well
 function get_repo_files {
-	# This function descends recursively through all submodules
-	# of a repository and makes the paths returned by `git ls-files`
-	# relative to the root repo.
-	# All directory paths are computed as well.
-	# The root of repo we are looking at, will not change.
-	local root=$1
-	# Check if this is the root invocation.
-	if [[ -n $2 ]]; then
-		# The path to the current repo we are looking at:
-		local repo_dir="$root/$2"
-		# The relative path to the submodule:
-		local relpath="$2/"
-	else
-		# First invocation, the repo_dir is just the root.
-		local repo_dir=$root
-		local relpath=''
-	fi
-	pending "list files" "$repo_dir" >&2
+	# Resolve symbolic links
+	# e.g. on osx $TMPDIR is in /var/folders...
+	# which is actually /private/var/folders...
+	# We do this so that the root part of $toplevel can be replaced
+	# git resolves symbolic links before it outputs $toplevel
+	local root=$(cd "$1"; pwd -P)
+	# This function is passed to git submodule foreach
+	list_fn="
+	# toplevel/path relative to root
+	local repo=\${toplevel/#${root//\//\\/}/}/\$path
+	# If we are at root, remove the slash in front
+	repo=\${repo/#\//}
+	# We are only interested in submodules under home/
+	if [[ \$repo =~ ^home ]]; then
+		cd \"\$toplevel/\$path\"
+		# List the files and prefix every line
+		# with the relative repo path
+		git ls-files | sed \"s#^#\${repo//#/\\#}/#\"
+	fi"
 	(
-		# Get files (+ submodule path prefix).
 		local path
 		while read path; do
-			printf "%s\n" "$relpath$path"
-		done < <(cd "$repo_dir" && git ls-files)
-
-		# Get all directories (+ submodule path prefix).
-		get_repo_dirs "$root" "$relpath"
-
-		# Recurse on all submodule children (not descendants, i.e. immediate
-		# children), passing the relative path to the submodule as the 2nd arg.
-		for submodule in $(cd "$repo_dir"; git submodule --quiet foreach 'printf "%s\n" "$path"'); do
-			get_repo_files "$root" "$relpath$submodule"
-		done
-	) | sort | uniq
-	success "list files" "$repo_dir" >&2
+			# Remove quotes from ls-files
+			# (used when there are newlines in the path)
+			path=${path/#\"/}
+			path=${path/%\"/}
+			# Check if home/ is a submodule
+			[[ $path == 'home' ]] && continue
+			# Remove the home/ part
+			path=${path/#home\//}
+			# Print the file path
+			printf "%s\n" "$path"
+			# Get the path of all the parent directories up to the repo root.
+			while true; do
+				path=$(dirname "$path")
+				# If path is '.' we're done
+				[[ $path == '.' ]] && break
+				# Print the path
+				printf "%s\n" "$path"
+			done
+		# Enter the repo, list the repo root files in home and do the same for any submodules
+		done < <(cd "$root" && git ls-files 'home/' && git submodule --quiet foreach --recursive "$list_fn")
+	) | sort -u # sort the results and make the list unique
 }
