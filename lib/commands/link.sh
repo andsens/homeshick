@@ -74,19 +74,6 @@ function get_repo_files {
 	# We do this so that the root part of $toplevel can be replaced
 	# git resolves symbolic links before it outputs $toplevel
 	local root=$(cd "$1"; pwd -P)
-	# This function is passed to git submodule foreach
-	list_fn="
-	# toplevel/path relative to root
-	local repo=\${toplevel/#${root//\//\\/}/}/\$path
-	# If we are at root, remove the slash in front
-	repo=\${repo/#\//}
-	# We are only interested in submodules under home/
-	if [[ \$repo =~ ^home ]]; then
-		cd \"\$toplevel/\$path\"
-		# List the files and prefix every line
-		# with the relative repo path
-		git ls-files | sed \"s#^#\${repo//#/\\#}/#\"
-	fi"
 	(
 		local path
 		while read path; do
@@ -100,7 +87,8 @@ function get_repo_files {
 			path=${path/#home\//}
 			# Print the file path
 			printf "%s\n" "$path"
-			# Get the path of all the parent directories up to the repo root.
+			# Get the path of all the parent directories
+			# up to the repo root.
 			while true; do
 				path=$(dirname "$path")
 				# If path is '.' we're done
@@ -108,7 +96,14 @@ function get_repo_files {
 				# Print the path
 				printf "%s\n" "$path"
 			done
-		# Enter the repo, list the repo root files in home and do the same for any submodules
-		done < <(cd "$root" && git ls-files 'home/' && git submodule --quiet foreach --recursive "$list_fn")
+		# Enter the repo, list the repo root files in home
+		# and do the same for any submodules
+		done < <(cd "$root" &&
+		         git ls-files 'home/' &&
+		         git submodule --quiet foreach --recursive \
+		         "$homeshick/lib/submodule_files.sh \"$root\" \"\$toplevel\" \"\$path\"")
+		# Unfortunately we have to use an external script for `git submodule foreach'
+		# because versions prior to ~ 2.0 use `eval' to execute the argument.
+		# This somehow messes quite badly with string substitution.
 	) | sort -u # sort the results and make the list unique
 }
