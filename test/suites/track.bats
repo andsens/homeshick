@@ -247,7 +247,7 @@ EOF
 	GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
 	[[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]] && skip 'could not detect git version'
 	run version_compare $GIT_VERSION 1.8.2
-	[[ $? == 2 ]] && skip 'git version too low'
+	[[ $status == 2 ]] && skip 'git version too low'
 
 	mkdir $HOME/.folder
 	touch $HOME/.folder/ignored.swp
