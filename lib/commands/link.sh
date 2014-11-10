@@ -9,6 +9,13 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
+	# Run through the repo files using process substitution.
+	# The get_repo_files call is at the bottom of this loop.
+	# We set the IFS to nothing and the separator for `read' to NUL so that we
+	# don't separate files with newlines in their name into two iterations.
+	# `read's stdin comes from a third unused file descriptor because we are
+	# using the real stdin for prompting the user whether he wants to overwrite or skip
+	# on conflicts.
 	while IFS= read -d $'\0' -r filename <&3 ; do
 		remote="$repo/home/$filename"
 		local="$HOME/$filename"
@@ -61,6 +68,7 @@ function symlink {
 		fi
 
 		success
+	# Fetch the repo files and redirect the output into file descriptor 3
 	done 3< <(get_repo_files "$repo")
 	return $EX_SUCCESS
 }
