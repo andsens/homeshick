@@ -2,6 +2,13 @@
 
 load ../helper
 
+@test 'link a file with spaces in its name' {
+	castle 'repo with spaces in name'
+	$HOMESHICK_FN --batch link "repo with spaces in name"
+	[ -f "$HOME/.file with spaces in name" ]
+	[ -f "$HOME/.folder with spaces in name/another file with spaces in its name" ]
+}
+
 @test 'only link submodule files inside home/' {
 	castle 'submodule-outside-home'
 	# '!' inverts the return value

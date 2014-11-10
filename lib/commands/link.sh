@@ -9,7 +9,10 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
+	oldIFS=$IFS
+	IFS=$'\n'
 	for filename in $(get_repo_files "$repo"); do
+		IFS=$oldIFS
 		remote="$repo/home/$filename"
 		local="$HOME/$filename"
 

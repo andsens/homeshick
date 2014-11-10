@@ -14,4 +14,13 @@
 
 	git add .repowithspacesfile
 	git commit -m 'Add file to repo with spaces in name'
+
+	touch ".file with spaces in name"
+	git add ".file with spaces in name"
+
+	mkdir ".folder with spaces in name"
+	touch ".folder with spaces in name/another file with spaces in its name"
+	git add ".folder with spaces in name/another file with spaces in its name"
+
+	git commit -m 'Add files with spaces in path'
 ) > /dev/null
