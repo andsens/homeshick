@@ -22,5 +22,10 @@
 	touch ".folder with spaces in name/another file with spaces in its name"
 	git add ".folder with spaces in name/another file with spaces in its name"
 
-	git commit -m 'Add files with spaces in path'
+	touch ".crazy
+file␇☺"
+	git add ".crazy
+file␇☺"
+
+	git commit -m 'Add file with newline and all kinds of crazy characters in the name'
 ) > /dev/null

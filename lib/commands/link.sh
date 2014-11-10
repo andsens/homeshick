@@ -9,10 +9,7 @@ function symlink {
 		ignore 'ignored' "$castle"
 		return $EX_SUCCESS
 	fi
-	oldIFS=$IFS
-	IFS=$'\n'
-	for filename in $(get_repo_files "$repo"); do
-		IFS=$oldIFS
+	while IFS= read -d $'\0' -r filename <&3 ; do
 		remote="$repo/home/$filename"
 		local="$HOME/$filename"
 
@@ -64,7 +61,7 @@ function symlink {
 		fi
 
 		success
-	done
+	done 3< <(get_repo_files "$repo")
 	return $EX_SUCCESS
 }
 
@@ -79,7 +76,7 @@ function get_repo_files {
 	local root=$(cd "$1"; pwd -P)
 	(
 		local path
-		while read path; do
+		while IFS= read -d $'\n' -r path; do
 			# Remove quotes from ls-files
 			# (used when there are newlines in the path)
 			path=${path/#\"/}
@@ -88,8 +85,8 @@ function get_repo_files {
 			[[ $path == 'home' ]] && continue
 			# Remove the home/ part
 			path=${path/#home\//}
-			# Print the file path
-			printf "%s\n" "$path"
+			# Print the file path (NUL separated because \n can be used in filenames)
+			printf "$path\0"
 			# Get the path of all the parent directories
 			# up to the repo root.
 			while true; do
@@ -97,7 +94,7 @@ function get_repo_files {
 				# If path is '.' we're done
 				[[ $path == '.' ]] && break
 				# Print the path
-				printf "%s\n" "$path"
+				printf "$path\0"
 			done
 		# Enter the repo, list the repo root files in home
 		# and do the same for any submodules
@@ -108,5 +105,5 @@ function get_repo_files {
 		# Unfortunately we have to use an external script for `git submodule foreach'
 		# because versions prior to ~ 2.0 use `eval' to execute the argument.
 		# This somehow messes quite badly with string substitution.
-	) | sort -u # sort the results and make the list unique
+	) | sort -zu # sort the results and make the list unique (-u), NUL is the line separator (-z)
 }

@@ -2,6 +2,29 @@
 
 load ../helper
 
+@test 'link file with crazy name' {
+	castle 'repo with spaces in name'
+	$HOMESHICK_FN --batch link 'repo with spaces in name'
+	test_filename=".crazy
+file␇☺"
+	[ -f "$HOME/.crazy
+file␇☺" ]
+}
+
+@test 'do not fail when linking file with newline' {
+ castle 'rc-files'
+ test_filename="filename
+newline"
+ touch "$HOMESICK/repos/rc-files/home/$test_filename"
+ commit_repo_state $HOMESICK/repos/rc-files
+ $HOMESHICK_FN --batch link rc-files
+ [ -L "$HOME/filename
+newline" ]
+ is_symlink "$HOMESICK/repos/rc-files/home/filename
+newline" "$HOME/filename
+newline"
+}
+
 @test 'link a file with spaces in its name' {
 	castle 'repo with spaces in name'
 	$HOMESHICK_FN --batch link "repo with spaces in name"
@@ -173,17 +196,6 @@ EOF
 	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
 	is_symlink $HOMESICK/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
 	is_symlink "$HOMESICK/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
-}
-
-@test 'fail when linking file with newline' {
-	castle 'rc-files'
-	test_filename="filename
-newline"
-	touch "$HOMESICK/repos/rc-files/home/$test_filename"
-	commit_repo_state $HOMESICK/repos/rc-files
-	$HOMESHICK_FN --batch link rc-files
-	[ -L "$HOME/filenamennewline" ]
-	is_symlink "$HOMESICK/repos/rc-files/home/filenamennewline" "$HOME/filenamennewline"
 }
 
 @test 'files ignored by git should not be linked' {
