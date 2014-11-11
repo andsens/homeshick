@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 (
 	local git_username="Homeshick user"
 	local git_useremail="homeshick@example.com"

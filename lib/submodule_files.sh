@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script is meant to be used in conjunction with
 # `git submodule foreach'.
 # It runs outputs all files tracked by a submodule.

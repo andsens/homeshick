@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 printf '\nsource "$HOME/.homesick/repos/homeshick/homeshick.sh"' >> $HOME/.bashrc
 cat > $HOME/.bashrc <<EOF
 source "$HOME/.homesick/repos/homeshick/homeshick.sh"
