@@ -109,7 +109,7 @@ function get_repo_files {
 		done < <(cd "$root" &&
 		         git ls-files 'home/' &&
 		         git submodule --quiet foreach --recursive \
-		         "$homeshick/lib/submodule_files.sh \"$root\" \"\$toplevel\" \"\$path\"")
+		         "$homeshick/lib/utils/submodule_files.sh \"$root\" \"\$toplevel\" \"\$path\"")
 		# Unfortunately we have to use an external script for `git submodule foreach'
 		# because versions prior to ~ 2.0 use `eval' to execute the argument.
 		# This somehow messes quite badly with string substitution.
