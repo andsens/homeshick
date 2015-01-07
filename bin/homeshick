@@ -7,11 +7,11 @@ homeshick="$repos/homeshick"
 # The install script however symlinks us. So $0 changes.
 
 # Include all helper functions. We will include the required command function later on.
-source $homeshick/lib/exit_status.sh
-source $homeshick/lib/fs.sh
-source $homeshick/lib/git.sh
-source $homeshick/lib/log.sh
-source $homeshick/lib/prompt.sh
+source "$homeshick/lib/exit_status.sh"
+source "$homeshick/lib/fs.sh"
+source "$homeshick/lib/git.sh"
+source "$homeshick/lib/log.sh"
+source "$homeshick/lib/prompt.sh"
 
 exit_status=$EX_SUCCESS
 
