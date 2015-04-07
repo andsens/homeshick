@@ -148,8 +148,9 @@ function mock_git_version {
 			fi
 		}
 	"
-	# The function needs to be exported for it to work in child processes
+	# The functions need to be exported for them to work in child processes
 	export -f git
+	export -f mock_git_version
 }
 
 function commit_repo_state {
