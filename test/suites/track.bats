@@ -265,4 +265,6 @@ EOF
 	$HOMESHICK_FN track rc-files $HOME/.folder/ignored.swp
 	[ ! -e $HOMESICK/repos/rc-files/home/.folder/ignored.swp ]
 	[ -e $HOMESICK/repos/rc-files/home/.folder ]
+	# "unmock" git
+	unset git
 }

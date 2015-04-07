@@ -71,4 +71,6 @@ EOF
 	$HOMESHICK_FN --batch clone $REPO_FIXTURES/nested-submodules
 	[ -e "$HOMESICK/repos/nested-submodules/level1" ]
 	[ ! -e "$HOMESICK/repos/nested-submodules/level1/level2/info" ]
+	# "unmock" git
+	unset git
 }
