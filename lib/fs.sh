@@ -29,5 +29,5 @@ function list_castle_names {
 function abs_path {
 	local dir=$(dirname "$1")
 	local base=$(basename "$1")
-	(cd "$dir" &>/dev/null; printf "%s/%s" "$(pwd)" "$base")
+	(cd "$dir" &>/dev/null; printf "%s/%s" "$PWD" "$base")
 }
