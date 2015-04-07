@@ -243,6 +243,10 @@ EOF
 }
 
 @test 'track file in new folder with git version >= 1.8.2' {
+	GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
+	[[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]] && skip 'could not detect git version'
+	run version_compare $GIT_VERSION 1.8.2
+	[[ $status == 2 ]] && skip 'git version too low'
 
 	castle 'rc-files'
 	mkdir $HOME/.folder
