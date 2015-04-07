@@ -253,6 +253,16 @@ EOF
 }
 
 @test 'track file in new folder with mocked git version < 1.8.2' {
+	# git > 2.3 exits with $?=1 when trying to track an ignored file.
+	# In lower versions this was 128, so the homeshick fallback check
+	# will not work.
+	# This is not a problem, it simply means that we can not emulate
+	# git < 1.8.2 behavior with git > 2.3.0 and must skip the test.
+	GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
+	[[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]] && skip 'could not detect git version'
+	run version_compare $GIT_VERSION 2.3.0
+	[[ $status -lt 2 ]] && skip 'git version too high'
+
 	castle 'rc-files'
 	mock_git_version 1.8.0
 
