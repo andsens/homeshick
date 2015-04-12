@@ -1,5 +1,5 @@
 # This script should be sourced in the context of your shell like so:
-# source <path>/homeshick.sh
+# source homeshick.sh
 # Once the homeshick() function is defined, you can type
 # "homeshick cd CASTLE" to enter a castle.
 
