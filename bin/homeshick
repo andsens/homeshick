@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
 repos="$HOME/.homesick/repos"
-homeshick="$repos/homeshick"
-# It's either this^ or the one below:
-# scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# The install script however symlinks us. So $0 changes.
+homeshick="${HOMESHICK_DIR:-$repos/homeshick}"
 
 # Include all helper functions. We will include the required command function later on.
 source "$homeshick/lib/exit_status.sh"
