@@ -9,5 +9,9 @@ if ( "$1" == "cd" && "x$2" != "x" ) then
         cd "$HOME/.homesick/repos/$2"
     endif
 else
-    $HOME/.homesick/repos/homeshick/bin/homeshick $*
+    if ( $?HOMESHICK_DIR ) then
+        $HOMESHICK_DIR/bin/homeshick $*
+    else
+        $HOME/.homesick/repos/homeshick/bin/homeshick $*
+    endif
 endif

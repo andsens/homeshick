@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 
 repos="$HOME/.homesick/repos"
-homeshick="$repos/homeshick"
-# It's either this^ or the one below:
-# scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# The install script however symlinks us. So $0 changes.
-
 # Include all helper functions. We will include the required command function later on.
+homeshick=${HOMESHICK_DIR:-$HOME/.homesick/repos/homeshick}
 source "$homeshick/lib/exit_status.sh"
 source "$homeshick/lib/fs.sh"
 source "$homeshick/lib/git.sh"
@@ -126,9 +122,9 @@ fi
 # Include the file that implements the invoked command
 case $cmd in
 	cd) ;;
-	symlink) source $homeshick/lib/commands/link.sh ;;
-	updates) source $homeshick/lib/commands/check.sh ;;
-	*)       source $homeshick/lib/commands/$cmd.sh ;;
+	symlink) source "$homeshick/lib/commands/link.sh" ;;
+	updates) source "$homeshick/lib/commands/check.sh" ;;
+	*)       source "$homeshick/lib/commands/$cmd.sh" ;;
 esac
 
 case $cmd in
