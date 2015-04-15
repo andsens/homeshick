@@ -47,6 +47,7 @@ function mk_structure {
 	local hs_repo=$HOMESICK/repos/homeshick
 	mkdir -p $hs_repo
 	ln -s $(cd "${TESTDIR}/.."; printf "$(pwd)")/homeshick.sh "${hs_repo}/homeshick.sh"
+	ln -s $(cd "${TESTDIR}/.."; printf "$(pwd)")/homeshick.fish "${hs_repo}/homeshick.fish"
 	ln -s $(cd "${TESTDIR}/../bin"; printf "$(pwd)") "${hs_repo}/bin"
 	ln -s $(cd "${TESTDIR}/../lib"; printf "$(pwd)") "${hs_repo}/lib"
 	ln -s $(cd "${TESTDIR}/../completions"; printf "$(pwd)") "${hs_repo}/completions"
