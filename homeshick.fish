@@ -6,6 +6,8 @@
 function homeshick
 	if test \( (count $argv) = 2 -a $argv[1] = "cd" \)
 		cd "$HOME/.homesick/repos/$argv[2]"
+	else if set -q HOMESHICK_DIR 
+		eval $HOMESHICK_DIR/bin/homeshick $argv
 	else
 		eval $HOME/.homesick/repos/homeshick/bin/homeshick $argv
 	end
