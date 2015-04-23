@@ -10,11 +10,12 @@ function export_env_vars {
 	export REPO_FIXTURES="${_TMPDIR}/repos"
 	export HOME="${_TMPDIR}/home"
 	export NOTHOME="${_TMPDIR}/nothome"
-
 	export HOMESICK="$HOME/.homesick"
+
 	export HOMESHICK_FN="homeshick"
-	export HOMESHICK_FN_SRC="$HOMESICK/repos/homeshick/homeshick.sh"
-	export HOMESHICK_BIN="$HOMESICK/repos/homeshick/bin/homeshick"
+	export HOMESHICK_DIR=${HOMESHICK_DIR:-$(dirname "${TESTDIR}")}
+	export HOMESHICK_FN_SRC="$HOMESHICK_DIR/homeshick.sh"
+	export HOMESHICK_BIN="$HOMESHICK_DIR/bin/homeshick"
 
 	# Check if expect is installed
 	run type expect >/dev/null 2>&1
@@ -44,13 +45,6 @@ function remove_coreutils_from_path {
 
 function mk_structure {
 	mkdir "$REPO_FIXTURES" "$HOME" "$NOTHOME"
-	local hs_repo=$HOMESICK/repos/homeshick
-	mkdir -p $hs_repo
-	ln -s $(cd "${TESTDIR}/.."; printf "$(pwd)")/homeshick.sh "${hs_repo}/homeshick.sh"
-	ln -s $(cd "${TESTDIR}/.."; printf "$(pwd)")/homeshick.fish "${hs_repo}/homeshick.fish"
-	ln -s $(cd "${TESTDIR}/../bin"; printf "$(pwd)") "${hs_repo}/bin"
-	ln -s $(cd "${TESTDIR}/../lib"; printf "$(pwd)") "${hs_repo}/lib"
-	ln -s $(cd "${TESTDIR}/../completions"; printf "$(pwd)") "${hs_repo}/completions"
 }
 
 function rm_structure {
