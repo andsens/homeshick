@@ -74,8 +74,8 @@ _homeshick_complete()
         symlink
         updates
     '
-    local -r short_opts='-q      -s     -f      -b'
-    local -r long_opts='--quiet --skip --force --batch'
+    local -r short_opts='-q      -s     -f      -b      -v'
+    local -r long_opts='--quiet --skip --force --batch --verbose'
     local -r protocols='file ftp ftps git http https rsync ssh'
 
     # Scan through the command line and find the homeshick command
