@@ -40,7 +40,7 @@ _homeshick_basename()
 _homeshick_castles()
 {
     local repos="$HOME/.homesick/repos"
-    for repo in $(find $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
+    for repo in $(find -L $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
         _homeshick_basename ${repo%/.git}
     done
 }

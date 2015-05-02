@@ -57,7 +57,7 @@ _homeshick_castles()
 {
 	local castles repos="$HOME/.homesick/repos"
 	castles=()
-	for repo in $(find $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
+	for repo in $(find -L $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
 		castles+=($(_homeshick_basename "${repo%/.git}"))
 	done
 	_describe -t castles 'castle' castles && ret=0
