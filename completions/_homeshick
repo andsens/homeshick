@@ -7,6 +7,7 @@ _homeshick () {
 		'(-s --skip)'{-f,--force}'[Overwrite files that already exist]' \
 		'(-f --force)'{-s,--skip}'[Skip files that already exist]' \
 		{-b,--batch}'[Batch-mode: Skip interactive prompt]' \
+		{-v,--verbose}'[Verbose-mode: Detailed status output]' \
 		{-h,--help}'[Help message]' \
 		'1:commands:(cd clone generate list check refresh pull link track help)' \
 		'*::arguments:->arguments' \
@@ -57,7 +58,7 @@ _homeshick_castles()
 {
 	local castles repos="$HOME/.homesick/repos"
 	castles=()
-	for repo in $(find $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
+	for repo in $(find -L $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
 		castles+=($(_homeshick_basename "${repo%/.git}"))
 	done
 	_describe -t castles 'castle' castles && ret=0

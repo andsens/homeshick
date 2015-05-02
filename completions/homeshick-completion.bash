@@ -40,7 +40,7 @@ _homeshick_basename()
 _homeshick_castles()
 {
     local repos="$HOME/.homesick/repos"
-    for repo in $(find $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
+    for repo in $(find -L $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
         _homeshick_basename ${repo%/.git}
     done
 }
@@ -74,8 +74,8 @@ _homeshick_complete()
         symlink
         updates
     '
-    local -r short_opts='-q      -s     -f      -b'
-    local -r long_opts='--quiet --skip --force --batch'
+    local -r short_opts='-q      -s     -f      -b      -v'
+    local -r long_opts='--quiet --skip --force --batch --verbose'
     local -r protocols='file ftp ftps git http https rsync ssh'
 
     # Scan through the command line and find the homeshick command
