@@ -70,6 +70,6 @@ To assert variable values and file existance you *must* use single brackets!
 Also consider negative test cases (e.g. what happens when a non-existing
 castlename is passed as an argument?).
 
-You can read about the details of the testing framework
-in the [testing documentation]().
-[testing documentaion]: https://github.com/andsens/homeshick/wiki/Testing
+You can read about the details of the testing framework in the
+[testing documentation][].
+[testing documentation]: https://github.com/andsens/homeshick/wiki/Testing
