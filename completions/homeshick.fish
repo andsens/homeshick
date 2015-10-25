@@ -4,7 +4,7 @@ function __fish_homeshick_strip_options
         return 1
     end
     for item in $cmd[2..-1]
-        if [ (expr substr $item 1 1) = "-" ]
+        if [ (echo $item | sed 's/^\(.\).*/\1/') = "-" ]
             continue
         end
         echo $item
