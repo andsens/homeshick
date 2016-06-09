@@ -38,11 +38,6 @@ printf "homes${bldblu}h${txtdef}ick uses git in concert with symlinks to track y
 "
 }
 
-function help_err {
-	extended_help $1
-	exit $EX_USAGE
-}
-
 function extended_help {
 	case $1 in
 		cd)

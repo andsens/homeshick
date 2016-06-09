@@ -23,6 +23,12 @@ function err {
 	exit $exit_status
 }
 
+function help_err {
+	source $homeshick/lib/commands/help.sh
+	extended_help $1
+	exit $EX_USAGE
+}
+
 function status {
 	if $TALK; then
 		printf "$1%13s$txtdef %s\n" "$2" "$3"
