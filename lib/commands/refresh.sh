@@ -7,7 +7,7 @@ function refresh {
 	local castle=$2
 	local fetch_head="$repos/$castle/.git/FETCH_HEAD"
 	pending 'checking' "$castle"
-	castle_exists 'check freshness' "$castle"
+	castle_exists 'refresh' "$castle"
 
 	if [[ -e $fetch_head ]]; then
 		local last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
