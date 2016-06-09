@@ -134,15 +134,18 @@ case $cmd in
 	*)
 		for param in "${params[@]}"; do
 			case $cmd in
-				clone)         clone "$param"               ;;
-				generate)      generate "$param"            ;;
-				check|updates) check "$param"               ;;
-				refresh)       refresh $threshhold "$param" ;;
-				pull)          pull "$param"                ;;
-				symlink|link)  symlink "$param"             ;;
-				track)         track "$castle" "$param"     ;;
+				clone)         clone "$param"                 ;;
+				generate)      generate "$param"              ;;
+				check|updates) (check "$param")               ;;
+				refresh)       (refresh $threshhold "$param") ;;
+				pull)          (pull "$param")                ;;
+				symlink|link)  symlink "$param"               ;;
+				track)         track "$castle" "$param"       ;;
 			esac
 			result=$?
+			if [[ $result == $EX_USAGE ]]; then
+				exit $EX_USAGE
+			fi
 			if [[ $exit_status == 0 && $result != 0 ]]; then
 				exit_status=$result
 			fi
