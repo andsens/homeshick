@@ -3,7 +3,7 @@
 function symlink {
 	[[ ! $1 ]] && help symlink
 	local castle=$1
-	castle_exists "$castle"
+	castle_exists 'link' "$castle"
 	local repo="$repos/$castle"
 	if [[ ! -d $repo/home ]]; then
 		ignore 'ignored' "$castle"

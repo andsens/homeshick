@@ -18,3 +18,8 @@ load ../helper
 	$HOMESHICK_FN link symlinks
 	[ ! $($HOMESHICK_FN link symlinks | grep identical) ]
 }
+
+@test 'link non-existent castle' {
+	run $HOMESHICK_FN link nonexistent
+	[ $status -eq 1 ] # EX_ERR
+}
