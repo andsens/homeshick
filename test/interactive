@@ -39,6 +39,7 @@ run() {
 source $SCRIPTDIR/helper.bash
 export_env_vars
 setup_env
+ln_homeshick
 
 setup_script="${SCRIPTDIR}/setup.sh"
 if [[ -f $setup_script ]]; then

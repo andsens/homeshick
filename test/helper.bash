@@ -13,7 +13,8 @@ function export_env_vars {
 	export HOMESICK="$HOME/.homesick"
 
 	export HOMESHICK_FN="homeshick"
-	export HOMESHICK_DIR=${HOMESHICK_DIR:-$(dirname "${TESTDIR}")}
+	local repo_dir=$(cd "${TESTDIR}/.."; printf "$(pwd)")
+	export HOMESHICK_DIR=${HOMESHICK_DIR:-$repo_dir}
 	export HOMESHICK_FN_SRC_SH="$HOMESHICK_DIR/homeshick.sh"
 	export HOMESHICK_FN_SRC_CSH="$HOMESHICK_DIR/bin/homeshick.csh"
 	export HOMESHICK_FN_SRC_FISH="$HOMESHICK_DIR/homeshick.fish"
@@ -47,6 +48,17 @@ function remove_coreutils_from_path {
 
 function mk_structure {
 	mkdir "$REPO_FIXTURES" "$HOME" "$NOTHOME"
+}
+
+function ln_homeshick {
+	local hs_repo=$HOMESICK/repos/homeshick
+	mkdir -p $hs_repo
+	local repo_dir=$(cd "${TESTDIR}/.."; printf "$(pwd)")
+	ln -s "$repo_dir/homeshick.sh" "${hs_repo}/homeshick.sh"
+	ln -s "$repo_dir/homeshick.fish" "${hs_repo}/homeshick.fish"
+	ln -s "$repo_dir/bin" "${hs_repo}/bin"
+	ln -s "$repo_dir/lib" "${hs_repo}/lib"
+	ln -s "$repo_dir/completions" "${hs_repo}/completions"
 }
 
 function rm_structure {
