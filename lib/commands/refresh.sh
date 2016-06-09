@@ -30,7 +30,12 @@ function pull_outdated {
 	local outdated_castles=()
 	while [[ $# -gt 0 ]]; do
 		local castle=$1; shift
-		local fetch_head="$repos/$castle/.git/FETCH_HEAD"
+		local repo="$repos/$castle"
+		if [[ ! -d $repo ]]; then
+			# bogus argument, skip. User has already been warned by refresh()
+			continue
+		fi
+		local fetch_head="$repo/.git/FETCH_HEAD"
 		# When in interactive mode:
 		# No matter if we are going to pull the castles or not
 		# we reset the outdated ones by touching FETCH_HEAD
