@@ -11,7 +11,7 @@ load ../helper
 
 @test 'fish with homeshick_dir override' {
 	[ $(type -t fish) = "file" ] || skip "fish not installed"
-	cmd="source ${HOMESHICK_FN_SRC%.sh}.fish; set HOMESHICK_DIR \"$_TMPDIR/nowhere\"; $HOMESHICK_FN"
+	cmd="source $HOMESHICK_FN_SRC_FISH; set HOMESHICK_DIR \"$_TMPDIR/nowhere\"; $HOMESHICK_FN"
 	local result=$( fish <<< "$cmd" 2>&1 >/dev/null )
 	echo "result=$result"
 	[[ "$result" =~ "/nowhere/" ]]

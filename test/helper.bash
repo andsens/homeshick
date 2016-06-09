@@ -14,7 +14,9 @@ function export_env_vars {
 
 	export HOMESHICK_FN="homeshick"
 	export HOMESHICK_DIR=${HOMESHICK_DIR:-$(dirname "${TESTDIR}")}
-	export HOMESHICK_FN_SRC="$HOMESHICK_DIR/homeshick.sh"
+	export HOMESHICK_FN_SRC_SH="$HOMESHICK_DIR/homeshick.sh"
+	export HOMESHICK_FN_SRC_CSH="$HOMESHICK_DIR/bin/homeshick.csh"
+	export HOMESHICK_FN_SRC_FISH="$HOMESHICK_DIR/homeshick.fish"
 	export HOMESHICK_BIN="$HOMESHICK_DIR/bin/homeshick"
 
 	# Check if expect is installed
@@ -56,7 +58,7 @@ function setup_env {
 	remove_coreutils_from_path
 	export_env_vars
 	mk_structure
-	source $HOMESHICK_FN_SRC
+	source $HOMESHICK_FN_SRC_SH
 }
 
 function setup {
