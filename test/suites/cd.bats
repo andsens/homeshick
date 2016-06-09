@@ -41,3 +41,52 @@ load ../helper
 	local result=$($HOMESHICK_FN cd repo\ with\ spaces\ in\ name && pwd)
 	[ "$spaces_repo_dir" = "$result" ]
 }
+
+@test 'cd to castle in sh' {
+	[ $(type -t sh) = "file" ] || skip "sh not installed"
+	castle 'dotfiles'
+	local dotfiles_dir=$HOMESICK/repos/dotfiles
+	cmd=". $HOMESHICK_FN_SRC_SH && $HOMESHICK_FN cd dotfiles && echo \$PWD"
+	local result=$( sh <<< "$cmd" 2>&1 )
+	[ "$dotfiles_dir" = "$result" ]
+}
+
+@test 'cd to castle in dash' {
+	[ $(type -t dash) = "file" ] || skip "dash not installed"
+	castle 'dotfiles'
+	local dotfiles_dir=$HOMESICK/repos/dotfiles
+	cmd=". $HOMESHICK_FN_SRC_SH && $HOMESHICK_FN cd dotfiles && echo \$PWD"
+	local result=$( dash <<< "$cmd" 2>&1 )
+	[ "$dotfiles_dir" = "$result" ]
+}
+
+@test 'cd to castle in csh' {
+	[ $(type -t csh) = "file" ] || skip "csh not installed"
+	$EXPECT_INSTALLED || skip 'expect not installed'
+	# in csh we can't alias a command and use that command on the same line
+	# % do_something; do_something_else
+	# is apparently different from
+	# % do_something
+	# % do_something_else
+	castle 'dotfiles'
+	local dotfiles_dir=$HOMESICK/repos/dotfiles
+	cat <<EOF | expect -f -
+			spawn csh
+			send "alias $HOMESHICK_FN source \"$HOMESHICK_FN_SRC_CSH\"\n"
+			send "$HOMESHICK_FN cd dotfiles\n"
+			send "pwd\n"
+			expect "*$dotfiles_dir*" {} default {exit 1}
+			send "exit\n"
+			expect EOF
+EOF
+}
+
+@test 'cd to castle in fish' {
+	[ $(type -t fish) = "file" ] || skip "fish not installed"
+	castle 'dotfiles'
+	# fish $PWD has all symlinks resolved
+	local dotfiles_dir=$(cd $HOMESICK/repos/dotfiles && pwd -P)
+	cmd="source $HOMESHICK_FN_SRC_FISH; and $HOMESHICK_FN cd dotfiles; and pwd"
+	local result=$( fish <<< "$cmd" 2>&1 )
+	[ "$dotfiles_dir" = "$result" ]
+}
