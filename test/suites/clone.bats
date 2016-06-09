@@ -15,7 +15,7 @@ load ../helper
 ${esc}1;36m        clone${esc}0m https://github.com/andsens/rc-files.git\r${esc}1;32m        clone${esc}0m https://github.com/andsens/rc-files.git\r
 ${esc}1;37m      updates${esc}0m The castle rc-files has new files.\r
 ${esc}1;36m     symlink?${esc}0m BATCH - No\r${esc}1;31m     symlink?${esc}0m BATCH - No\r
-"
+" {} default {exit 1}
 			expect EOF
 EOF
 }

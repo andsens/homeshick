@@ -114,7 +114,7 @@ newline"
 	cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN link rc-files
 			expect -ex "${esc}1;37m     conflict${esc}0m .bashrc exists\r
-${esc}1;36m   overwrite?${esc}0m ${open_bracket}yN${close_bracket}"
+${esc}1;36m   overwrite?${esc}0m ${open_bracket}yN${close_bracket}" {} default {exit 1}
 			send "y\n"
 			expect EOF
 EOF
