@@ -42,9 +42,10 @@ load ../helper
 ## First row: nonexistent
 ## Second column: directory
 @test 'link dir to nonexistent' {
+	castle 'dotfiles'
 	$HOMESHICK_FN --batch link dotfiles
 	[ ! -L "$HOME/.ssh" ]
-	[ ! -d "$HOME/.ssh" ]
+	[ -d "$HOME/.ssh" ]
 }
 
 
