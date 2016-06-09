@@ -5,11 +5,11 @@ load ../helper
 @test 'clone with github shorthand, while matching path exists' {
 	$EXPECT_INSTALLED || skip 'expect not installed'
 	ping -c 1 -w 3 github.com || ping -c 1 -t 3 github.com || skip 'github not reachable'
-	git init andsens/rc-files
+	(cd $HOME; git init andsens/rc-files)
 	open_bracket="\\u005b"
 	close_bracket="\\u005d"
 	esc="\\u001b$open_bracket"
-	cat <<EOF | expect -f -
+	(cd $HOME; cat <<EOF | expect -f -
 			spawn $HOMESHICK_BIN --batch clone andsens/rc-files
 			expect -ex "${esc}1;33m        clone${esc}0m andsens/rc-files also exists as a filesystem path, use \`homeshick clone ./andsens/rc-files' to circumvent the github shorthand\r
 ${esc}1;36m        clone${esc}0m https://github.com/andsens/rc-files.git\r${esc}1;32m        clone${esc}0m https://github.com/andsens/rc-files.git\r
@@ -18,6 +18,7 @@ ${esc}1;36m     symlink?${esc}0m BATCH - No\r${esc}1;31m     symlink?${esc}0m BA
 " {} default {exit 1}
 			expect EOF
 EOF
+	)
 }
 
 @test 'clone a repo' {
