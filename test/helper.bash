@@ -89,7 +89,7 @@ function get_inode_no {
 	stat -c %i $1 2>/dev/null || stat -f %i $1
 }
 
-# Snatched from http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format 
+# Snatched from http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
 function version_compare {
 	if [[ $1 == $2 ]]; then
 		return 0
