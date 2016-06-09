@@ -4,7 +4,7 @@ load ../helper
 
 @test 'clone with github shorthand, while matching path exists' {
 	$EXPECT_INSTALLED || skip 'expect not installed'
-	ping -c 1 -w 3 github.com || skip 'github not reachable'
+	ping -c 1 -w 3 github.com || ping -c 1 -t 3 github.com || skip 'github not reachable'
 	git init andsens/rc-files
 	open_bracket="\\u005b"
 	close_bracket="\\u005d"
