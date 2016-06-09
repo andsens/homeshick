@@ -2,7 +2,7 @@
 
 
 function refresh {
-	[[ ! $1 || ! $2 ]] && help_err last-update
+	[[ ! $1 || ! $2 ]] && help_err refresh
 	local threshhold=$1
 	local castle=$2
 	local fetch_head="$repos/$castle/.git/FETCH_HEAD"
