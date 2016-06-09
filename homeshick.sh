@@ -3,7 +3,7 @@
 # Once the homeshick() function is defined, you can type
 # "homeshick cd CASTLE" to enter a castle.
 
-function homeshick() {
+homeshick () {
 	if [ "$1" = "cd" ] && [ -n "$2" ]; then
 		cd "$HOME/.homesick/repos/$2"
 	else
