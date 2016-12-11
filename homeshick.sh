@@ -4,9 +4,10 @@
 # "homeshick cd CASTLE" to enter a castle.
 
 homeshick () {
+        repos="${HOMESICK_DIR:-$HOME/.homesick}/repos"
 	if [ "$1" = "cd" ] && [ -n "$2" ]; then
-		cd "$HOME/.homesick/repos/$2"
+		cd "$repos/$2"
 	else
-		"${HOMESHICK_DIR:-$HOME/.homesick/repos/homeshick}/bin/homeshick" "$@"
+		"$repos/homeshick/bin/homeshick" "$@"
 	fi
 }
