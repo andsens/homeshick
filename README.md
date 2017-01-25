@@ -22,7 +22,7 @@ Quick install
 
 homeshick is installed to your own home directory and does not require root privileges to be installed.
 ```sh
-git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
+git clone git://github.com/andsens/homeshick.git $HOME/.homeshick/repos/homeshick
 ```
 *Note: If you'd like to help testing new features before they are released use `git clone --branch testing git://...`*
 
