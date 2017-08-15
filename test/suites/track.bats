@@ -278,3 +278,19 @@ EOF
 	# "unmock" git
 	unset git
 }
+
+@test 'track symlink in $HOME to $HOME' {
+	castle 'symlinks'
+	ln -s . .home
+	(cd $HOME; ln -s . .home)
+	$HOMESHICK_FN track symlinks $HOME/.home
+	is_symlink ../../../../. $HOMESICK/repos/symlinks/home/.home
+}
+
+@test 'track file and make sure symlink is relative' {
+	castle 'symlinks'
+	touch $HOME/.test
+	$HOMESHICK_FN track symlinks $HOME/.test
+	ls -al $HOME
+	is_symlink .homesick/repos/symlinks/home/.test $HOME/.test
+}

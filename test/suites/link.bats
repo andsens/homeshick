@@ -22,7 +22,7 @@ newline"
  $HOMESHICK_FN --batch link rc-files
  [ -L "$HOME/filename
 newline" ]
- is_symlink "$HOMESICK/repos/rc-files/home/filename
+ is_symlink ".homesick/repos/rc-files/home/filename
 newline" "$HOME/filename
 newline"
 }
@@ -185,9 +185,9 @@ EOF
 	castle 'dotfiles'
 	castle 'repo with spaces in name'
 	$HOMESHICK_FN --batch link rc-files dotfiles repo\ with\ spaces\ in\ name
-	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
-	is_symlink $HOMESICK/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
-	is_symlink "$HOMESICK/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
+	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
+	is_symlink ../.homesick/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
+	is_symlink ".homesick/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
 }
 
 @test 'link all castles when no castle is specified' {
@@ -195,9 +195,9 @@ EOF
 	castle 'dotfiles'
 	castle 'repo with spaces in name'
 	$HOMESHICK_FN --batch link
-	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
-	is_symlink $HOMESICK/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
-	is_symlink "$HOMESICK/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
+	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
+	is_symlink ../.homesick/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
+	is_symlink ".homesick/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
 }
 
 @test 'files ignored by git should not be linked' {

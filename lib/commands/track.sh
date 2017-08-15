@@ -36,15 +36,15 @@ function track {
 
 		local filepath=${local#$HOME/}
 		pending 'track' "$filepath"
-		local rel_remote="home/$filepath"
-		local remote="$repo/$rel_remote"
+		local repo_path_remote="home/$filepath"
+		local remote="$repo/$repo_path_remote"
 
 		if [[ -e $remote ]]; then
 			ignore 'exists' "The file $filepath is already being tracked."
 			continue
 		fi
 		if $check_ignore; then
-			if (cd "$repo" && git check-ignore --quiet "$rel_remote") then
+			if (cd "$repo" && git check-ignore --quiet "$repo_path_remote") then
 				ignore 'ignored' "The file $filepath would be ignored by git."
 				continue
 			fi
@@ -70,25 +70,18 @@ function track {
 				# Figure out the relative path from the symlink location in
 				# the castle to the path the symlink points at
 
-				# Get the paths to $remote and $local relative to the homedir
-				local path_to_local
-				local path_to_remote
-				path_to_local=$(dirname "${local/#$HOME\//}")
-				path_to_remote=$(dirname "${remote/#$HOME\//}")
-				# Replace every part of the path with a '..' (the '[^/]+$' is for the last part)
-				local path_from_remote=''
-				while [[ $path_to_remote =~ ^(.*)[^/]+/+(.*)$ || $path_to_remote =~ ^[^/]+$ ]]; do
-					path_to_remote=${BASH_REMATCH[1]}${BASH_REMATCH[2]}
-					path_from_remote="../${path_from_remote}"
-				done
-				local relpath="${path_from_remote}${path_to_local}/${target}"
-				# Remove unnecessary path parts
-				# Remove '/./'
-				relpath=${relpath//\/.\//\/}
+				# Convert the relative target into an absolute one
+				local abs_target
+				local target_dir
+				target_dir=$(abs_path "$(dirname "$local")")
+				abs_target="$target_dir/$target"
 				# Remove 'somedir/../'
-				while [[ $relpath =~ ^(.*/)?[^/.]+/\.\./(.*)$ ]]; do
-					relpath=${BASH_REMATCH[1]}${BASH_REMATCH[2]}
+				while [[ $abs_target =~ ^(.*/)?[^/.]+/\.\./(.*)$ ]]; do
+					abs_target=${BASH_REMATCH[1]}${BASH_REMATCH[2]}
 				done
+				# Get the relative path from the remote dir to the target
+				local relpath
+				relpath=$(create_rel_path "$(dirname "$remote")" "$abs_target")
 				ln -s "$relpath" "$remote"
 				# Remove $remote so we can create the symlink further down
 				rm "$local"
@@ -98,10 +91,12 @@ function track {
 			mv -f "$local" "$remote"
 		fi
 		# Create the symlink in place of the moved file (simulate what the link command does)
-		ln -s "$remote" "$local"
+		local rel_remote
+		rel_remote=$(create_rel_path "$(dirname "$local")" "$remote")
+		ln -s "$rel_remote" "$local"
 
 		local git_out
-		git_out=$(cd "$repo" && git add "$rel_remote" 2>&1)
+		git_out=$(cd "$repo" && git add "$repo_path_remote" 2>&1)
 		status=$?
 		if [[ $status == 128 && $check_ignore == false ]]; then
 			# Currently our only option with git < 1.8.2, we can't be sure some other error hasn't occurred

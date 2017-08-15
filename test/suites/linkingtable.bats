@@ -18,25 +18,25 @@ load ../helper
 @test 'link file to nonexistent' {
 	castle 'rc-files'
 	$HOMESHICK_FN --batch link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
+	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
 }
 
 @test 'link file symlink to nonexistent' {
 	castle 'rc-files'
 	$HOMESHICK_FN --batch link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
+	is_symlink .homesick/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 }
 
 @test 'link dir symlink to nonexistent' {
 	castle 'rc-files'
 	$HOMESHICK_FN --batch link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
+	is_symlink .homesick/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 }
 
 @test 'link dead symlink to nonexistent' {
 	castle 'rc-files'
 	$HOMESHICK_FN --batch link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
+	is_symlink .homesick/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 }
 
 ## First row: nonexistent
@@ -57,7 +57,7 @@ load ../helper
 	local inode_before=$(get_inode_no $HOME/.bashrc)
 	$HOMESHICK_FN --batch --force link rc-files
 	local inode_after=$(get_inode_no $HOME/.bashrc)
-	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
+	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
 	[ "$inode_before" -eq "$inode_after" ]
 }
 
@@ -67,7 +67,7 @@ load ../helper
 	local inode_before=$(get_inode_no $HOME/symlinked-file)
 	$HOMESHICK_FN --batch --force link rc-files
 	local inode_after=$(get_inode_no $HOME/symlinked-file)
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
+	is_symlink .homesick/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 	[ "$inode_before" -eq "$inode_after" ]
 }
 
@@ -77,7 +77,7 @@ load ../helper
 	local inode_before=$(get_inode_no $HOME/symlinked-directory)
 	$HOMESHICK_FN --batch --force link rc-files
 	local inode_after=$(get_inode_no $HOME/symlinked-directory)
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
+	is_symlink .homesick/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 	[ "$inode_before" -eq "$inode_after" ]
 }
 
@@ -87,7 +87,7 @@ load ../helper
 	local inode_before=$(get_inode_no $HOME/dead-symlink)
 	$HOMESHICK_FN --batch --force link rc-files
 	local inode_after=$(get_inode_no $HOME/dead-symlink)
-	is_symlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
+	is_symlink .homesick/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 	[ "$inode_before" -eq "$inode_after" ]
 }
 
@@ -111,30 +111,30 @@ load ../helper
 	castle 'rc-files'
 	touch $HOME/.bashrc
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
+	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
+	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
 }
 
 @test 'link file symlink to file' {
 	castle 'rc-files'
 	touch $HOME/symlinked-file
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
+	is_symlink .homesick/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 }
 
 @test 'link dir symlink to file' {
 	castle 'rc-files'
 	mkdir $HOME/symlinked-directory
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
+	is_symlink .homesick/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 }
 
 @test 'link dead symlink to file' {
 	castle 'rc-files'
 	touch $HOME/dead-symlink
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
+	is_symlink .homesick/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 }
 
 ## Third row: file
@@ -154,28 +154,28 @@ load ../helper
 	castle 'rc-files'
 	mkdir $HOME/.bashrc
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
+	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
 }
 
 @test 'link file symlink to dir' {
 	castle 'rc-files'
 	mkdir $HOME/symlinked-file
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
+	is_symlink .homesick/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 }
 
 @test 'link dir symlink to dir' {
 	castle 'rc-files'
 	mkdir $HOME/symlinked-directory
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
+	is_symlink .homesick/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 }
 
 @test 'link dead symlink to dir' {
 	castle 'rc-files'
 	mkdir $HOME/dead-symlink
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
+	is_symlink .homesick/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 }
 
 ## Fourth row: directory
@@ -199,7 +199,7 @@ load ../helper
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/.bashrc
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/.bashrc $HOME/.bashrc
+	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
 	rm -rf $NOTHOME/symlink-target-dir
 }
 
@@ -208,7 +208,7 @@ load ../helper
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/symlinked-file
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-file $HOME/symlinked-file
+	is_symlink .homesick/repos/rc-files/home/symlinked-file $HOME/symlinked-file
 	rm -rf $NOTHOME/symlink-target-dir
 }
 
@@ -217,7 +217,7 @@ load ../helper
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/symlinked-directory
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
+	is_symlink .homesick/repos/rc-files/home/symlinked-directory $HOME/symlinked-directory
 	rm -rf $NOTHOME/symlink-target-dir
 }
 
@@ -226,7 +226,7 @@ load ../helper
 	mkdir $NOTHOME/symlink-target-dir
 	ln -s $NOTHOME/symlink-target-dir $HOME/dead-symlink
 	$HOMESHICK_FN --batch --force link rc-files
-	is_symlink $HOMESICK/repos/rc-files/home/dead-symlink $HOME/dead-symlink
+	is_symlink .homesick/repos/rc-files/home/dead-symlink $HOME/dead-symlink
 	rm -rf $NOTHOME/symlink-target-dir
 }
 

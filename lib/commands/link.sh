@@ -19,25 +19,31 @@ function symlink {
 	# using the real stdin for prompting the user whether he wants to overwrite or skip
 	# on conflicts.
 	while IFS= read -d $'\0' -r filename <&3 ; do
-		remote="$repo/home/$filename"
-		local="$HOME/$filename"
+		local remote="$repo/home/$filename"
+		local local="$HOME/$filename"
+		local rel_remote
+		rel_remote=$(create_rel_path "$(dirname "$local")" "$remote")
 
 		if [[ -e $local || -L $local ]]; then
 			# $local exists (but may be a dead symlink)
-			if [[ -L $local && $(readlink "$local") == "$remote" ]]; then
+			if [[ -L $local && $(readlink "$local") == "$rel_remote" ]]; then
 				# $local symlinks to $remote.
+				if $VERBOSE; then
+					ignore 'identical' "$filename"
+				fi
+				continue
+			elif [[ $(readlink "$local") == "$remote" ]]; then
+				# $local is an absolute symlink to $remote
 				if [[ -d $remote && ! -L $remote ]]; then
-					# If $remote is a directory -> legacy handling.
+					# $remote is a directory, but $local is a symlink -> legacy handling.
 					rm "$local"
 				else
-					# $local points at $remote and $remote is not a directory
-					if $VERBOSE; then
-						ignore 'identical' "$filename"
-					fi
-					continue
+					# replace it with a relative symlink
+					rm "$local"
 				fi
 			else
 				# $local does not symlink to $remote
+				# check if we should delete $local
 				if [[ -d $local && -d $remote && ! -L $remote ]]; then
 					# $remote is a real directory while
 					# $local is a directory or a symlinked directory
@@ -46,16 +52,13 @@ function symlink {
 						ignore 'identical' "$filename"
 					fi
 					continue
-				fi
-				if $SKIP; then
+				elif $SKIP; then
 					ignore 'exists' "$filename"
 					continue
-				fi
-				if ! $FORCE; then
+				elif ! $FORCE; then
 					prompt_no 'conflict' "$filename exists" "overwrite?" || continue
 				fi
-				# Delete $local. If $remote is a real directory,
-				# $local must be a file (because of all the previous checks)
+				# Delete $local.
 				rm -rf "$local"
 			fi
 		fi
@@ -63,7 +66,7 @@ function symlink {
 		if [[ ! -d $remote || -L $remote ]]; then
 			# $remote is not a real directory so we create a symlink to it
 			pending 'symlink' "$filename"
-			ln -s "$remote" "$local"
+			ln -s "$rel_remote" "$local"
 		else
 			pending 'directory' "$filename"
 			mkdir "$local"
