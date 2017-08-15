@@ -19,9 +19,7 @@ function err {
 		fail
 	fi
 	status "$bldred" "error" "$reason" >&2
-	for line in "$@"; do
-		printf "%s\n" "$line" >&2
-	done
+	printf "%s\n" "$@" >&2
 	exit "$exit_status"
 }
 
