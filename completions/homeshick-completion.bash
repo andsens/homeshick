@@ -40,8 +40,10 @@ _homeshick_basename()
 _homeshick_castles()
 {
     local repos="$HOME/.homesick/repos"
-    for repo in $(find -L $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
-        _homeshick_basename ${repo%/.git}
+    # This should be a while loop like in link.sh, leave it for now though
+    # shellcheck disable=SC2044
+    for repo in $(find -L "$repos" -mindepth 2 -maxdepth 2 -type d -name .git); do
+        _homeshick_basename "${repo%/.git}"
     done
 }
 
@@ -53,7 +55,7 @@ _homeshick_complete_castles()
 _homeshick_complete()
 {
     # The comments at the bottom of the file explain what's going on here.
-    if [ $_HOMESHICK_HAS_COMPOPT ]; then
+    if $_HOMESHICK_HAS_COMPOPT; then
         compopt +o default +o nospace
         COMPREPLY=()
     else
@@ -98,22 +100,22 @@ _homeshick_complete()
 
     local cur="${COMP_WORDS[COMP_CWORD]}"
 
-    if (( $COMP_CWORD < $cmd_index )); then
+    if (( COMP_CWORD < cmd_index )); then
         # Offer option completions.
         case "$cur" in
             --*)
-                COMPREPLY=($(compgen -W "$long_opts" -- $cur))
+                COMPREPLY=($(compgen -W "$long_opts" -- "$cur"))
                 ;;
             -*)
-                COMPREPLY=($(compgen -W "$short_opts" -- $cur))
+                COMPREPLY=($(compgen -W "$short_opts" -- "$cur"))
                 ;;
             *)
                 # Skip completion; we should never get here.
                 ;;
         esac
-    elif (( $COMP_CWORD == $cmd_index )); then
+    elif (( COMP_CWORD == cmd_index )); then
         # Offer command name completions.
-        COMPREPLY=($(compgen -W "$cmds" -- $cur))
+        COMPREPLY=($(compgen -W "$cmds" -- "$cur"))
     else
         # Offer command argument completions.
         case "$cmd" in
@@ -123,7 +125,7 @@ _homeshick_complete()
                 ;;
             cd)
                 # Offer exactly one castle name completion.
-                if (( $COMP_CWORD == $cmd_index + 1 )); then
+                if (( COMP_CWORD == cmd_index + 1 )); then
                     _homeshick_complete_castles "$cur"
                 fi
                 ;;
@@ -131,7 +133,7 @@ _homeshick_complete()
                 # Offer a numerical completion for DAYS (mostly as a reminder
                 # that this argument should be a number), then castle name
                 # completions after that.
-                if (( $COMP_CWORD == $cmd_index + 1 )); then
+                if (( COMP_CWORD == cmd_index + 1 )); then
                     COMPREPLY=({0..9})
                 else
                     _homeshick_complete_castles "$cur"
@@ -140,24 +142,24 @@ _homeshick_complete()
             track)
                 # Offer one castle name completion, then filename completions
                 # after that.
-                if (( $COMP_CWORD == $cmd_index + 1 )); then
+                if (( COMP_CWORD == cmd_index + 1 )); then
                     _homeshick_complete_castles "$cur"
                 else
-                    [ $_HOMESHICK_HAS_COMPOPT ] && compopt -o default
+                    $_HOMESHICK_HAS_COMPOPT && compopt -o default
                     # Let the default Readline filename completion take over.
                     COMPREPLY=()
                 fi
                 ;;
             clone)
                 # Offer an initial protocol completion.
-                if (( $COMP_CWORD == $cmd_index + 1 )); then
-                    [ $_HOMESHICK_HAS_COMPOPT ] && compopt -o nospace
+                if (( COMP_CWORD == cmd_index + 1 )); then
+                    $_HOMESHICK_HAS_COMPOPT && compopt -o nospace
                     COMPREPLY=($(compgen -W "$protocols" -S '://' -- "$cur"))
                 fi
                 ;;
             help)
                 # Offer exactly one command name completion.
-                if (( $COMP_CWORD == $cmd_index + 1 )); then
+                if (( COMP_CWORD == cmd_index + 1 )); then
                     COMPREPLY=($(compgen -W "$cmds" -- "$cur"))
                 fi
                 ;;
@@ -191,7 +193,9 @@ _homeshick_complete()
 # COMPREPLY=('') to semi-deny completion. That is, pressing Tab will just add
 # space characters to the command line, rather than generating filenames.
 #
-if type compopt >/dev/null 2>&1; then
-    _HOMESHICK_HAS_COMPOPT=1
+if type compopt &>/dev/null; then
+    _HOMESHICK_HAS_COMPOPT=true
+else
+    _HOMESHICK_HAS_COMPOPT=false
 fi
 complete -o default -F _homeshick_complete homeshick

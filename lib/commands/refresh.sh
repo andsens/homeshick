@@ -1,27 +1,30 @@
 #!/bin/bash
 
-
 function refresh {
 	[[ ! $1 || ! $2 ]] && help_err refresh
 	local threshhold=$1
 	local castle=$2
+	# repos is a global variable
+	# shellcheck disable=SC2154
 	local fetch_head="$repos/$castle/.git/FETCH_HEAD"
 	pending 'checking' "$castle"
 	castle_exists 'refresh' "$castle"
 
 	if [[ -e $fetch_head ]]; then
-		local last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
-		local time_now=$(date +%s)
+		local last_mod
+		local time_now
+		last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
+		time_now=$(date +%s)
 		if [[ $((time_now-last_mod)) -gt $threshhold ]]; then
 			fail "outdated"
-			return $EX_TH_EXCEEDED
+			return "$EX_TH_EXCEEDED"
 		else
 			success "fresh"
-			return $EX_SUCCESS
+			return "$EX_SUCCESS"
 		fi
 	else
 		fail "outdated"
-		return $EX_TH_EXCEEDED
+		return "$EX_TH_EXCEEDED"
 	fi
 }
 
@@ -40,8 +43,10 @@ function pull_outdated {
 		# No matter if we are going to pull the castles or not
 		# we reset the outdated ones by touching FETCH_HEAD
 		if [[ -e $fetch_head ]]; then
-			local last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
-			local time_now=$(date +%s)
+			local last_mod
+			local time_now
+			last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
+			time_now=$(date +%s)
 			if [[ $((time_now-last_mod)) -gt $threshhold ]]; then
 				outdated_castles+=("$castle")
 				! $BATCH && touch "$fetch_head"
@@ -51,8 +56,8 @@ function pull_outdated {
 			! $BATCH && touch "$fetch_head"
 		fi
 	done
-	ask_pull ${outdated_castles[*]}
-	return $EX_SUCCESS
+	ask_pull "${outdated_castles[@]}"
+	return "$EX_SUCCESS"
 }
 
 function ask_pull {
@@ -65,13 +70,13 @@ function ask_pull {
 			msg="The castles $* are outdated."
 			IFS=$OIFS
 		fi
-		prompt_no 'refresh' "$msg" 'pull?'
-		if [[ $? = 0 ]]; then
+		if prompt_no 'refresh' "$msg" 'pull?'; then
+			# shellcheck source=lib/commands/pull.sh
 			source $homeshick/lib/commands/pull.sh
-			for castle in $*; do
+			for castle in "$@"; do
 				pull "$castle"
 			done
 		fi
 	fi
-	return $EX_SUCCESS
+	return "$EX_SUCCESS"
 }

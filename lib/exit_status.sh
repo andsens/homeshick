@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+# constants file, disable SC2034
+# shellcheck disable=SC2034
+true
+
 # List of semi-standard exit status codes
 
 # Sources:

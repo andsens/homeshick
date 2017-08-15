@@ -10,15 +10,15 @@ function ask_symlink {
 			msg="The castles $* have new files."
 			IFS=$OIFS
 		fi
-		prompt_no 'updates' "$msg" 'symlink?'
-		if [[ $? = 0 ]]; then
+		if prompt_no 'updates' "$msg" 'symlink?'; then
+			# shellcheck source=lib/commands/link.sh
 			source $homeshick/lib/commands/link.sh
-			for castle in $*; do
+			for castle in "$@"; do
 				symlink "$castle"
 			done
 		fi
 	fi
-	return $EX_SUCCESS
+	return "$EX_SUCCESS"
 }
 
 
@@ -38,6 +38,8 @@ function prompt_no {
 	local prompt=$3
 	local result=-1
 
+	# global vars
+	# shellcheck disable=SC2154
 	status "$bldwht" "$status" "$message"
 	if ! $BATCH; then
 		pending "$prompt" "[yN] "
@@ -45,11 +47,11 @@ function prompt_no {
 			local answer=""
 			local char=""
 			while true; do
-				read -s -n 1 char
+				read -s -n 1 -r char
 				if [[ $char == "" ]]; then
 					break
 				fi
-				printf "%c" $char
+				printf "%c" "$char"
 				answer="${answer}${char}"
 			done
 			case $answer in
@@ -62,6 +64,8 @@ function prompt_no {
 				printf "\b"
 			done
 			printf "%${#answer}s\r"
+			# global vars
+			# shellcheck disable=SC2154
 			pending "$pending_status" "$pending_message"
 		done
 	else

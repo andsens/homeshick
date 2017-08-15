@@ -1,10 +1,14 @@
 #!/bin/bash
+
+# help is used globally
+# shellcheck disable=SC2120
 function help {
 	if [[ $1 ]]; then
-		extended_help $1
-		exit $EX_SUCCESS
+		extended_help "$1"
+		exit "$EX_SUCCESS"
 	fi
-printf "homes${bldblu}h${txtdef}ick uses git in concert with symlinks to track your precious dotfiles.
+
+printf "homes\e[1;34mh\e[0mick uses git in concert with symlinks to track your precious dotfiles.
 
  Usage: homeshick [options] TASK
 
@@ -59,7 +63,7 @@ function extended_help {
       ;;
 		check|updates)
       printf "Checks if a castle has been updated on the remote\n"
-      printf "Usage:\n  homeshick $1 [CASTLE..]"
+      printf "Usage:\n  homeshick %s [CASTLE..]" "$1"
       ;;
     refresh)
       printf "Checks if a castle has not been pulled in DAYS days.\n"
@@ -72,7 +76,7 @@ function extended_help {
       ;;
 		link|symlink)
       printf "Symlinks all dotfiles from a castle\n"
-      printf "Usage:\n  homeshick $1 [CASTLE..]"
+      printf "Usage:\n  homeshick %s [CASTLE..]" "$1"
       ;;
 		track)
       printf "Adds a file to a castle.\n"
@@ -83,7 +87,11 @@ function extended_help {
       printf "Shows usage of a task\n"
       printf "Usage:\n  homeshick help [TASK]"
       ;;
-		*)    help  ;;
+		*)
+			# no args for help
+			# shellcheck disable=SC2119
+			help
+			;;
 		esac
 	printf "\n\n"
 }

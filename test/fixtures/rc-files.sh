@@ -1,12 +1,14 @@
 #!/bin/bash
-(
+
+# shellcheck disable=2164
+function fixture_rc_files() {
 	local git_username="Homeshick user"
 	local git_useremail="homeshick@example.com"
 	local rc_files="$REPO_FIXTURES/rc-files"
-	git init $rc_files
-	cd $rc_files
-	git config user.name $git_username
-	git config user.email $git_useremail
+	git init "$rc_files"
+	cd "$rc_files"
+	git config user.name "$git_username"
+	git config user.email "$git_useremail"
 	mkdir home
 	cd home
 
@@ -17,19 +19,19 @@ EOF
 	git add .bashrc
 	git commit -m '.bashrc file for my new rc-files repo'
 
-	cat > $NOTHOME/some-file <<EOF
+	cat > "$NOTHOME/some-file" <<EOF
 File with some content.
 EOF
-	ln -s $NOTHOME/some-file symlinked-file
+	ln -s "$NOTHOME/some-file" symlinked-file
 	git add symlinked-file
 	git commit -m 'Added a symlinked file'
 
-	mkdir $NOTHOME/some-directory
-	ln -s $NOTHOME/some-directory symlinked-directory
+	mkdir "$NOTHOME/some-directory"
+	ln -s "$NOTHOME/some-directory" symlinked-directory
 	git add symlinked-directory
 	git commit -m 'Added a symlinked directory'
 
-	ln -s $NOTHOME/nonexistent dead-symlink
+	ln -s "$NOTHOME/nonexistent" dead-symlink
 	git add dead-symlink
 	git commit -m 'Added a dead symlink'
 
@@ -43,4 +45,6 @@ EOF
 EOF
 	git add .gitignore
 	git commit -m 'Added .gitignore file'
-) > /dev/null
+}
+
+fixture_rc_files  > /dev/null

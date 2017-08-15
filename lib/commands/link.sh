@@ -4,10 +4,12 @@ function symlink {
 	[[ ! $1 ]] && help symlink
 	local castle=$1
 	castle_exists 'link' "$castle"
+	# repos is a global variable
+	# shellcheck disable=SC2154
 	local repo="$repos/$castle"
 	if [[ ! -d $repo/home ]]; then
 		ignore 'ignored' "$castle"
-		return $EX_SUCCESS
+		return "$EX_SUCCESS"
 	fi
 	# Run through the repo files using process substitution.
 	# The get_repo_files call is at the bottom of this loop.
@@ -70,18 +72,21 @@ function symlink {
 		success
 	# Fetch the repo files and redirect the output into file descriptor 3
 	done 3< <(get_repo_files "$repo")
-	return $EX_SUCCESS
+	return "$EX_SUCCESS"
 }
 
 # Fetches all files and folders in a repository that are tracked by git
 # Works recursively on submodules as well
+# Disable SC2154, we cannot do it inline where $homeshick is used.
+# shellcheck disable=SC2154
 function get_repo_files {
 	# Resolve symbolic links
 	# e.g. on osx $TMPDIR is in /var/folders...
 	# which is actually /private/var/folders...
 	# We do this so that the root part of $toplevel can be replaced
 	# git resolves symbolic links before it outputs $toplevel
-	local root=$(cd "$1"; pwd -P)
+	local root
+	root=$(cd "$1" && pwd -P)
 	(
 		local path
 		while IFS= read -d $'\n' -r path; do
@@ -94,6 +99,8 @@ function get_repo_files {
 			# Remove the home/ part
 			path=${path/#home\//}
 			# Print the file path (NUL separated because \n can be used in filenames)
+			# Disable SC2059, using %s messes with the filename
+			# shellcheck disable=SC2059
 			printf "$path\0"
 			# Get the path of all the parent directories
 			# up to the repo root.
@@ -102,6 +109,7 @@ function get_repo_files {
 				# If path is '.' we're done
 				[[ $path == '.' ]] && break
 				# Print the path
+				# shellcheck disable=SC2059
 				printf "$path\0"
 			done
 		# Enter the repo, list the repo root files in home

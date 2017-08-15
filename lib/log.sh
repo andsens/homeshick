@@ -14,19 +14,22 @@ function err {
 	local reason="$2"
 	shift 2
 	if [[ $pending_status ]]; then
+		# no args for fail
+		# shellcheck disable=SC2119
 		fail
 	fi
 	status "$bldred" "error" "$reason" >&2
 	for line in "$@"; do
-		printf "$line\n" >&2
+		printf "%s\n" "$line" >&2
 	done
-	exit $exit_status
+	exit "$exit_status"
 }
 
 function help_err {
+	# shellcheck source=lib/commands/help.sh
 	source $homeshick/lib/commands/help.sh
-	extended_help $1
-	exit $EX_USAGE
+	extended_help "$1"
+	exit "$EX_USAGE"
 }
 
 function status {
@@ -53,6 +56,8 @@ function pending {
 	fi
 }
 
+# fail is used globally
+# shellcheck disable=SC2120
 function fail {
 	[[ $1 ]] && pending_status=$1
 	[[ $2 ]] && pending_message=$2

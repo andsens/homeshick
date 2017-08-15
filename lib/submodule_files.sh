@@ -12,6 +12,8 @@ repo=${toplevel/#$root/}/$path
 repo=${repo/#\//}
 # We are only interested in submodules under home/
 if [[ $repo =~ ^home ]]; then
+	# just let cd fail if the path does not exist
+	# shellcheck disable=2164
 	cd "$toplevel/$path"
 	# List the files and prefix every line
 	# with the relative repo path

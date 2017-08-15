@@ -3,18 +3,29 @@
 repos="$HOME/.homesick/repos"
 # Include all helper functions. We will include the required command function later on.
 homeshick=${HOMESHICK_DIR:-$HOME/.homesick/repos/homeshick}
+# shellcheck source=lib/exit_status.sh
 source "$homeshick/lib/exit_status.sh"
+# shellcheck source=lib/fs.sh
 source "$homeshick/lib/fs.sh"
+# shellcheck source=lib/git.sh
 source "$homeshick/lib/git.sh"
+# shellcheck source=lib/log.sh
 source "$homeshick/lib/log.sh"
+# shellcheck source=lib/prompt.sh
 source "$homeshick/lib/prompt.sh"
+
+# lots of global variables in here, so just disable SC2034 for the entire file
+# shellcheck disable=SC2034
+true
 
 exit_status=$EX_SUCCESS
 
-test -x $(which git) || err $EX_SOFTWARE "git not found in path"
+test -x "$(which git)" || err $EX_SOFTWARE "git not found in path"
 
 mkdir -p "$repos"
 
+# used in pull.sh
+# shellcheck disable=SC2034
 T_START=$(date +%s)
 GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
 if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
@@ -34,7 +45,7 @@ while [[ $# -gt 0 ]]; do
 		if [[ $1 =~ ^-[a-z]{2,} ]]; then
 			param=$1
 			shift
-			set -- ${param:0:2} -${param:2} $@
+			set -- "${param:0:2}" "-${param:2}" "$@"
 			unset param
 		fi
 		case $1 in
@@ -56,6 +67,8 @@ done
 # Get the subcommand
 valid_commands=(cd clone generate list check updates refresh pull symlink link track help)
 if [[ ! $cmd ]]; then
+	# We actually want literal matching of the rhs here, $1 shouldn't be a regexp
+	# shellcheck disable=SC2076
 	if [[ " ${valid_commands[*]} " =~ " $1 " ]]; then
 		cmd=$1
 		shift
@@ -72,16 +85,28 @@ while [[ $# -gt 0 ]]; do
 		if [[ $1 =~ ^-[a-z]{2,} ]]; then
 			param=$1
 			shift
-			set -- ${param:0:2} -${param:2} $@
+			set -- "${param:0:2}" "-${param:2}" "$@"
 			unset param
 		fi
 		case $1 in
-			-h | --help)  cmd="help" ; shift; continue ;;
-			-q | --quiet) TALK=false ; shift; continue ;;
-			-s | --skip)  SKIP=true  ; shift; continue ;;
-			-f | --force) FORCE=true ; shift; continue ;;
-			-b | --batch) BATCH=true ; shift; continue ;;
-			-v | --verbose) VERBOSE=true ; shift; continue ;;
+			-h | --help)
+				cmd="help"
+				shift; continue ;;
+			-q | --quiet)
+				TALK=false
+				shift; continue ;;
+			-s | --skip)
+				SKIP=true
+				shift; continue ;;
+			-f | --force)
+				FORCE=true
+				shift; continue ;;
+			-b | --batch)
+				BATCH=true
+				shift; continue ;;
+			-v | --verbose)
+				VERBOSE=true
+				shift; continue ;;
 			*)     err $EX_USAGE "Unknown option '$1'" ;;
 		esac
 	fi
@@ -91,7 +116,7 @@ while [[ $# -gt 0 ]]; do
 			params+=("$1")
 			shift; continue ;;
 		refresh)
-			[[ ! $threshhold ]] && threshhold=$[$1*86400] || params+=("$1")
+			[[ ! $threshhold ]] && threshhold=$(($1*86400)) || params+=("$1")
 			shift; continue ;;
 		track)
 			[[ ! $castle ]] && castle=$1 || params+=("$1")
@@ -105,7 +130,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # If no additional arguments are given, run the subcommand for every castle
-if [[ ! $params ]]; then
+if [[ ${#params[@]} -eq 0 ]]; then
 	case $cmd in
 		check | updates | refresh | pull | symlink | link)
 			while IFS= read -d $'\n' -r name ; do
@@ -117,14 +142,21 @@ if [[ ! $params ]]; then
 fi
 
 # Default param for refresh is 7
-[[ ! $threshhold ]] && threshhold=$[7*86400]
+[[ ! $threshhold ]] && threshhold=$((7*86400))
 
 # Include the file that implements the invoked command
 case $cmd in
 	cd) ;;
-	symlink) source "$homeshick/lib/commands/link.sh" ;;
-	updates) source "$homeshick/lib/commands/check.sh" ;;
-	*)       source "$homeshick/lib/commands/$cmd.sh" ;;
+	symlink)
+		# shellcheck source=lib/commands/link.sh
+		source "$homeshick/lib/commands/link.sh" ;;
+	updates)
+		# shellcheck source=lib/commands/check.sh
+		source "$homeshick/lib/commands/check.sh" ;;
+	*)
+		# Don't know what will be included, so just disable the rule
+		# shellcheck disable=SC1090
+		source "$homeshick/lib/commands/$cmd.sh" ;;
 esac
 
 case $cmd in
@@ -134,16 +166,23 @@ case $cmd in
 	*)
 		for param in "${params[@]}"; do
 			case $cmd in
-				clone)         clone "$param"                 ;;
-				generate)      generate "$param"              ;;
-				check|updates) (check "$param")               ;;
-				refresh)       (refresh $threshhold "$param") ;;
-				pull)          (pull "$param")                ;;
-				symlink|link)  symlink "$param"               ;;
-				track)         track "$castle" "$param"       ;;
+				clone)
+					clone "$param" ;;
+				generate)
+					generate "$param" ;;
+				check|updates)
+					(check "$param") ;;
+				refresh)
+					(refresh $threshhold "$param") ;;
+				pull)
+					(pull "$param") ;;
+				symlink|link)
+					symlink "$param" ;;
+				track)
+					track "$castle" "$param" ;;
 			esac
 			result=$?
-			if [[ $result == $EX_USAGE ]]; then
+			if [[ $result == "$EX_USAGE" ]]; then
 				exit $EX_USAGE
 			fi
 			if [[ $exit_status == 0 && $result != 0 ]]; then
@@ -151,9 +190,12 @@ case $cmd in
 			fi
 		done
 		case $cmd in
-			clone)   symlink_cloned_files ${params[*]}      ;;
-			refresh) pull_outdated $threshhold ${params[*]} ;;
-			pull)    symlink_new_files ${params[*]}         ;;
+			clone)
+				symlink_cloned_files "${params[@]}" ;;
+			refresh)
+				pull_outdated $threshhold "${params[@]}" ;;
+			pull)
+				symlink_new_files "${params[@]}" ;;
 		esac
 		result=$?
 		if [[ $exit_status == 0 && $result != 0 ]]; then
