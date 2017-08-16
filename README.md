@@ -28,7 +28,7 @@ git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
 
 To invoke homeshick, source the `homeshick.sh` script from your rc-script:
 ```sh
-# from sh and its derivates (bash, zsh etc.) 
+# from sh and its derivates (bash, dash, ksh, zsh etc.)
 printf '\nsource "$HOME/.homesick/repos/homeshick/homeshick.sh"' >> $HOME/.bashrc
 # csh and derivatives (i.e. tcsh)
 printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.csh"\n' >> $HOME/.cshrc

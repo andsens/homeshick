@@ -8,3 +8,8 @@ shellcheck --shell=bash \
 	lib/!(exit_status).sh \
 	{,lib/commands/,test/,test/fixtures/}*.{sh,bash} \
 	test/{run,interactive,shellcheck}
+
+shellcheck --shell=sh homeshick.sh
+shellcheck --shell=bash homeshick.sh
+shellcheck --shell=dash homeshick.sh
+shellcheck --shell=ksh homeshick.sh
