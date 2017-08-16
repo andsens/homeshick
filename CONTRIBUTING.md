@@ -5,9 +5,9 @@ Make sure that what you are experiencing is actually an error and that it lies
 with homeshick (often it can be a git configuration error)
 
 ### Questions ###
-If you have a question be sure to read [the documentation][] first.
+If you have a question be sure to read
+[the documentation](https://github.com/andsens/homeshick/wiki) first.
 Often you will find the answer to it there.
-[the documentation]: https://github.com/andsens/homeshick/wiki
 
 ### Description ###
 As with bug reports everywhere else:
@@ -20,14 +20,14 @@ You will also need to report which operating system you encountered the issue on
 and which shell you used (type `echo $SHELL` in your terminal if you are unsure).
 
 ### Reproducing ###
-Unless you ran in to a [heisenbug][], it should be possible to reproduce the
+Unless you ran in to a [heisenbug](http://en.wikipedia.org/wiki/Heisenbug),
+it should be possible to reproduce the
 bug in a testing environment. To that end run
 `$HOME/.homesick/repos/homeshick/test/interactive` and reproduce the bug.  This
 script drops you into a new shell where `$HOME` is set to an (almost) empty
 temporary folder. If you cannot reproduce the bug there, the error is likely
 with your setup and not homeshick. Otherwise attach the commands you executed
 in that environment to the issue.
-[heisenbug]: http://en.wikipedia.org/wiki/Heisenbug
 
 ## Pull requests ##
 
@@ -45,10 +45,9 @@ release version of homeshick.
 [shellcheck](https://www.shellcheck.net/) with `test/shellcheck`
 and the [bats](https://github.com/sstephenson/bats) testsuite with `test/run`
 
-Use the supplied [editorconfig][] file. Most editors have [editorconfig
-plugins][] to apply these settings.
-[editorconfig]:         http://editorconfig.org
-[editorconfig plugins]: http://editorconfig.org/#download
+Use the supplied [editorconfig](http://editorconfig.org) file.
+Most editors have [editorconfig plugins](http://editorconfig.org/#download)
+to apply these settings.
 
 ### Content ###
 **Every PR should only contain one feature change, bug fix or typo correction.**
@@ -74,5 +73,4 @@ Also consider negative test cases (e.g. what happens when a non-existing
 castlename is passed as an argument?).
 
 You can read about the details of the testing framework in the
-[testing documentation][].
-[testing documentation]: https://github.com/andsens/homeshick/wiki/Testing
+[testing documentation](https://github.com/andsens/homeshick/wiki/Testing).
