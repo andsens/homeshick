@@ -74,11 +74,7 @@ function track {
 				local abs_target
 				local target_dir
 				target_dir=$(abs_path "$(dirname "$local")")
-				abs_target="$target_dir/$target"
-				# Remove 'somedir/../'
-				while [[ $abs_target =~ ^(.*/)?[^/.]+/\.\./(.*)$ ]]; do
-					abs_target=${BASH_REMATCH[1]}${BASH_REMATCH[2]}
-				done
+				abs_target=$(clean_path "$target_dir/$target")
 				# Get the relative path from the remote dir to the target
 				local relpath
 				relpath=$(create_rel_path "$(dirname "$remote")" "$abs_target")

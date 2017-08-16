@@ -284,13 +284,13 @@ EOF
 	ln -s . .home
 	(cd $HOME; ln -s . .home)
 	$HOMESHICK_FN track symlinks $HOME/.home
-	is_symlink ../../../../. $HOMESICK/repos/symlinks/home/.home
+	is_symlink ../../../.. $HOMESICK/repos/symlinks/home/.home
 }
 
-@test 'track file and make sure symlink is relative' {
+@test 'track file pointing at hidden dir outside home' {
 	castle 'symlinks'
-	touch $HOME/.test
+	ln -s ../nothome/..some/file $HOME/.test
 	$HOMESHICK_FN track symlinks $HOME/.test
-	ls -al $HOME
-	is_symlink .homesick/repos/symlinks/home/.test $HOME/.test
+	ls -al $HOMESICK/repos/symlinks/home/.test
+	is_symlink ../../../../../nothome/..some/file $HOMESICK/repos/symlinks/home/.test
 }
