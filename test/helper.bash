@@ -24,11 +24,10 @@ function export_env_vars {
 	export HOMESHICK_BIN="$HOMESHICK_DIR/bin/homeshick"
 
 	# Check if expect is installed
-	run type expect >/dev/null 2>&1
-	if [[ $status != 0 ]]; then
-		export EXPECT_INSTALLED=false
-	else
+	if type expect &>/dev/null; then
 		export EXPECT_INSTALLED=true
+	else
+		export EXPECT_INSTALLED=false
 	fi
 }
 
@@ -36,8 +35,7 @@ function remove_coreutils_from_path {
 	# Check if coreutils is in PATH
 	system=$(uname -a)
 	if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
-		run type brew >/dev/null 2>&1
-		if [[ $status = 0 ]]; then
+		if type brew &>/dev/null; then
 			coreutils_path=$(brew --prefix coreutils 2>/dev/null)/libexec/gnubin
 			if [[ -d $coreutils_path && $PATH == *$coreutils_path* ]]; then
 				if [[ -z $HOMESHICK_KEEP_PATH || $HOMESHICK_KEEP_PATH == false ]]; then
