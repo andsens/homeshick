@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
+
 set -e
-export SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+export SCRIPTDIR
 
 if [[ -n $1 ]]; then
 	if [[ $1 == '--help' ]]; then
@@ -8,7 +10,7 @@ if [[ -n $1 ]]; then
 		printf " Usage: interactive [shell]\n"
 		exit 0
 	else
-		if [[ $# > 1 ]]; then
+		if [[ $# -gt 1 ]]; then
 			printf "only one SHELL argument allowed\n" >&2
 			exit 64 # 64=$EX_USAGE
 		fi
@@ -21,6 +23,8 @@ if [[ -z $_shell ]]; then
 fi
 
 # Replacement function for the run fn in bats
+# Disable SC2034 for global variables
+# shellcheck disable=SC2034
 run() {
 	local e E T
 	[[ ! "$-" =~ e ]] || e=1
@@ -36,18 +40,19 @@ run() {
 	[ -z "$E" ] || set -E
 	[ -z "$T" ] || set -T
 }
-source $SCRIPTDIR/helper.bash
+# shellcheck source=test/helper.bash
+source "$SCRIPTDIR/helper.bash"
 export_env_vars
 setup_env
 ln_homeshick
 
-setup_script="${SCRIPTDIR}/setup.sh"
+setup_script="$SCRIPTDIR/setup.sh"
 if [[ -f $setup_script ]]; then
 	$setup_script
 else
-	"${SCRIPTDIR}/setup-default.sh"
+	"$SCRIPTDIR/setup-default.sh"
 fi
 
-cd $HOME
-/usr/bin/env $_shell
+cd "$HOME"
+/usr/bin/env "$_shell"
 rm_structure

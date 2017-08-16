@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
+shopt -s extglob
+shopt -s nullglob
+
 shellcheck --shell=bash \
-	homeshick.sh \
 	bin/homeshick \
-	{,lib/,lib/commands/,test/,test/fixtures/}*.sh \
-	{completions/,test/}*.bash
+	lib/!(exit_status).sh \
+	{,lib/commands/,test/,test/fixtures/}*.{sh,bash} \
+	test/{run,interactive,shellcheck}

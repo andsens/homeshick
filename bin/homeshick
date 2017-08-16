@@ -3,7 +3,8 @@
 repos="$HOME/.homesick/repos"
 # Include all helper functions. We will include the required command function later on.
 homeshick=${HOMESHICK_DIR:-$HOME/.homesick/repos/homeshick}
-# shellcheck source=lib/exit_status.sh
+# On travis-ci exit_status for some reason errors out, ignore it
+# shellcheck disable=SC1090
 source "$homeshick/lib/exit_status.sh"
 # shellcheck source=lib/fs.sh
 source "$homeshick/lib/fs.sh"
@@ -20,7 +21,7 @@ true
 
 exit_status=$EX_SUCCESS
 
-type git &>/dev/null || err $EX_SOFTWARE "git not found in path"
+type git &>/dev/null || err "$EX_SOFTWARE" "git not found in path"
 
 mkdir -p "$repos"
 
@@ -29,7 +30,7 @@ mkdir -p "$repos"
 T_START=$(date +%s)
 GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
 if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
-	err $EX_SOFTWARE "could not determine git version"
+	err "$EX_SOFTWARE" "could not determine git version"
 fi
 
 TALK=true
@@ -55,7 +56,7 @@ while [[ $# -gt 0 ]]; do
 			-f | --force) FORCE=true ; shift; continue ;;
 			-b | --batch) BATCH=true ; shift; continue ;;
 			-v | --verbose) VERBOSE=true ; shift; continue ;;
-			*)     err $EX_USAGE "Unknown option '$1'" ;;
+			*)     err "$EX_USAGE" "Unknown option '$1'" ;;
 		esac
 	else
 		break
@@ -74,7 +75,7 @@ if [[ ! $cmd ]]; then
 		shift
 	fi
 	if [[ ! $cmd ]]; then
-		err $EX_USAGE "Unknown command '$1'"
+		err "$EX_USAGE" "Unknown command '$1'"
 	fi
 fi
 
@@ -107,7 +108,7 @@ while [[ $# -gt 0 ]]; do
 			-v | --verbose)
 				VERBOSE=true
 				shift; continue ;;
-			*)     err $EX_USAGE "Unknown option '$1'" ;;
+			*)     err "$EX_USAGE" "Unknown option '$1'" ;;
 		esac
 	fi
 
@@ -121,11 +122,11 @@ while [[ $# -gt 0 ]]; do
 		track)
 			[[ ! $castle ]] && castle=$1 || params+=("$1")
 			shift; continue ;;
-		list) err $EX_USAGE "The 'list' command does not take any arguments" ;;
+		list) err "$EX_USAGE" "The 'list' command does not take any arguments" ;;
 		help)
 			[[ ! $help_cmd ]] && help_cmd=$1
 			shift; continue;;
-		*) err $EX_USAGE "Unknown command '$1'" ;;
+		*) err "$EX_USAGE" "Unknown command '$1'" ;;
 	esac
 done
 
@@ -183,7 +184,7 @@ case $cmd in
 			esac
 			result=$?
 			if [[ $result == "$EX_USAGE" ]]; then
-				exit $EX_USAGE
+				exit "$EX_USAGE"
 			fi
 			if [[ $exit_status == 0 && $result != 0 ]]; then
 				exit_status=$result
