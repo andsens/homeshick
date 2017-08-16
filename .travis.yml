@@ -11,8 +11,8 @@ install:
 - sudo apt-get install -qq expect bats
 - git clone https://github.com/sstephenson/bats.git
 script:
+- test/shellcheck
 - bats --tap test/suites
-- shellcheck --shell=bash homeshick.sh bin/homeshick {,lib/,lib/commands/,test/,test/fixtures/}*.sh {completions/,test/}*.bash
 notifications:
   email:
     on_success: never

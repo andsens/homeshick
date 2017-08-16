@@ -41,6 +41,9 @@ release version of homeshick.
 ### Code style ###
 * Indent with tabs and align with spaces.
 * Always use double brackets for `if` blocks
+* Run your changes through
+[shellcheck](https://www.shellcheck.net/) with `test/shellcheck`
+and the [bats](https://github.com/sstephenson/bats) testsuite with `test/run`
 
 Use the supplied [editorconfig][] file. Most editors have [editorconfig
 plugins][] to apply these settings.

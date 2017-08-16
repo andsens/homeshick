@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+shellcheck --shell=bash \
+	homeshick.sh \
+	bin/homeshick \
+	{,lib/,lib/commands/,test/,test/fixtures/}*.sh \
+	{completions/,test/}*.bash
