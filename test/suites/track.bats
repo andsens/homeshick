@@ -294,3 +294,11 @@ EOF
 	ls -al $HOMESICK/repos/symlinks/home/.test
 	is_symlink ../../../../../nothome/..some/file $HOMESICK/repos/symlinks/home/.test
 }
+
+@test 'track file pointing at hidden dir in snakelike fashion' {
+	castle 'symlinks'
+	ln -s .some/../.file $HOME/.test
+	$HOMESHICK_FN track symlinks $HOME/.test
+	ls -al $HOMESICK/repos/symlinks/home/.test
+	is_symlink ../../../../.file $HOMESICK/repos/symlinks/home/.test
+}
