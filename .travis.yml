@@ -9,7 +9,6 @@ addons:
 install:
 - sudo apt-get update -qq
 - sudo apt-get install -qq expect bats
-- git clone https://github.com/sstephenson/bats.git
 script:
 - test/shellcheck
 - bats --tap test/suites
