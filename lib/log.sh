@@ -19,7 +19,9 @@ function err {
 		fail
 	fi
 	status "$bldred" "error" "$reason" >&2
-	printf "%s\n" "$@" >&2
+	if [[ $# -gt 0 ]]; then
+		printf "%s\n" "$@" >&2
+	fi
 	exit "$exit_status"
 }
 
