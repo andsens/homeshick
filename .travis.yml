@@ -7,7 +7,6 @@ addons:
     packages:
     - shellcheck
     - bats
-    - expect
 script:
 - test/shellcheck
 - bats --tap test/suites
