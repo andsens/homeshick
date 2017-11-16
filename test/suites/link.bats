@@ -5,8 +5,6 @@ load ../helper
 @test 'link file with crazy name' {
 	castle 'repo with spaces in name'
 	$HOMESHICK_FN --batch link 'repo with spaces in name'
-
-	ls -al $home
 	stat "$HOME/.crazy
 file␇☺"
 	test -f "$HOME/.crazy

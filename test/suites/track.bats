@@ -46,7 +46,6 @@ load ../helper
 	echo "test" > $HOME/someother/folder/some_file
 	mkdir -p $HOME/somethird/folder
 	(cd $HOME; ln -s ../../some/folder/../../someother/folder/some_file $HOME/somethird/folder/link_to_some_file)
-	ls -al $HOME/somethird/folder/ >&2
 	$HOMESHICK_FN track symlinks $HOME/somethird/folder/link_to_some_file
 	[ "$(cat $HOME/somethird/folder/link_to_some_file)" = 'test' ]
 	local relpath='../../../../../../someother/folder/some_file'
@@ -291,7 +290,6 @@ EOF
 	castle 'symlinks'
 	ln -s ../nothome/..some/file $HOME/.test
 	$HOMESHICK_FN track symlinks $HOME/.test
-	ls -al $HOMESICK/repos/symlinks/home/.test
 	is_symlink ../../../../../nothome/..some/file $HOMESICK/repos/symlinks/home/.test
 }
 
@@ -299,6 +297,5 @@ EOF
 	castle 'symlinks'
 	ln -s .some/../.file $HOME/.test
 	$HOMESHICK_FN track symlinks $HOME/.test
-	ls -al $HOMESICK/repos/symlinks/home/.test
 	is_symlink ../../../../.file $HOMESICK/repos/symlinks/home/.test
 }

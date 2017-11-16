@@ -14,7 +14,6 @@ function test_path() {
 	cleaned=$(clean_path "$path")
 	if [[ $cleaned != "$expected" ]]; then
 		printf "got '%s'\n" "$cleaned"
-		echo $output
 		[ "$expected" = "$cleaned" ]
 	fi
 }
