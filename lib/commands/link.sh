@@ -16,60 +16,60 @@ function symlink {
 	# We set the IFS to nothing and the separator for `read' to NUL so that we
 	# don't separate files with newlines in their name into two iterations.
 	# `read's stdin comes from a third unused file descriptor because we are
-	# using the real stdin for prompting the user whether he wants to overwrite or skip
-	# on conflicts.
-	while IFS= read -d $'\0' -r filename <&3 ; do
-		local remote="$repo/home/$filename"
-		local local="$HOME/$filename"
-		local rel_remote
-		rel_remote=$(create_rel_path "$(dirname "$local")" "$remote")
+	# using the real stdin for prompting whether the user wants to
+	# overwrite or skip on conflicts.
+	while IFS= read -d $'\0' -r relpath <&3 ; do
+		local repopath="$repo/home/$relpath"
+		local homepath="$HOME/$relpath"
+		local rel_repopath
+		rel_repopath=$(create_rel_path "$(dirname "$homepath")" "$repopath")
 
-		if [[ -e $local || -L $local ]]; then
-			# $local exists (but may be a dead symlink)
-			if [[ -L $local && $(readlink "$local") == "$rel_remote" ]]; then
-				# $local symlinks to $remote.
+		if [[ -e $homepath || -L $homepath ]]; then
+			# $homepath exists (but may be a dead symlink)
+			if [[ -L $homepath && $(readlink "$homepath") == "$rel_repopath" ]]; then
+				# $homepath symlinks to $repopath.
 				if $VERBOSE; then
-					ignore 'identical' "$filename"
+					ignore 'identical' "$relpath"
 				fi
 				continue
-			elif [[ $(readlink "$local") == "$remote" ]]; then
-				# $local is an absolute symlink to $remote
-				if [[ -d $remote && ! -L $remote ]]; then
-					# $remote is a directory, but $local is a symlink -> legacy handling.
-					rm "$local"
+			elif [[ $(readlink "$homepath") == "$repopath" ]]; then
+				# $homepath is an absolute symlink to $repopath
+				if [[ -d $repopath && ! -L $repopath ]]; then
+					# $repopath is a directory, but $homepath is a symlink -> legacy handling.
+					rm "$homepath"
 				else
 					# replace it with a relative symlink
-					rm "$local"
+					rm "$homepath"
 				fi
 			else
-				# $local does not symlink to $remote
-				# check if we should delete $local
-				if [[ -d $local && -d $remote && ! -L $remote ]]; then
-					# $remote is a real directory while
-					# $local is a directory or a symlinked directory
+				# $homepath does not symlink to $repopath
+				# check if we should delete $homepath
+				if [[ -d $homepath && -d $repopath && ! -L $repopath ]]; then
+					# $repopath is a real directory while
+					# $homepath is a directory or a symlinked directory
 					# we do not take any action regardless of which it is.
 					if $VERBOSE; then
-						ignore 'identical' "$filename"
+						ignore 'identical' "$relpath"
 					fi
 					continue
 				elif $SKIP; then
-					ignore 'exists' "$filename"
+					ignore 'exists' "$relpath"
 					continue
 				elif ! $FORCE; then
-					prompt_no 'conflict' "$filename exists" "overwrite?" || continue
+					prompt_no 'conflict' "$relpath exists" "overwrite?" || continue
 				fi
-				# Delete $local.
-				rm -rf "$local"
+				# Delete $homepath.
+				rm -rf "$homepath"
 			fi
 		fi
 
-		if [[ ! -d $remote || -L $remote ]]; then
-			# $remote is not a real directory so we create a symlink to it
-			pending 'symlink' "$filename"
-			ln -s "$rel_remote" "$local"
+		if [[ ! -d $repopath || -L $repopath ]]; then
+			# $repopath is not a real directory so we create a symlink to it
+			pending 'symlink' "$relpath"
+			ln -s "$rel_repopath" "$homepath"
 		else
-			pending 'directory' "$filename"
-			mkdir "$local"
+			pending 'directory' "$relpath"
+			mkdir "$homepath"
 		fi
 
 		success
