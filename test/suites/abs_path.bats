@@ -44,3 +44,13 @@ function setup() {
 	local path=$(cd $HOME && abs_path folder\ with\ spaces/sub\ folder)
 	[ "$path" = "$HOME/folder with spaces/sub folder" ]
 }
+
+@test 'test root' {
+	local path=$(abs_path /)
+	[ "$path" = "/" ]
+}
+
+@test 'test file in root' {
+	local path=$(abs_path /test)
+	[ "$path" = "/test" ]
+}

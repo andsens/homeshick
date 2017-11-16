@@ -30,11 +30,24 @@ function list_castle_names {
 }
 
 function abs_path {
+	local path=$1
 	local dir
+	dir=$(dirname "$path")
+	if [[ ! -e $dir ]]; then
+		printf "The parent directory '%s' does not exist" "$dir" >&2
+		return 1
+	fi
+	local real_dir
 	local base
-	dir=$(dirname "$1")
-	base=$(basename "$1")
-	(cd "$dir" &>/dev/null || return $?; printf "%s/%s" "$PWD" "$base")
+	real_dir=$(cd "$dir" >/dev/null && printf "%s" "$PWD")
+	base=$(basename "$path")
+	if [[ $base = "/" ]]; then
+		printf "/\n"
+	elif [[ $real_dir = "/" ]]; then
+		printf "/%s\n" "$base"
+	else
+		printf "%s/%s\n" "$real_dir" "$base"
+	fi
 }
 
 # Removes unnecessary path parts, such as '/./' and 'somedir/../' and trailing slashes
