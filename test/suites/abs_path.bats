@@ -4,79 +4,92 @@ load ../helper
 
 function setup() {
 	setup_env
-	source $HOMESHICK_DIR/lib/fs.sh
+	source "$HOMESHICK_DIR/lib/fs.sh"
 }
 
 @test 'test simple filepath' {
-	touch $HOME/file
-	local path=$(cd $HOME && abs_path file)
+	touch "$HOME/file"
+	local path
+	path=$(cd "$HOME" && abs_path file)
 	[ "$path" = "$HOME/file" ]
 }
 
 @test 'test filepath with spaces' {
-	mkdir $HOME/folder\ with\ spaces
-	touch $HOME/folder\ with\ spaces/file
-	local path=$(cd $HOME && abs_path folder\ with\ spaces/file)
+	mkdir "$HOME/folder with spaces"
+	touch "$HOME/folder with spaces/file"
+	local path
+	path=$(cd "$HOME" && abs_path folder\ with\ spaces/file)
 	[ "$path" = "$HOME/folder with spaces/file" ]
 }
 
 @test 'test filepath and filename with spaces' {
-	mkdir $HOME/folder\ with\ spaces
-	touch $HOME/folder\ with\ spaces/file\ name\ with\ spaces
-	local path=$(cd $HOME && abs_path folder\ with\ spaces/file\ name\ with\ spaces)
+	mkdir "$HOME/folder with spaces"
+	touch "$HOME/folder with spaces/file name with spaces"
+	local path
+	path=$(cd "$HOME" && abs_path folder\ with\ spaces/file\ name\ with\ spaces)
 	[ "$path" = "$HOME/folder with spaces/file name with spaces" ]
 }
 
 @test 'test folder' {
-	mkdir $HOME/folder
-	local path=$(cd $HOME && abs_path folder)
+	mkdir "$HOME/folder"
+	local path
+	path=$(cd "$HOME" && abs_path folder)
 	[ "$path" = "$HOME/folder" ]
 }
 
 @test 'test subfolder' {
-	mkdir -p $HOME/folder/subfolder
-	local path=$(cd $HOME && abs_path folder/subfolder)
+	mkdir -p "$HOME/folder/subfolder"
+	local path
+	path=$(cd "$HOME" && abs_path folder/subfolder)
 	[ "$path" = "$HOME/folder/subfolder" ]
 }
 
 @test 'test folders with spaces' {
-	mkdir -p $HOME/folder\ with\ spaces/sub\ folder
-	local path=$(cd $HOME && abs_path folder\ with\ spaces/sub\ folder)
+	mkdir -p "$HOME/folder with spaces/sub folder"
+	local path
+	path=$(cd "$HOME" && abs_path folder\ with\ spaces/sub\ folder)
 	[ "$path" = "$HOME/folder with spaces/sub folder" ]
 }
 
 @test 'test root' {
-	local path=$(abs_path /)
+	local path
+	path=$(abs_path /)
 	[ "$path" = "/" ]
 }
 
 @test 'test file in root' {
-	local path=$(abs_path /test)
+	local path
+	path=$(abs_path /test)
 	[ "$path" = "/test" ]
 }
 
 @test 'test trailing slash' {
-	local path=$(abs_path /test/)
+	local path
+	path=$(abs_path /test/)
 	[ "$path" = "/test" ]
 }
 
 @test 'test trailing slashdot' {
-	mkdir $HOME/test
-	local path=$(cd $HOME && abs_path test/.)
+	mkdir "$HOME/test"
+	local path
+	path=$(cd "$HOME" && abs_path test/.)
 	[ "$path" = "$HOME/test" ]
 }
 
 @test 'test symlink' {
-	mkdir $HOME/realdir
-	ln -s realdir $HOME/symlink
-	local path=$(cd $HOME && abs_path symlink)
+	mkdir "$HOME/realdir"
+	ln -s realdir "$HOME/symlink"
+	local path
+	path=$(cd "$HOME" && abs_path symlink)
 	[ "$path" = "$HOME/symlink" ]
 }
 
 @test 'test symlink resolution' {
-	mkdir $HOME/realdir
-	ln -s realdir $HOME/symlink
-	local path=$(cd $HOME && abs_path -P symlink/.)
-	local abs_home=$(cd $HOME >/dev/null && pwd -P)
+	mkdir "$HOME/realdir"
+	ln -s realdir "$HOME/symlink"
+	local path
+	path=$(cd "$HOME" && abs_path -P symlink/.)
+	local abs_home
+	abs_home=$(cd "$HOME" >/dev/null && pwd -P)
 	[ "$path" = "$abs_home/realdir" ]
 }

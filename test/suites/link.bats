@@ -16,7 +16,7 @@ file␇☺"
  test_filename="filename
 newline"
  touch "$HOMESICK/repos/rc-files/home/$test_filename"
- commit_repo_state $HOMESICK/repos/rc-files
+ commit_repo_state "$HOMESICK/repos/rc-files"
  $HOMESHICK_FN --batch link rc-files
  [ -L "$HOME/filename
 newline" ]
@@ -44,10 +44,10 @@ newline"
 @test 'link files of nested submodules' {
 	fixture 'nested-submodules'
 	GIT_VERSION=$(get_git_version)
-	run version_compare $GIT_VERSION 1.6.5
+	run version_compare "$GIT_VERSION" 1.6.5
 	[[ $status == 2 ]] && skip 'git version too low'
 
-	$HOMESHICK_FN --batch clone $REPO_FIXTURES/nested-submodules
+	$HOMESHICK_FN --batch clone "$REPO_FIXTURES/nested-submodules"
 	$HOMESHICK_FN --batch link nested-submodules
 	[ -f "$HOME/.subdir1/.subdir2/.info2" ]
 }
@@ -55,7 +55,7 @@ newline"
 @test "don't fail when linking uninitialized subrepos" {
 	fixture 'nested-submodules'
 	GIT_VERSION=$(get_git_version)
-	run version_compare $GIT_VERSION 1.6.5
+	run version_compare "$GIT_VERSION" 1.6.5
 	[[ $status == 2 ]] && skip 'git version too low'
 
 	git clone "$REPO_FIXTURES/nested-submodules" "$HOMESICK/repos/nested-submodules"
@@ -68,10 +68,10 @@ newline"
 @test 'link submodule files' {
 	fixture 'nested-submodules'
 	GIT_VERSION=$(get_git_version)
-	run version_compare $GIT_VERSION 1.6.5
+	run version_compare "$GIT_VERSION" 1.6.5
 	[[ $status == 2 ]] && skip 'git version too low'
 
-	$HOMESHICK_FN --batch clone $REPO_FIXTURES/nested-submodules
+	$HOMESHICK_FN --batch clone "$REPO_FIXTURES/nested-submodules"
 	$HOMESHICK_FN --batch link nested-submodules
 	[ -f "$HOME/.info" ]
 	[ -f "$HOME/.subdir1/.info1" ]
@@ -91,16 +91,17 @@ newline"
 
 @test 'symlink to a relative symlink' {
 	castle 'symlinks'
-	echo "test" > $HOME/file_in_homedir
+	echo "test" > "$HOME/file_in_homedir"
 	$HOMESHICK_FN --batch link symlinks
-	[ "$(cat $HOME/link_to_homedir_file)" = 'test' ]
+	[ "$(cat "$HOME/link_to_homedir_file")" = 'test' ]
 }
 
 @test 'overwrite prompt skipped when linking and --batch is on' {
 	castle 'rc-files'
-	touch $HOME/.bashrc
+	touch "$HOME/.bashrc"
 	$HOMESHICK_FN --batch link rc-files
-	[ -f "$HOME/.bashrc" -a ! -L "$HOME/.bashrc" ]
+	[ -f "$HOME/.bashrc" ]
+	[ ! -L "$HOME/.bashrc" ]
 }
 
 @test 'overwrite file with link when the prompt is answered with yes' {
@@ -110,9 +111,9 @@ newline"
 	open_bracket="\\u005b"
 	close_bracket="\\u005d"
 	esc="\\u001b$open_bracket"
-	touch $HOME/.bashrc
+	touch "$HOME/.bashrc"
 	cat <<EOF | expect -f -
-			spawn $HOMESHICK_BIN link rc-files
+			spawn "$HOMESHICK_BIN" link rc-files
 			expect -ex "${esc}1;37m     conflict${esc}0m .bashrc exists\r
 ${esc}1;36m   overwrite?${esc}0m ${open_bracket}yN${close_bracket}" {} default {exit 1}
 			send "y\n"
@@ -123,7 +124,7 @@ EOF
 
 @test "don't overwrite file or prompt for it when linking and --skip is on" {
 	castle 'rc-files'
-	touch $HOME/.bashrc
+	touch "$HOME/.bashrc"
 	$HOMESHICK_FN --skip link rc-files
 	[ -f "$HOME/.bashrc" -a ! -L "$HOME/.bashrc" ]
 }
@@ -131,21 +132,23 @@ EOF
 @test 'existing symlinks are not relinked when running link' {
 	castle 'module-files'
 	$HOMESHICK_FN --batch link module-files
-	local inode_before=$(get_inode_no $HOME/.my_module)
+	local inode_before
+	inode_before=$(get_inode_no "$HOME/.my_module")
 	$HOMESHICK_FN --batch link module-files
-	local inode_after=$(get_inode_no $HOME/.my_module)
+	local inode_after
+	inode_after=$(get_inode_no "$HOME/.my_module")
 	[ "$inode_before" -eq "$inode_after" ]
 }
 
 @test 'traverse into the folder structure when linking' {
 	castle 'dotfiles'
-	mkdir -p $HOME/.config/bar.dir
-	cat > $HOME/.config/foo.conf <<EOF
+	mkdir -p "$HOME/.config/bar.dir"
+	cat > "$HOME/.config/foo.conf" <<EOF
 #I am just a regular foo.conf file
 [foo]
 A=True
 EOF
-	cat > $HOME/.config/bar.dir/bar.conf <<EOF
+	cat > "$HOME/.config/bar.dir/bar.conf" <<EOF
 #I am just a regular bar.conf file
 [bar]
 A=True
@@ -183,9 +186,9 @@ EOF
 	castle 'dotfiles'
 	castle 'repo with spaces in name'
 	$HOMESHICK_FN --batch link rc-files dotfiles repo\ with\ spaces\ in\ name
-	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
-	is_symlink ../.homesick/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
-	is_symlink ".homesick/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
+	is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
+	is_symlink ../.homesick/repos/dotfiles/home/.ssh/known_hosts "$HOME/.ssh/known_hosts"
+	is_symlink ".homesick/repos/repo with spaces in name/home/.repowithspacesfile" "$HOME/.repowithspacesfile"
 }
 
 @test 'link all castles when no castle is specified' {
@@ -193,18 +196,18 @@ EOF
 	castle 'dotfiles'
 	castle 'repo with spaces in name'
 	$HOMESHICK_FN --batch link
-	is_symlink .homesick/repos/rc-files/home/.bashrc $HOME/.bashrc
-	is_symlink ../.homesick/repos/dotfiles/home/.ssh/known_hosts $HOME/.ssh/known_hosts
-	is_symlink ".homesick/repos/repo with spaces in name/home/.repowithspacesfile" $HOME/.repowithspacesfile
+	is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
+	is_symlink ../.homesick/repos/dotfiles/home/.ssh/known_hosts "$HOME/.ssh/known_hosts"
+	is_symlink ".homesick/repos/repo with spaces in name/home/.repowithspacesfile" "$HOME/.repowithspacesfile"
 }
 
 @test 'files ignored by git should not be linked' {
 	castle 'dotfiles'
 	touch "$HOMESICK/repos/dotfiles/home/shouldBeIgnored.txt"
-	cat > $HOMESICK/repos/dotfiles/.gitignore <<EOF
+	cat > "$HOMESICK/repos/dotfiles/.gitignore" <<EOF
 shouldBeIgnored.txt
 EOF
-	commit_repo_state $HOMESICK/repos/dotfiles
+	commit_repo_state "$HOMESICK/repos/dotfiles"
 	$HOMESHICK_FN --batch link dotfiles
 	[ ! -L "$HOME/shouldBeIgnored.txt" ]
 }
@@ -214,7 +217,6 @@ EOF
 	mkdir -p "$HOME/two-levels/under-home"
 	ln -s "two-levels/under-home" "$HOME/.ssh"
 	$HOMESHICK_FN --batch link
-	ls -al $HOME/.ssh/
 	is_symlink ../../.homesick/repos/dotfiles/home/.ssh/known_hosts "$HOME/two-levels/under-home/known_hosts"
 	[ -f "$HOME/.ssh/known_hosts" ]
 }
@@ -222,7 +224,7 @@ EOF
 @test 'link file into directory that is an absolute symlink' {
 	castle 'dotfiles'
 	mkdir -p "$HOME/two-levels/under-home"
-	ln -s "$HOME/two-levels/under-home" $HOME/.config
+	ln -s "$HOME/two-levels/under-home" "$HOME/.config"
 	$HOMESHICK_FN --batch link
 	is_symlink ../../.homesick/repos/dotfiles/home/.config/bar.dir "$HOME/two-levels/under-home/bar.dir"
 }

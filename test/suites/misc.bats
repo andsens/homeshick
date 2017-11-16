@@ -3,7 +3,7 @@
 load ../helper
 
 @test 'invoke non existing command' {
-	run $HOMESHICK_FN commandthatdoesnexist
+	run "$HOMESHICK_FN" commandthatdoesnexist
 	[ $status -eq 64 ] # EX_USAGE
 }
 
@@ -20,13 +20,13 @@ load ../helper
 }
 
 @test 'link non-existent castle' {
-	run $HOMESHICK_FN link nonexistent
+	run "$HOMESHICK_FN" link nonexistent
 	[ $status -eq 1 ] # EX_ERR
 }
 
 @test 'error should end with a single newline' {
 	$HOMESHICK_FN --batch generate existing-repo
 	output=$($HOMESHICK_FN --batch generate existing-repo 2>&1 | tr '\n' 'n')
-	run grep -q 'nn$' <<<$output
+	run grep -q 'nn$' <<<"$output"
 	[ $status -eq 1 ]
 }
