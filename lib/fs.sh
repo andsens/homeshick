@@ -153,43 +153,22 @@ function clean_path {
 
 # Determines the relative path from source_dir to target
 # As in: "What would the symlink look like if a file in $source_dir linked to $target?"
-# $source_dir:
-#   Is the directory in which the link resides.
-#   It must have a trailing slash.
-# $target:
-#   Is the relative path from $source_dir to it.
-#   It must not have a trailing slash.
-# Both paths:
-#   Must be absolute.
-#   Must be well-formed (no nulbytes or double slashes)
+# $source_dir is the directory in which the link resides.
+# $target is the relative path from $source_dir to it.
+# NOTE: You will get different results for the same parameters depending on
+# which path parts of $source_dir and $target are symlinks.
+# Example:
+# $source_dir: "/root/alpha/beta" ("beta" links to "../../gamma")
+# $target: "/root/delta/file"
+# result: "../root/delta/file"
+# If "/root/delta" were a symlink to "../gamma", the result would be "file"
 function create_rel_path {
 	local source_dir=$1
 	local target=$2
 
-	if [[ $source_dir != /* ]]; then
-		printf "\$source_dir '%s' is not absolute\n" "$source_dir" >&2
-		return 1
-	fi
-	if [[ $target != /* ]]; then
-		printf "\$target '%s' is not absolute\n" "$target" >&2
-		return 1
-	fi
-	if [[ $source_dir != */ ]]; then
-		printf "\$source_dir '%s' must have a trailing slash\n" "$source_dir" >&2
-		return 1
-	fi
-	if [[ $target = */ ]]; then
-		printf "\$target '%s' must not have a trailing slash\n" "$target" >&2
-		return 1
-	fi
-	if [[ $source_dir = *//* ]]; then
-		printf "\$source_dir '%s' is not well-formed\n" "$source_dir" >&2
-		return 1
-	fi
-	if [[ $target = *//* ]]; then
-		printf "\$target '%s' is not well-formed\n" "$target" >&2
-		return 1
-	fi
+	# Resolve symlinks in $source_dir and the parents of $target
+	source_dir=$(abs_path "$source_dir")/
+	target=$(abs_path "$target")
 
 	# Make sure $prefix has a trailing slash
 	local prefix

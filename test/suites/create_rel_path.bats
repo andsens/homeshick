@@ -48,36 +48,6 @@ function test_rel_path() {
 	test_rel_path "$HOME/lvl1-2/" "$HOME/lvl1/lvl2/lvl3/file" "../lvl1/lvl2/lvl3/file"
 }
 
-@test 'fail on missing trailing slash in source_dir' {
-	run create_rel_path "$HOME/dir" "$HOME/file"
-	[ $status -eq 1 ]
-}
-
-@test 'fail on relative source_dir' {
-	run create_rel_path "dir/" "$HOME/file"
-	[ $status -eq 1 ]
-}
-
-@test 'fail on double slash in source_dir' {
-	run create_rel_path "$HOME//dir" "$HOME/file"
-	[ $status -eq 1 ]
-}
-
-@test 'fail on trailing slash in target' {
-	run create_rel_path "$HOME/dir" "$HOME/folder/"
-	[ $status -eq 1 ]
-}
-
-@test 'fail on relative target' {
-	run create_rel_path "$HOME/dir" "folder/"
-	[ $status -eq 1 ]
-}
-
-@test 'fail on double slash in target' {
-	run create_rel_path "$HOME/dir" "$HOME//file"
-	[ $status -eq 1 ]
-}
-
 @test 'relpath from dir/ non-existent-file' {
 	run create_rel_path "$HOME/dir" "$HOME/non-existent-file" "non-existent-file"
 }

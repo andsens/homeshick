@@ -288,6 +288,7 @@ EOF
 
 @test 'track file pointing at hidden dir outside home' {
 	castle 'symlinks'
+	mkdir $NOTHOME/..some
 	ln -s ../nothome/..some/file $HOME/.test
 	$HOMESHICK_FN track symlinks $HOME/.test
 	is_symlink ../../../../../nothome/..some/file $HOMESICK/repos/symlinks/home/.test
