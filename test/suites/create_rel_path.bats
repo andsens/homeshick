@@ -77,3 +77,11 @@ function test_rel_path() {
 	run create_rel_path "$HOME/dir" "$HOME//file"
 	[ $status -eq 1 ]
 }
+
+@test 'relpath from dir/ non-existent-file' {
+	run create_rel_path "$HOME/dir" "$HOME/non-existent-file" "non-existent-file"
+}
+
+@test 'relpath from dir/ dir2/non-existent-file' {
+	run create_rel_path "$HOME/dir" "$HOME/dir2/non-existent-file" "dir2/non-existent-file"
+}
