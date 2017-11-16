@@ -54,3 +54,29 @@ function setup() {
 	local path=$(abs_path /test)
 	[ "$path" = "/test" ]
 }
+
+@test 'test trailing slash' {
+	local path=$(abs_path /test/)
+	[ "$path" = "/test" ]
+}
+
+@test 'test trailing slashdot' {
+	mkdir $HOME/test
+	local path=$(cd $HOME && abs_path test/.)
+	[ "$path" = "$HOME/test" ]
+}
+
+@test 'test symlink' {
+	mkdir $HOME/realdir
+	ln -s realdir $HOME/symlink
+	local path=$(cd $HOME && abs_path symlink)
+	[ "$path" = "$HOME/symlink" ]
+}
+
+@test 'test symlink resolution' {
+	mkdir $HOME/realdir
+	ln -s realdir $HOME/symlink
+	local path=$(cd $HOME && abs_path -P symlink/.)
+	local abs_home=$(cd $HOME >/dev/null && pwd -P)
+	[ "$path" = "$abs_home/realdir" ]
+}

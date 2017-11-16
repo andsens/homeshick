@@ -29,8 +29,19 @@ function list_castle_names {
 	return "$EX_SUCCESS"
 }
 
+# Converts any path to an absolute path.
+# All path parts except the last one must exist.
+# A pwd option can be given as the first argument (like -P to resolve symlinks).
+# In order to resolve the last part of the path append "/." to it.
 function abs_path {
-	local path=$1
+	local path
+	local pwd_opt=""
+	if [[ $# -eq 1 ]]; then
+		path=$1
+	else
+		pwd_opt=$1
+		path=$2
+	fi
 	local dir
 	dir=$(dirname "$path")
 	if [[ ! -e $dir ]]; then
@@ -39,9 +50,11 @@ function abs_path {
 	fi
 	local real_dir
 	local base
-	real_dir=$(cd "$dir" >/dev/null && printf "%s" "$PWD")
+	real_dir=$(cd "$dir" >/dev/null && printf "%s" "$(pwd "$pwd_opt")")
 	base=$(basename "$path")
-	if [[ $base = "/" ]]; then
+	if [[ $base = "." ]]; then
+		printf "%s\n" "$real_dir"
+	elif [[ $base = "/" ]]; then
 		printf "/\n"
 	elif [[ $real_dir = "/" ]]; then
 		printf "/%s\n" "$base"
