@@ -127,7 +127,8 @@ function clean_path {
 
 # Determines the relative path from source_dir to target
 # As in: "What would the symlink look like if a file in $source_dir linked to $target?"
-# Both paths must be absolute, $source_dir is assumed to be the directory of the link
+# Both paths must be absolute, $source_dir is assumed to be the directory
+# in which the link resides.
 function create_rel_path {
 	local source_dir=$1
 	local target=$2
