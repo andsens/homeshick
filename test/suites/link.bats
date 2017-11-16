@@ -208,3 +208,21 @@ EOF
 	$HOMESHICK_FN --batch link dotfiles
 	[ ! -L "$HOME/shouldBeIgnored.txt" ]
 }
+
+@test 'link file into directory that is a relative symlink' {
+	castle 'dotfiles'
+	mkdir -p "$HOME/two-levels/under-home"
+	ln -s "two-levels/under-home" "$HOME/.ssh"
+	$HOMESHICK_FN --batch link
+	ls -al $HOME/.ssh/
+	is_symlink ../../.homesick/repos/dotfiles/home/.ssh/known_hosts "$HOME/two-levels/under-home/known_hosts"
+	[ -f "$HOME/.ssh/known_hosts" ]
+}
+
+@test 'link file into directory that is an absolute symlink' {
+	castle 'dotfiles'
+	mkdir -p "$HOME/two-levels/under-home"
+	ln -s "$HOME/two-levels/under-home" $HOME/.config
+	$HOMESHICK_FN --batch link
+	is_symlink ../../.homesick/repos/dotfiles/home/.config/bar.dir "$HOME/two-levels/under-home/bar.dir"
+}

@@ -167,8 +167,8 @@ function create_rel_path {
 	local target=$2
 
 	# Resolve symlinks in $source_dir and the parents of $target
-	source_dir=$(abs_path "$source_dir")/ || return $?
-	target=$(abs_path "$target") || return $?
+	source_dir=$(abs_path -P "${source_dir%/}/.")/ || return $?
+	target=$(abs_path -P "$target") || return $?
 
 	# Make sure $prefix has a trailing slash
 	local prefix

@@ -60,3 +60,26 @@ function test_rel_path() {
 	run create_rel_path "$HOME/dir/dir2" "$HOME/file"
 	[ $status -eq 1 ]
 }
+
+@test 'relpath from inside symlinked dir on same level as real dir to file' {
+	mkdir -p "$HOME/realdir"
+	ln -s "realdir" "$HOME/symlinkdir"
+	touch "$HOME/file"
+	test_rel_path "$HOME/symlinkdir/" "$HOME/file" "../file"
+}
+
+@test 'relpath from inside symlinked dir on higher level than real dir to file' {
+	mkdir -p "$HOME/somedir/realdir"
+	ln -s "somedir/realdir" "$HOME/symlinkdir"
+	touch "$HOME/file"
+	test_rel_path "$HOME/symlinkdir/" "$HOME/file" "../../file"
+}
+
+@test 'relpath from inside symlinked dir on higher level than real dir to file where root dir is symlinked dir' {
+	mkdir "$HOME/root"
+	ln -s "root" "$HOME/symlinked-root"
+	mkdir -p "$HOME/symlinked-root/somedir/realdir"
+	ln -s "somedir/realdir" "$HOME/symlinked-root/symlinkdir"
+	touch "$HOME/symlinked-root/file"
+	test_rel_path "$HOME/symlinked-root/symlinkdir/" "$HOME/symlinked-root/file" "../../file"
+}

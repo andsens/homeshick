@@ -300,3 +300,24 @@ EOF
 	$HOMESHICK_FN track symlinks $HOME/.test
 	is_symlink ../../../../.file $HOMESICK/repos/symlinks/home/.test
 }
+
+@test 'track regular file from a dir that is a symlink' {
+	castle 'symlinks'
+	mkdir -p "$HOME/two-levels/under-home"
+	ln -s "two-levels/under-home" "$HOME/symlinked-dir"
+	touch "$HOME/symlinked-dir/trackme"
+	$HOMESHICK_FN track symlinks "$HOME/symlinked-dir/trackme"
+	is_symlink ../../.homesick/repos/symlinks/home/symlinked-dir/trackme "$HOME/symlinked-dir/trackme"
+}
+
+@test 'track relative symlink from a dir that is a symlink' {
+	castle 'symlinks'
+	mkdir -p "$HOME/two-levels/under-home"
+	ln -s "two-levels/under-home" "$HOME/symlinked-dir"
+	touch "$HOME/linktome"
+	ln -s "../linktome" "$HOME/symlinked-dir/trackme"
+	$HOMESHICK_FN track symlinks "$HOME/symlinked-dir/trackme"
+	ls -al $HOMESICK/repos/symlinks/home/symlinked-dir
+	is_symlink ../../../../../linktome "$HOMESICK/repos/symlinks/home/symlinked-dir/trackme"
+	is_symlink ../../.homesick/repos/symlinks/home/symlinked-dir/trackme "$HOME/symlinked-dir/trackme"
+}
