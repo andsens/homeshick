@@ -55,3 +55,8 @@ function test_rel_path() {
 @test 'relpath from dir/ dir2/non-existent-file' {
 	run create_rel_path "$HOME/dir" "$HOME/dir2/non-existent-file" "dir2/non-existent-file"
 }
+
+@test 'fail on non existent source_dir' {
+	run create_rel_path "$HOME/dir/dir2" "$HOME/file"
+	[ $status -eq 1 ]
+}

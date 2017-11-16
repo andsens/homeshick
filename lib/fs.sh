@@ -50,7 +50,7 @@ function abs_path {
 	fi
 	local real_dir
 	local base
-	real_dir=$(cd "$dir" >/dev/null && printf "%s" "$(pwd "$pwd_opt")")
+	real_dir=$(cd "$dir" >/dev/null && printf "%s" "$(pwd "$pwd_opt")") || return $?
 	base=$(basename "$path")
 	if [[ $base = "." ]]; then
 		printf "%s\n" "$real_dir"
@@ -167,8 +167,8 @@ function create_rel_path {
 	local target=$2
 
 	# Resolve symlinks in $source_dir and the parents of $target
-	source_dir=$(abs_path "$source_dir")/
-	target=$(abs_path "$target")
+	source_dir=$(abs_path "$source_dir")/ || return $?
+	target=$(abs_path "$target") || return $?
 
 	# Make sure $prefix has a trailing slash
 	local prefix

@@ -77,7 +77,7 @@ function track {
 				abs_target=$(clean_path "$target_dir/$target")
 				# Get the relative path from the repopath dir to the target
 				local rel_targetpath
-				rel_targetpath=$(create_rel_path "$(dirname "$repopath")/" "$abs_target")
+				rel_targetpath=$(create_rel_path "$(dirname "$repopath")/" "$abs_target") || return $?
 				ln -s "$rel_targetpath" "$repopath"
 				# Remove $homepath so we can create the symlink further down
 				rm "$homepath"
@@ -88,7 +88,7 @@ function track {
 		fi
 		# Create the symlink in place of the moved file (simulate what the link command does)
 		local rel_repopath
-		rel_repopath=$(create_rel_path "$(dirname "$homepath")/" "$repopath")
+		rel_repopath=$(create_rel_path "$(dirname "$homepath")/" "$repopath") || return $?
 		ln -s "$rel_repopath" "$homepath"
 
 		local git_out
