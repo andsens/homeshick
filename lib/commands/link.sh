@@ -22,7 +22,7 @@ function symlink {
 		local repopath="$repo/home/$relpath"
 		local homepath="$HOME/$relpath"
 		local rel_repopath
-		rel_repopath=$(create_rel_path "$(dirname "$homepath")" "$repopath")
+		rel_repopath=$(create_rel_path "$(dirname "$homepath")/" "$repopath")
 
 		if [[ -e $homepath || -L $homepath ]]; then
 			# $homepath exists (but may be a dead symlink)
