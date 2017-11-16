@@ -8,8 +8,6 @@ addons:
     - shellcheck
     - bats
     # - expect
-    - csh
-    - fish
 script:
 - test/shellcheck
 - bats --tap test/suites
