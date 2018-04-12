@@ -30,3 +30,11 @@ load ../helper
 	run grep -q 'nn$' <<<"$output"
 	[ $status -eq 1 ]
 }
+
+@test 'fish function should not print errors when invoked without arguments' {
+	[ "$(type -t fish)" = "file" ] || skip "fish not installed"
+	cmd="source "$HOMESHICK_FN_SRC_FISH"; and $HOMESHICK_FN"
+	local stderr
+	stderr=$( fish <<< "$cmd" 2>&1 >/dev/null )
+	[ -z "$stderr" ]
+}
