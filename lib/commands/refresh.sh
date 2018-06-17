@@ -12,10 +12,8 @@ function refresh {
 
 	if [[ -e $fetch_head ]]; then
 		local last_mod
-		local time_now
 		last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
-		time_now=$(date +%s)
-		if [[ $((time_now-last_mod)) -gt $threshhold ]]; then
+		if [[ $((T_START-last_mod)) -gt $threshhold ]]; then
 			fail "outdated"
 			return "$EX_TH_EXCEEDED"
 		else
@@ -44,10 +42,8 @@ function pull_outdated {
 		# we reset the outdated ones by touching FETCH_HEAD
 		if [[ -e $fetch_head ]]; then
 			local last_mod
-			local time_now
 			last_mod=$(stat -c %Y "$fetch_head" 2> /dev/null || stat -f %m "$fetch_head")
-			time_now=$(date +%s)
-			if [[ $((time_now-last_mod)) -gt $threshhold ]]; then
+			if [[ $((T_START-last_mod)) -gt $threshhold ]]; then
 				outdated_castles+=("$castle")
 				! $BATCH && touch "$fetch_head"
 			fi
