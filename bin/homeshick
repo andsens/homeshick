@@ -66,7 +66,7 @@ done
 [[ $# -gt 0 ]] || cmd="help"
 
 # Get the subcommand
-valid_commands=(cd clone generate list check updates refresh pull symlink link track help)
+valid_commands=(cd clone generate list check updates refresh pull push symlink link track help)
 if [[ ! $cmd ]]; then
 	# We actually want literal matching of the rhs here, $1 shouldn't be a regexp
 	# shellcheck disable=SC2076
@@ -113,7 +113,7 @@ while [[ $# -gt 0 ]]; do
 	fi
 
 	case $cmd in
-		cd | clone | generate | check | updates | pull | symlink | link)
+		cd | clone | generate | check | updates | pull | push | symlink | link)
 			params+=("$1")
 			shift; continue ;;
 		refresh)
@@ -133,7 +133,7 @@ done
 # If no additional arguments are given, run the subcommand for every castle
 if [[ ${#params[@]} -eq 0 ]]; then
 	case $cmd in
-		check | updates | refresh | pull | symlink | link)
+		check | updates | refresh | pull | push | symlink | link)
 			while IFS= read -d $'\n' -r name ; do
 				params+=("$name")
 			done < <(list_castle_names) ;;
@@ -177,6 +177,8 @@ case $cmd in
 					(refresh $threshhold "$param") ;;
 				pull)
 					(pull "$param") ;;
+				push)
+					(push "$param") ;;
 				symlink|link)
 					symlink "$param" ;;
 				track)

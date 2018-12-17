@@ -20,6 +20,7 @@ printf "homes\e[1;34mh\e[0mick uses git in concert with symlinks to track your p
   homeshick check [CASTLE..]          # Check a castle for updates
   homeshick refresh [DAYS [CASTLE..]] # Check if a castle needs refreshing
   homeshick pull [CASTLE..]           # Update a castle
+  homeshick push [CASTLE..]           # Update remote castle
   homeshick link [CASTLE..]           # Symlinks all dotfiles from a castle
   homeshick track CASTLE FILE..       # Add a file to a castle
   homeshick help [TASK]               # Show usage of a task
@@ -73,6 +74,10 @@ function extended_help {
 		pull)
       printf "Updates a castle. Also recurse into submodules.\n"
       printf "Usage:\n  homeshick pull [CASTLE..]"
+      ;;
+		ush)
+      printf "Updates remote castle. Pushes local changes to remote.\n"
+      printf "Usage:\n  homeshick ush [CASTLE..]"
       ;;
 		link|symlink)
       printf "Symlinks all dotfiles from a castle\n"
