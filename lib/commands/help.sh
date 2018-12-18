@@ -75,7 +75,7 @@ function extended_help {
       printf "Updates a castle. Also recurse into submodules.\n"
       printf "Usage:\n  homeshick pull [CASTLE..]"
       ;;
-		ush)
+		push)
       printf "Updates remote castle. Pushes local changes to remote.\n"
       printf "Usage:\n  homeshick ush [CASTLE..]"
       ;;
