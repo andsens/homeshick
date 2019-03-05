@@ -19,7 +19,7 @@ function export_env_vars {
 	repo_dir=$(cd "$TESTDIR/.." && pwd)
 	export HOMESHICK_DIR=${HOMESHICK_DIR:-$repo_dir}
 	export HOMESHICK_FN_SRC_SH="$HOMESHICK_DIR/homeshick.sh"
-	export HOMESHICK_FN_SRC_CSH="$HOMESHICK_DIR/bin/homeshick.csh"
+	export HOMESHICK_FN_SRC_CSH="$HOMESHICK_DIR/homeshick.csh"
 	export HOMESHICK_FN_SRC_FISH="$HOMESHICK_DIR/homeshick.fish"
 	export HOMESHICK_BIN="$HOMESHICK_DIR/bin/homeshick"
 
