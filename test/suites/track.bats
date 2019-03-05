@@ -267,15 +267,12 @@ EOF
 	[[ $status -lt 2 ]] && skip 'git version too high'
 
 	castle 'rc-files'
-	mock_git_version 1.8.0
 
 	mkdir "$HOME/.folder"
 	touch "$HOME/.folder/ignored.swp"
-	$HOMESHICK_FN track rc-files "$HOME/.folder/ignored.swp"
+	GIT_VERSION=1.8.0 $HOMESHICK_FN track rc-files "$HOME/.folder/ignored.swp"
 	[ ! -e "$HOMESICK/repos/rc-files/home/.folder/ignored.swp" ]
 	[ -e "$HOMESICK/repos/rc-files/home/.folder" ]
-	# "unmock" git
-	unset git
 }
 
 @test 'track symlink in $HOME to $HOME' {

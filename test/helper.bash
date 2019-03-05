@@ -136,39 +136,13 @@ function version_compare {
 }
 
 function get_git_version {
-	GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
-	[[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]] && skip 'could not detect git version'
+	if [[ -z $GIT_VERSION ]]; then
+		read -r _ _ GIT_VERSION _ < <(command git --version)
+		if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
+			skip 'could not detect git version'
+		fi
+	fi
 	printf "%s" "$GIT_VERSION"
-}
-
-function mock_git_version {
-	# To mock a git version we simply create a function wrapper for it
-	# and forward all calls to git except `git --version`
-	local real_git
-	real_git=$(which git)
-	# Don't mess with quoting in this eval, it works...
-	# shellcheck disable=SC2086
-	eval "
-		function git {
-			if [[ \$1 == '--version' ]]; then
-					echo "git version $1"
-					return 0
-				else
-					local res
-					# Some variable expansions used by git internally may break,
-					# if we just forward the arguments with '\$@',
-					# so we unset this function until the execution is completed.
-					unset git
-					$real_git "\$@"
-					res=\$?
-					mock_git_version $1
-					return \$res
-			fi
-		}
-	"
-	# The functions need to be exported for them to work in child processes
-	export -f git
-	export -f mock_git_version
 }
 
 function commit_repo_state {

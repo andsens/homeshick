@@ -68,11 +68,8 @@ EOF
 
 @test 'recursive clone with git version < 1.6.5' {
 	fixture 'nested-submodules'
-	mock_git_version 1.6.4
 
-	$HOMESHICK_FN --batch clone "$REPO_FIXTURES/nested-submodules"
+	GIT_VERSION=1.6.4 $HOMESHICK_FN --batch clone "$REPO_FIXTURES/nested-submodules"
 	[ -e "$HOMESICK/repos/nested-submodules/level1" ]
 	[ ! -e "$HOMESICK/repos/nested-submodules/level1/level2/info" ]
-	# "unmock" git
-	unset git
 }
