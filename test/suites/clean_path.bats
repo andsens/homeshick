@@ -106,3 +106,13 @@ function test_clean_path() {
 	clean_path '/home/user../../somedir'
 	test_clean_path '/home/user../../somedir' '/home/somedir'
 }
+
+@test 'clean /home/user../../some dir' {
+	clean_path '/home/user../../some dir'
+	test_clean_path '/home/user../../some dir' '/home/some dir'
+}
+
+@test 'clean /home/user name../../some dir' {
+	clean_path '/home/user name../../some dir'
+	test_clean_path '/home/user name../../some dir' '/home/some dir'
+}

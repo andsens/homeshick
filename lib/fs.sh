@@ -75,15 +75,15 @@ function clean_path {
 	local parts=()
 	local rest=$path
 	while [[ $rest != '.' && $rest != '/' ]]; do
-		parts+=($(basename "$rest"))
+		parts+=("$(basename "$rest")")
 		rest=$(dirname "$rest")
 	done
 	# reverse $parts, it's a lot easier to follow the code below then
 	local new_parts=()
 	for (( idx=${#parts[@]}-1 ; idx>=0 ; idx-- )); do
-		new_parts+=(${parts[$idx]})
+		new_parts+=("${parts[$idx]}")
 	done
-	parts=(${new_parts[@]})
+	parts=("${new_parts[@]}")
 
 	local left
 	local right
@@ -131,9 +131,9 @@ function clean_path {
 		for j in "${!parts[@]}"; do
 			[[ $omit_left = true && $j -eq $i ]] && continue
 			[[ $omit_right = true && $j -eq $i+1 ]] && continue
-			new_parts+=(${parts[$j]})
+			new_parts+=("${parts[$j]}")
 		done
-		parts=(${new_parts[@]})
+		parts=("${new_parts[@]}")
 		if [[ $omit_left = false && $omit_right = false ]]; then
 			break
 		fi
