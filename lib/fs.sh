@@ -22,6 +22,9 @@ function home_exists {
 
 function list_castle_names {
 	while IFS= read -d $'\0' -r repo ; do
+		# Avoid using basename for a small speed-up
+		# See link, for why it's OK to use bash string substitution in this case
+		# https://github.com/andsens/homeshick/pull/181/files#r196206593
 		local reponame
 		reponame="${repo%/.git}"
 		reponame="${reponame##*/}"

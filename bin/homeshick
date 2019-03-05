@@ -30,7 +30,7 @@ fi
 # used in pull.sh
 # shellcheck disable=SC2034
 T_START=$(date +%s)
-read -r _ _ GIT_VERSION _ < <(git --version)
+read -r _ _ GIT_VERSION _ < <(command git --version)
 if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
 	err "$EX_SOFTWARE" "could not determine git version"
 fi
