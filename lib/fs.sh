@@ -23,7 +23,8 @@ function home_exists {
 function list_castle_names {
 	while IFS= read -d $'\0' -r repo ; do
 		local reponame
-		reponame=$(basename "${repo%/.git}")
+		reponame="${repo%/.git}"
+		reponame="${reponame##*/}"
 		printf "%s\n" "$reponame"
 	done < <(find -L "$repos" -mindepth 2 -maxdepth 2 -name .git -type d -print0 | sort -z)
 	return "$EX_SUCCESS"

@@ -23,12 +23,14 @@ exit_status=$EX_SUCCESS
 
 type git &>/dev/null || err "$EX_SOFTWARE" "git not found in path"
 
-mkdir -p "$repos"
+if [[ ! -d $repos ]]; then
+	mkdir -p "$repos"
+fi
 
 # used in pull.sh
 # shellcheck disable=SC2034
 T_START=$(date +%s)
-GIT_VERSION=$(git --version | grep 'git version' | cut -d ' ' -f 3)
+read -r _ _ GIT_VERSION _ < <(git --version)
 if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
 	err "$EX_SOFTWARE" "could not determine git version"
 fi
