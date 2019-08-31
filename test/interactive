@@ -35,6 +35,7 @@ run() {
 	set +T
 	output="$("$@" 2>&1)"
 	status="$?"
+	# shellcheck disable=SC2206
 	IFS=$'\n' lines=($output)
 	[ -z "$e" ] || set -e
 	[ -z "$E" ] || set -E
