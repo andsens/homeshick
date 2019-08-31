@@ -11,6 +11,6 @@ fpath=(\$HOME/.homesick/repos/homeshick/completions \$fpath)
 autoload -U compinit
 compinit
 EOF
-printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/bin/homeshick.csh"' >> "$HOME/.cshrc"
+printf '\nalias homeshick source "$HOME/.homesick/repos/homeshick/homeshick.csh"' >> "$HOME/.cshrc"
 mkdir -p "$HOME/.config/fish"
 printf '\nsource "$HOME/.homesick/repos/homeshick/homeshick.fish"' >> "$HOME/.config/fish/config.fish"

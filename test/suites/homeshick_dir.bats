@@ -18,7 +18,7 @@ load ../helper
 
 @test 'csh with homeshick_dir override' {
 	[ "$(type -t csh)" = "file" ] || skip "csh not installed"
-	cmd="set HOMESHICK_DIR=/nowhere; source ${HOMESHICK_BIN}.csh"
+	cmd="set HOMESHICK_DIR=/nowhere; source \"${HOMESHICK_FN_SRC_CSH}\""
 	local result=$( csh <<< "$cmd" 2>&1 >/dev/null )
 	[[ "$result" =~ "/nowhere/" ]]
 }

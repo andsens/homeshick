@@ -19,8 +19,8 @@ function export_env_vars {
 	repo_dir=$(cd "$TESTDIR/.." && pwd)
 	export HOMESHICK_DIR=${HOMESHICK_DIR:-$repo_dir}
 	export HOMESHICK_FN_SRC_SH="$HOMESHICK_DIR/homeshick.sh"
-	export HOMESHICK_FN_SRC_CSH="$HOMESHICK_DIR/homeshick.csh"
 	export HOMESHICK_FN_SRC_FISH="$HOMESHICK_DIR/homeshick.fish"
+	export HOMESHICK_FN_SRC_CSH="$HOMESHICK_DIR/homeshick.csh"
 	export HOMESHICK_BIN="$HOMESHICK_DIR/bin/homeshick"
 
 	# Check if expect is installed
@@ -57,6 +57,7 @@ function ln_homeshick {
 	local repo_dir
 	repo_dir=$(cd "$TESTDIR/.." && pwd)
 	ln -s "$repo_dir/homeshick.sh" "$hs_repo/homeshick.sh"
+	ln -s "$repo_dir/homeshick.csh" "$hs_repo/homeshick.csh"
 	ln -s "$repo_dir/homeshick.fish" "$hs_repo/homeshick.fish"
 	ln -s "$repo_dir/bin" "$hs_repo/bin"
 	ln -s "$repo_dir/lib" "$hs_repo/lib"
