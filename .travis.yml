@@ -1,6 +1,6 @@
 language: bash
 
-dist: trusty
+dist: bionic
 
 addons:
   apt:
