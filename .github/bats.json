@@ -1,0 +1,21 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "bats",
+      "pattern": [
+        {
+          "regexp": "^not ok .*"
+        },
+        {
+          "regexp": "^# \\(in test file (.+), line (\\d+)\\)$",
+          "file": 1,
+          "line": 2
+        },
+        {
+          "regexp": "#\\s+(.*)",
+          "message": 1
+        }
+      ]
+    }
+  ]
+}

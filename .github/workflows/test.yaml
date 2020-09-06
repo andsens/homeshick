@@ -51,4 +51,7 @@ jobs:
     - name: Download & compile bash ${{ matrix.bash-version }}
       run: test/get_bash.sh "${{ matrix.bash-version }}"
     - name: Test
-      run: PATH=$PWD/test/bash-versions/bash-${{ matrix.bash-version }}:$PATH /usr/local/bin/bats --tap "$PWD/test/suites"
+      run: |
+        echo "::add-matcher::.github/bats.json"
+        PATH=$PWD/test/bash-versions/bash-${{ matrix.bash-version }}:$PATH /usr/local/bin/bats --tap "$PWD/test/suites"
+        echo "::remove-matcher owner=bats::"
