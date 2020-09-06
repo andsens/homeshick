@@ -25,7 +25,10 @@ jobs:
         shellcheck -x homeshick
         echo "::remove-matcher owner=shellcheck::"
 
-  test-bash:
+  test:
+    strategy:
+      matrix:
+        bash-version: ['3.2', '3.2.48', '3.2.57', '4.0', '4.1', '4.2', '4.3', '4.3.30', '4.4', '5.0']
 
     runs-on: ubuntu-latest
     steps:
@@ -39,5 +42,14 @@ jobs:
         bash /tmp/bats/install.sh /tmp/local
     - name: Checkout the project
       uses: actions/checkout@v2
+    - name: Cache bash versions
+      uses: actions/cache@v2
+      env:
+        cache-name: bash-version
+      with:
+        path: test/bash-versions/${{ matrix.bash-version }}
+        key: ${{ env.cache-name }}-${{ matrix.bash-version }}
+    - name: Download & compile bash ${{ matrix.bash-version }}
+      run: test/get_bash.sh "${{ matrix.bash-version }}"
     - name: Test
-      run: /tmp/local/bin/bats --tap test/suites
+      run: test/bash-versions/bash-${{ matrix.bash-version }}/bash /tmp/local/bin/bats --tap test/suites

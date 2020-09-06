@@ -1,5 +1,2 @@
-repos
-home
-nothome
-shunit2-*
-setup.sh
+/setup.sh
+/bash-versions

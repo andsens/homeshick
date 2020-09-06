@@ -1,3 +1,16 @@
 #!/usr/bin/env bash
-SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-bats "${SCRIPTDIR}/suites"
+set -e
+
+main() {
+  cd "$(dirname "${BASH_SOURCE[0]}")"
+  local bash
+  local ret=0
+  for bash in bash-versions/*/bash; do
+    if ! "$bash" /usr/local/bin/bats suites; then
+      ret=$?
+    fi
+  done
+  return $ret
+}
+
+main "$@"
