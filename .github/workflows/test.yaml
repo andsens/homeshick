@@ -21,14 +21,13 @@ jobs:
     - name: Lint with shellcheck
       run: |
         echo "::add-matcher::.github/shellcheck.json"
-        cd bin
-        shellcheck -x homeshick
+        test/shellcheck
         echo "::remove-matcher owner=shellcheck::"
 
   test:
     strategy:
       matrix:
-        bash-version: ['3.2', '3.2.48', '3.2.57', '4.0', '4.1', '4.2', '4.3', '4.3.30', '4.4', '5.0']
+        bash-version: ['3.2.57', '4.0', '4.1', '4.2', '4.3', '4.3.30', '4.4', '5.0']
 
     runs-on: ubuntu-latest
     steps:
@@ -37,9 +36,9 @@ jobs:
         sudo apt-add-repository ppa:fish-shell/release-2 --yes
         sudo apt-get -qq update
         sudo apt-get -qq install fish expect tcsh
-        git clone https://github.com/sstephenson/bats.git /tmp/bats
-        mkdir -p /tmp/local
-        bash /tmp/bats/install.sh /tmp/local
+        git clone --depth 1 --branch v1.2.1 https://github.com/bats-core/bats-core.git /tmp/bats
+        sudo /tmp/bats/install.sh /usr/local
+        rm -rf /tmp/bats
     - name: Checkout the project
       uses: actions/checkout@v2
     - name: Cache bash versions
@@ -52,4 +51,4 @@ jobs:
     - name: Download & compile bash ${{ matrix.bash-version }}
       run: test/get_bash.sh "${{ matrix.bash-version }}"
     - name: Test
-      run: test/bash-versions/bash-${{ matrix.bash-version }}/bash /tmp/local/bin/bats --tap test/suites
+      run: PATH=$PWD/test/bash-versions/bash-${{ matrix.bash-version }}:$PATH /usr/local/bin/bats --tap "$PWD/test/suites"

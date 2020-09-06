@@ -3,10 +3,11 @@ set -e
 
 main() {
   cd "$(dirname "${BASH_SOURCE[0]}")"
-  local bash
+  local version_path
   local ret=0
-  for bash in bash-versions/*/bash; do
-    if ! "$bash" /usr/local/bin/bats suites; then
+  for version_path in bash-versions/*; do
+    [[ -d $version_path ]] || continue
+    if ! PATH=$PWD/$version_path:$PATH bats --tap "$PWD/suites"; then
       ret=$?
     fi
   done

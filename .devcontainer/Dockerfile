@@ -18,5 +18,6 @@ RUN apt-get update \
 RUN wget -O- https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz | \
 	tar -xJC /usr/local/bin --strip-components 1 shellcheck-v0.7.1/shellcheck
 RUN pip3 install docopt.sh==0.9.17
-RUN git clone --depth 1 https://github.com/sstephenson/bats.git /tmp/bats \
-	&& /tmp/bats/install.sh /usr/local
+RUN git clone --depth 1 --branch v1.2.1 https://github.com/bats-core/bats-core.git /tmp/bats \
+	&& /tmp/bats/install.sh /usr/local \
+	&& rm -rf /tmp/bats
