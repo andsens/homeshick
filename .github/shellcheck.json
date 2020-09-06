@@ -1,0 +1,22 @@
+{
+	"problemMatcher": [
+		{
+			"owner": "shellcheck",
+			"pattern": [
+				{
+					"regexp": "^In\\s(.+)\\sline\\s(\\d+):$",
+					"file": 1,
+					"line": 2
+				},
+				{
+					"regexp": ".*"
+				},
+				{
+					"regexp": "(SC\\d+):\\s(.+)$",
+					"code": 1,
+					"message": 2
+				}
+			]
+		}
+	]
+}

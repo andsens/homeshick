@@ -12,10 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Install shellcheck
+      run: |
+        sudo apt-get -qq update
+        sudo apt-get -qq install shellcheck
     - name: Checkout the project
       uses: actions/checkout@v2
     - name: Lint with shellcheck
-      uses: ludeeus/action-shellcheck@master
+      run: |
+        echo "::add-matcher::.github/shellcheck.json"
+        cd bin
+        shellcheck -x homeshick
+        echo "::remove-matcher owner=shellcheck::"
 
   test-bash:
 
@@ -25,7 +33,7 @@ jobs:
       run: |
         sudo apt-add-repository ppa:fish-shell/release-2 --yes
         sudo apt-get -qq update
-        sudo apt-get -qq install fish shellcheck expect tcsh
+        sudo apt-get -qq install fish expect tcsh
         git clone https://github.com/sstephenson/bats.git /tmp/bats
         mkdir -p /tmp/local
         bash /tmp/bats/install.sh /tmp/local
