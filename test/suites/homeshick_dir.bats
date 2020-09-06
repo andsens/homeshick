@@ -6,15 +6,15 @@ load ../helper
   castle 'dotfiles'
   local result
   result=$( HOMESHICK_DIR=$_TMPDIR/nowhere "$HOMESHICK_FN" 2>&1 >/dev/null ) || true
-  [[ "$result" =~ "/nowhere/" ]]
+  [[ "$result" =~ "/nowhere/" ]] || false
 }
 
 @test 'fish with homeshick_dir override' {
   [ "$(type -t fish)" = "file" ] || skip "fish not installed"
   cmd="source \"$HOMESHICK_FN_SRC_FISH\"; set HOMESHICK_DIR \"$_TMPDIR/nowhere\"; $HOMESHICK_FN"
   local result
-  result=$( fish <<< "$cmd" 2>&1 >/dev/null )
-  [[ "$result" =~ "/nowhere/" ]]
+  result=$( fish <<< "$cmd" 2>&1 >/dev/null ) || true
+  [[ "$result" =~ "/nowhere/" ]] || false
 }
 
 @test 'csh with homeshick_dir override' {
@@ -22,6 +22,5 @@ load ../helper
   cmd="set HOMESHICK_DIR=/nowhere; source \"${HOMESHICK_FN_SRC_CSH}\""
   local result
   result=$( csh <<< "$cmd" 2>&1 >/dev/null )
-  [[ "$result" =~ "/nowhere/" ]]
+  [[ "$result" =~ "/nowhere/" ]] || false
 }
-
