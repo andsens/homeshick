@@ -53,7 +53,7 @@ load ../helper
   local dotfiles_dir=$HOMESICK/repos/dotfiles
   cmd=". \"$HOMESHICK_FN_SRC_SH\" && $HOMESHICK_FN cd dotfiles && echo \$PWD"
   local result
-  result=$( sh <<< "$cmd" 2>&1 )
+  result=$( sh <<< "$cmd" )
   [ "$dotfiles_dir" = "$result" ]
 }
 
@@ -63,7 +63,7 @@ load ../helper
   local dotfiles_dir=$HOMESICK/repos/dotfiles
   cmd=". \"$HOMESHICK_FN_SRC_SH\" && $HOMESHICK_FN cd dotfiles && echo \$PWD"
   local result
-  result=$( dash <<< "$cmd" 2>&1 )
+  result=$( dash <<< "$cmd" )
   [ "$dotfiles_dir" = "$result" ]
 }
 
@@ -96,6 +96,6 @@ EOF
   dotfiles_dir=$(cd "$HOMESICK/repos/dotfiles" && pwd -P)
   cmd="source \"$HOMESHICK_FN_SRC_FISH\"; and $HOMESHICK_FN cd dotfiles; and pwd"
   local result
-  result=$( fish <<< "$cmd" 2>&1 )
+  result=$( fish <<< "$cmd" )
   [ "$dotfiles_dir" = "$result" ]
 }
