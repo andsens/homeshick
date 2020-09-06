@@ -1,0 +1,35 @@
+name: Lint & test
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+jobs:
+  lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the project
+      uses: actions/checkout@v2
+    - name: Lint with shellcheck
+      uses: ludeeus/action-shellcheck@master
+
+  test-bash:
+
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install testing dependencies
+      run: |
+        sudo apt-add-repository ppa:fish-shell/release-2 --yes
+        sudo apt-get -qq update
+        sudo apt-get -qq install fish shellcheck expect tcsh
+        git clone https://github.com/sstephenson/bats.git /tmp/bats
+        mkdir -p /tmp/local
+        bash /tmp/bats/install.sh /tmp/local
+    - name: Checkout the project
+      uses: actions/checkout@v2
+    - name: Test
+      run: /tmp/local/bin/bats --tap test/suites
