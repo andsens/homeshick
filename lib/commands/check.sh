@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function check {
   local exit_status=$EX_SUCCESS

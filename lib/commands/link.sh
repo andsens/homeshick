@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function symlink {
   [[ ! $1 ]] && help symlink

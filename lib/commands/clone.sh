@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function clone {
   [[ ! $1 ]] && help_err clone

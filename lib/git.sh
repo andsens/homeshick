@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Snatched from http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
 function version_compare {

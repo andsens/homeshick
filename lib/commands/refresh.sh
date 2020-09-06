@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function refresh {
   [[ ! $1 || ! $2 ]] && help_err refresh

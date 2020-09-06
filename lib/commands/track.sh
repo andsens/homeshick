@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function track {
   [[ ! $1 || ! $2 ]] && help track

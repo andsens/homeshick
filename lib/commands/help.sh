@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # help is used globally
 # shellcheck disable=SC2120

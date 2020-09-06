@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function generate {
   [[ ! $1 ]] && help_err generate

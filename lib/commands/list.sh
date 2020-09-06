@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function list {
   while IFS= read -d $'\n' -r reponame ; do

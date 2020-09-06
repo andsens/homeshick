@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # shellcheck disable=2164
 function fixture_rc_files() {
@@ -13,7 +13,7 @@ function fixture_rc_files() {
   cd home
 
   cat > .bashrc <<EOF
-#!/bin/bash
+#!/usr/bin/env bash
 PS1='\[33[01;32m\]\u@\h\[33[00m\]:\[33[01;34m\]\w\'
 EOF
   git add .bashrc

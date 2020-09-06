@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function ask_symlink {
   if [[ $# -gt 0 ]]; then

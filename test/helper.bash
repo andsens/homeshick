@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function export_env_vars {
   if [[ -n $BATS_TEST_DIRNAME ]]; then

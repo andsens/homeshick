@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function pull {
   [[ ! $1 ]] && help_err pull

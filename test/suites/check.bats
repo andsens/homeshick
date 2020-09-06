@@ -28,7 +28,7 @@ function add_commit_to_castle {
   git config user.email "homeshick@example.com"
 
   cat >> home/.bashrc <<EOF
-#!/bin/bash
+#!/usr/bin/env bash
 PS1='\[33[01;32m\]\u@\h\[33[00m\]:\[33[01;34m\]\w\'
 homeshick --batch refresh
 EOF
