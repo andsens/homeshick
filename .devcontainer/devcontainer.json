@@ -1,0 +1,35 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.128.0/containers/debian
+{
+  "name": "Debian",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".",
+    // Update 'VARIANT' to pick an Debian version. Rebuild the container if it already
+    // exists o update. Available variants: buster (or debian-10), stretch (or debian-9)
+    "args": {
+      "VARIANT": "buster"
+    }
+  },
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "shellcheck.executablePath": "/usr/local/bin/shellcheck"
+  },
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "timonwong.shellcheck",
+    "editorconfig.editorconfig",
+    "lextudio.restructuredtext",
+    "me-dutour-mathieu.vscode-github-actions"
+  ],
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
+  // "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
+  // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
+  // "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
+  // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+  // "remoteUser": "vscode"
+  "postCreateCommand": "pip3 --disable-pip-version-check --no-cache-dir install docopt && test/get_bash.sh 3.2 4.4 5.0"
+}
