@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
 
-shopt -s extglob
-shopt -s nullglob
+main() {
+  cd "$(dirname "${BASH_SOURCE[0]}")/.." || return 1
 
-shellcheck --shell=bash \
-	bin/homeshick \
-	lib/!(exit_status).sh \
-	{,lib/commands/,test/,test/fixtures/}*.{sh,bash} \
-	test/{run,interactive,shellcheck}
-
-shellcheck --shell=sh homeshick.sh
-shellcheck --shell=bash homeshick.sh
-shellcheck --shell=dash homeshick.sh
-shellcheck --shell=ksh homeshick.sh
+  local ret=0
+  shellcheck --source-path=SCRIPTDIR "$@" -- \
+    homeshick.sh \
+    bin/homeshick \
+    lib/*.sh \
+    lib/commands/*.sh \
+    test/{run,interactive,shellcheck,*.sh,*.bash} \
+    test/fixtures/*.sh \
+    test/suites/*.bats || ret=$?
+  shellcheck --shell=sh homeshick.sh || ret=$?
+  shellcheck --shell=bash homeshick.sh || ret=$?
+  shellcheck --shell=dash homeshick.sh || ret=$?
+  shellcheck --shell=ksh homeshick.sh || ret=$?
+  return $ret
+}
+main "$@"

@@ -4,7 +4,7 @@
 			"owner": "shellcheck",
 			"pattern": [
 				{
-					"regexp": "^In\\s(.+)\\sline\\s(\\d+):$",
+					"regexp": "^In (.+) line (\\d+):$",
 					"file": 1,
 					"line": 2
 				},
@@ -12,7 +12,7 @@
 					"regexp": ".*"
 				},
 				{
-					"regexp": "(SC\\d+):\\s(.+)$",
+					"regexp": "(SC\\d+): (.+)$",
 					"code": 1,
 					"message": 2
 				}
