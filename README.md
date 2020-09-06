@@ -1,4 +1,4 @@
-homeshick [![Build Status](https://travis-ci.org/andsens/homeshick.png?branch=development)](https://travis-ci.org/andsens/homeshick)
+homeshick ![Lint & test](https://github.com/andsens/homeshick/workflows/Lint%20&%20test/badge.svg)
 =========
 In Unix, configuration files are king.  
 Tailoring tools to suit your needs through configuration can be empowering.  
