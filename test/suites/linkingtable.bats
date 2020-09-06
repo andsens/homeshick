@@ -17,25 +17,25 @@ load ../helper
 ## First column: not directory
 @test 'link file to nonexistent' {
   castle 'rc-files'
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
 }
 
 @test 'link file symlink to nonexistent' {
   castle 'rc-files'
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   is_symlink .homesick/repos/rc-files/home/symlinked-file "$HOME/symlinked-file"
 }
 
 @test 'link dir symlink to nonexistent' {
   castle 'rc-files'
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   is_symlink .homesick/repos/rc-files/home/symlinked-directory "$HOME/symlinked-directory"
 }
 
 @test 'link dead symlink to nonexistent' {
   castle 'rc-files'
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   is_symlink .homesick/repos/rc-files/home/dead-symlink "$HOME/dead-symlink"
 }
 
@@ -43,7 +43,7 @@ load ../helper
 ## Second column: directory
 @test 'link dir to nonexistent' {
   castle 'dotfiles'
-  $HOMESHICK_FN --batch link dotfiles
+  homeshick --batch link dotfiles
   [ ! -L "$HOME/.ssh" ]
   [ -d "$HOME/.ssh" ]
 }
@@ -53,10 +53,10 @@ load ../helper
 ## First column: not directory
 @test 'link file to reposymlink' {
   castle 'rc-files'
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   local inode_before
   inode_before=$(get_inode_no "$HOME/.bashrc")
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   local inode_after
   inode_after=$(get_inode_no "$HOME/.bashrc")
   is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
@@ -65,10 +65,10 @@ load ../helper
 
 @test 'link file symlink to reposymlink' {
   castle 'rc-files'
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   local inode_before
   inode_before=$(get_inode_no "$HOME/symlinked-file")
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   local inode_after
   inode_after=$(get_inode_no "$HOME/symlinked-file")
   is_symlink .homesick/repos/rc-files/home/symlinked-file "$HOME/symlinked-file"
@@ -77,10 +77,10 @@ load ../helper
 
 @test 'link dir symlink to reposymlink' {
   castle 'rc-files'
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   local inode_before
   inode_before=$(get_inode_no "$HOME/symlinked-directory")
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   local inode_after
   inode_after=$(get_inode_no "$HOME/symlinked-directory")
   is_symlink .homesick/repos/rc-files/home/symlinked-directory "$HOME/symlinked-directory"
@@ -89,10 +89,10 @@ load ../helper
 
 @test 'link dead symlink to reposymlink' {
   castle 'rc-files'
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   local inode_before
   inode_before=$(get_inode_no "$HOME/dead-symlink")
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   local inode_after
   inode_after=$(get_inode_no "$HOME/dead-symlink")
   is_symlink .homesick/repos/rc-files/home/dead-symlink "$HOME/dead-symlink"
@@ -104,8 +104,8 @@ load ../helper
 @test 'link legacy symlinks' {
   castle 'dotfiles'
   # Recreate the legacy scenario
-  ln -s "$HOMESICK/repos/dotfiles/home/.ssh" "$HOME/.ssh"
-  $HOMESHICK_FN --batch --force link dotfiles
+  ln -s "$HOME/.homesick/repos/dotfiles/home/.ssh" "$HOME/.ssh"
+  homeshick --batch --force link dotfiles
   # Without legacy handling if we were to run `file $HOME/.ssh/known_hosts` we would get
   # .ssh/known_hosts: symbolic link in a loop
   # The `test -e` is sufficient though
@@ -118,30 +118,30 @@ load ../helper
 @test 'link file to file' {
   castle 'rc-files'
   touch "$HOME/.bashrc"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
 }
 
 @test 'link file symlink to file' {
   castle 'rc-files'
   touch "$HOME/symlinked-file"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/symlinked-file "$HOME/symlinked-file"
 }
 
 @test 'link dir symlink to file' {
   castle 'rc-files'
   mkdir "$HOME/symlinked-directory"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/symlinked-directory "$HOME/symlinked-directory"
 }
 
 @test 'link dead symlink to file' {
   castle 'rc-files'
   touch "$HOME/dead-symlink"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/dead-symlink "$HOME/dead-symlink"
 }
 
@@ -150,7 +150,7 @@ load ../helper
 @test 'link dir to file' {
   castle 'dotfiles'
   touch "$HOME/.ssh"
-  $HOMESHICK_FN --batch --force link dotfiles
+  homeshick --batch --force link dotfiles
   [ -d "$HOME/.ssh" ]
   [ ! -L "$HOME/.ssh" ]
 }
@@ -161,28 +161,28 @@ load ../helper
 @test 'link file to dir' {
   castle 'rc-files'
   mkdir "$HOME/.bashrc"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
 }
 
 @test 'link file symlink to dir' {
   castle 'rc-files'
   mkdir "$HOME/symlinked-file"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/symlinked-file "$HOME/symlinked-file"
 }
 
 @test 'link dir symlink to dir' {
   castle 'rc-files'
   mkdir "$HOME/symlinked-directory"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/symlinked-directory "$HOME/symlinked-directory"
 }
 
 @test 'link dead symlink to dir' {
   castle 'rc-files'
   mkdir "$HOME/dead-symlink"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/dead-symlink "$HOME/dead-symlink"
 }
 
@@ -193,7 +193,7 @@ load ../helper
   mkdir "$HOME/.ssh"
   local inode_before
   inode_before=$(get_inode_no "$HOME/.ssh")
-  $HOMESHICK_FN --batch --force link dotfiles
+  homeshick --batch --force link dotfiles
   local inode_after
   inode_after=$(get_inode_no "$HOME/.ssh")
   [ "$inode_before" -eq "$inode_after" ]
@@ -208,7 +208,7 @@ load ../helper
   castle 'rc-files'
   mkdir "$NOTHOME/symlink-target-dir"
   ln -s "$NOTHOME/symlink-target-dir" "$HOME/.bashrc"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
   rm -rf "$NOTHOME/symlink-target-dir"
 }
@@ -217,7 +217,7 @@ load ../helper
   castle 'rc-files'
   mkdir "$NOTHOME/symlink-target-dir"
   ln -s "$NOTHOME/symlink-target-dir" "$HOME/symlinked-file"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/symlinked-file "$HOME/symlinked-file"
   rm -rf "$NOTHOME/symlink-target-dir"
 }
@@ -226,7 +226,7 @@ load ../helper
   castle 'rc-files'
   mkdir "$NOTHOME/symlink-target-dir"
   ln -s "$NOTHOME/symlink-target-dir" "$HOME/symlinked-directory"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/symlinked-directory "$HOME/symlinked-directory"
   rm -rf "$NOTHOME/symlink-target-dir"
 }
@@ -235,7 +235,7 @@ load ../helper
   castle 'rc-files'
   mkdir "$NOTHOME/symlink-target-dir"
   ln -s "$NOTHOME/symlink-target-dir" "$HOME/dead-symlink"
-  $HOMESHICK_FN --batch --force link rc-files
+  homeshick --batch --force link rc-files
   is_symlink .homesick/repos/rc-files/home/dead-symlink "$HOME/dead-symlink"
   rm -rf "$NOTHOME/symlink-target-dir"
 }
@@ -248,7 +248,7 @@ load ../helper
   ln -s "$NOTHOME/symlink-target-dir" "$HOME/.ssh"
   local inode_before
   inode_before=$(get_inode_no "$HOME/.ssh")
-  $HOMESHICK_FN --batch --force link dotfiles
+  homeshick --batch --force link dotfiles
   local inode_after
   inode_after=$(get_inode_no "$HOME/.ssh")
   is_symlink "$NOTHOME/symlink-target-dir" "$HOME/.ssh"

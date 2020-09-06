@@ -4,7 +4,7 @@ load ../helper
 
 @test 'link file with crazy name' {
   castle 'repo with spaces in name'
-  $HOMESHICK_FN --batch link 'repo with spaces in name'
+  homeshick --batch link 'repo with spaces in name'
   stat "$HOME/.crazy
 file␇☺"
   test -f "$HOME/.crazy
@@ -15,9 +15,9 @@ file␇☺"
  castle 'rc-files'
  test_filename="filename
 newline"
- touch "$HOMESICK/repos/rc-files/home/$test_filename"
- commit_repo_state "$HOMESICK/repos/rc-files"
- $HOMESHICK_FN --batch link rc-files
+ touch "$HOME/.homesick/repos/rc-files/home/$test_filename"
+ commit_repo_state "$HOME/.homesick/repos/rc-files"
+ homeshick --batch link rc-files
  [ -L "$HOME/filename
 newline" ]
  is_symlink ".homesick/repos/rc-files/home/filename
@@ -27,7 +27,7 @@ newline"
 
 @test 'link a file with spaces in its name' {
   castle 'repo with spaces in name'
-  $HOMESHICK_FN --batch link "repo with spaces in name"
+  homeshick --batch link "repo with spaces in name"
   [ -f "$HOME/.file with spaces in name" ]
   [ -f "$HOME/.folder with spaces in name/another file with spaces in its name" ]
 }
@@ -35,7 +35,7 @@ newline"
 @test 'only link submodule files inside home/' {
   castle 'submodule-outside-home'
   # '!' inverts the return value
-  ! $HOMESHICK_FN --batch link submodule-outside-home 2>&1 | grep 'No such file or directory'
+  ! homeshick --batch link submodule-outside-home 2>&1 | grep 'No such file or directory'
   # This is the best I can do for testing.
   # The failure does not cause any files to be created
   # Ostensibly homeshick should exit with $? != 0 when linking fails, but it doesn't
@@ -47,8 +47,8 @@ newline"
   run version_compare "$GIT_VERSION" 1.6.5
   [[ $status == 2 ]] && skip 'git version too low'
 
-  $HOMESHICK_FN --batch clone "$REPO_FIXTURES/nested-submodules"
-  $HOMESHICK_FN --batch link nested-submodules
+  homeshick --batch clone "$REPO_FIXTURES/nested-submodules"
+  homeshick --batch link nested-submodules
   [ -f "$HOME/.subdir1/.subdir2/.info2" ]
 }
 
@@ -58,10 +58,10 @@ newline"
   run version_compare "$GIT_VERSION" 1.6.5
   [[ $status == 2 ]] && skip 'git version too low'
 
-  git clone "$REPO_FIXTURES/nested-submodules" "$HOMESICK/repos/nested-submodules"
-  [ -f "$HOMESICK/repos/nested-submodules/info" ]
-  $HOMESHICK_FN --batch link nested-submodules
-  [ ! -f "$HOMESICK/repos/nested-submodules/home/.info" ]
+  git clone "$REPO_FIXTURES/nested-submodules" "$HOME/.homesick/repos/nested-submodules"
+  [ -f "$HOME/.homesick/repos/nested-submodules/info" ]
+  homeshick --batch link nested-submodules
+  [ ! -f "$HOME/.homesick/repos/nested-submodules/home/.info" ]
   [ ! -f "$HOME/.info" ]
 }
 
@@ -71,35 +71,35 @@ newline"
   run version_compare "$GIT_VERSION" 1.6.5
   [[ $status == 2 ]] && skip 'git version too low'
 
-  $HOMESHICK_FN --batch clone "$REPO_FIXTURES/nested-submodules"
-  $HOMESHICK_FN --batch link nested-submodules
+  homeshick --batch clone "$REPO_FIXTURES/nested-submodules"
+  homeshick --batch link nested-submodules
   [ -f "$HOME/.info" ]
   [ -f "$HOME/.subdir1/.info1" ]
 }
 
 @test 'link repo with no dirs in home/' {
   castle 'nodirs'
-  $HOMESHICK_FN --batch link nodirs
+  homeshick --batch link nodirs
   [ -f "$HOME/.file1" ]
 }
 
 @test 'create file-less parent directories' {
   castle 'dotfiles'
-  $HOMESHICK_FN --batch link dotfiles
+  homeshick --batch link dotfiles
   [ -d "$HOME/.config/foo/bar" ]
 }
 
 @test 'symlink to a relative symlink' {
   castle 'symlinks'
   echo "test" > "$HOME/file_in_homedir"
-  $HOMESHICK_FN --batch link symlinks
+  homeshick --batch link symlinks
   [ "$(cat "$HOME/link_to_homedir_file")" = 'test' ]
 }
 
 @test 'overwrite prompt skipped when linking and --batch is on' {
   castle 'rc-files'
   touch "$HOME/.bashrc"
-  $HOMESHICK_FN --batch link rc-files
+  homeshick --batch link rc-files
   [ -f "$HOME/.bashrc" ]
   [ ! -L "$HOME/.bashrc" ]
 }
@@ -113,7 +113,7 @@ newline"
   esc="\\u001b$open_bracket"
   touch "$HOME/.bashrc"
   cat <<EOF | expect -f -
-      spawn "$HOMESHICK_BIN" link rc-files
+      spawn "$HOMESHICK_DIR/bin/homeshick" link rc-files
       expect -ex "${esc}1;37m     conflict${esc}0m .bashrc exists\r
 ${esc}1;36m   overwrite?${esc}0m ${open_bracket}yN${close_bracket}" {} default {exit 1}
       send "y\n"
@@ -125,16 +125,16 @@ EOF
 @test "don't overwrite file or prompt for it when linking and --skip is on" {
   castle 'rc-files'
   touch "$HOME/.bashrc"
-  $HOMESHICK_FN --skip link rc-files
+  homeshick --skip link rc-files
   [ -f "$HOME/.bashrc" ] && [ ! -L "$HOME/.bashrc" ]
 }
 
 @test 'existing symlinks are not relinked when running link' {
   castle 'module-files'
-  $HOMESHICK_FN --batch link module-files
+  homeshick --batch link module-files
   local inode_before
   inode_before=$(get_inode_no "$HOME/.my_module")
-  $HOMESHICK_FN --batch link module-files
+  homeshick --batch link module-files
   local inode_after
   inode_after=$(get_inode_no "$HOME/.my_module")
   [ "$inode_before" -eq "$inode_after" ]
@@ -158,26 +158,26 @@ EOF
   #.config/foo.conf should be overwritten by a directory of the same name
   [ -d "$HOME/.config/bar.dir" ]
   #.config/bar.dir should be overwritten by a file of the same name
-  $HOMESHICK_FN --batch --force link dotfiles
+  homeshick --batch --force link dotfiles
   [ -d "$HOME/.config/foo.conf" ]
   [ -f "$HOME/.config/bar.dir" ]
 }
 
 @test 'treat symlinked directories in the castle like files when linking' {
   castle 'module-files'
-  $HOMESHICK_FN --batch link module-files
+  homeshick --batch link module-files
   [ -L "$HOME/.my_module" ]
 }
 
 @test '.git directories are not symlinked' {
   castle 'dotfiles'
-  $HOMESHICK_FN --batch link dotfiles
+  homeshick --batch link dotfiles
   [ ! -e "$HOME/.vim/.git" ]
 }
 
 @test 'link a castle with spaces in its name' {
   castle 'repo with spaces in name'
-  $HOMESHICK_FN --batch link repo\ with\ spaces\ in\ name
+  homeshick --batch link repo\ with\ spaces\ in\ name
   [ -f "$HOME/.repowithspacesfile" ]
 }
 
@@ -185,7 +185,7 @@ EOF
   castle 'rc-files'
   castle 'dotfiles'
   castle 'repo with spaces in name'
-  $HOMESHICK_FN --batch link rc-files dotfiles repo\ with\ spaces\ in\ name
+  homeshick --batch link rc-files dotfiles repo\ with\ spaces\ in\ name
   is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
   is_symlink ../.homesick/repos/dotfiles/home/.ssh/known_hosts "$HOME/.ssh/known_hosts"
   is_symlink ".homesick/repos/repo with spaces in name/home/.repowithspacesfile" "$HOME/.repowithspacesfile"
@@ -195,7 +195,7 @@ EOF
   castle 'rc-files'
   castle 'dotfiles'
   castle 'repo with spaces in name'
-  $HOMESHICK_FN --batch link
+  homeshick --batch link
   is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
   is_symlink ../.homesick/repos/dotfiles/home/.ssh/known_hosts "$HOME/.ssh/known_hosts"
   is_symlink ".homesick/repos/repo with spaces in name/home/.repowithspacesfile" "$HOME/.repowithspacesfile"
@@ -203,12 +203,12 @@ EOF
 
 @test 'files ignored by git should not be linked' {
   castle 'dotfiles'
-  touch "$HOMESICK/repos/dotfiles/home/shouldBeIgnored.txt"
-  cat > "$HOMESICK/repos/dotfiles/.gitignore" <<EOF
+  touch "$HOME/.homesick/repos/dotfiles/home/shouldBeIgnored.txt"
+  cat > "$HOME/.homesick/repos/dotfiles/.gitignore" <<EOF
 shouldBeIgnored.txt
 EOF
-  commit_repo_state "$HOMESICK/repos/dotfiles"
-  $HOMESHICK_FN --batch link dotfiles
+  commit_repo_state "$HOME/.homesick/repos/dotfiles"
+  homeshick --batch link dotfiles
   [ ! -L "$HOME/shouldBeIgnored.txt" ]
 }
 
@@ -216,7 +216,7 @@ EOF
   castle 'dotfiles'
   mkdir -p "$HOME/two-levels/under-home"
   ln -s "two-levels/under-home" "$HOME/.ssh"
-  $HOMESHICK_FN --batch link
+  homeshick --batch link
   is_symlink ../../.homesick/repos/dotfiles/home/.ssh/known_hosts "$HOME/two-levels/under-home/known_hosts"
   [ -f "$HOME/.ssh/known_hosts" ]
 }
@@ -225,6 +225,6 @@ EOF
   castle 'dotfiles'
   mkdir -p "$HOME/two-levels/under-home"
   ln -s "$HOME/two-levels/under-home" "$HOME/.config"
-  $HOMESHICK_FN --batch link
+  homeshick --batch link
   is_symlink ../../.homesick/repos/dotfiles/home/.config/bar.dir "$HOME/two-levels/under-home/bar.dir"
 }

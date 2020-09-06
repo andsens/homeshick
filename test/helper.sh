@@ -12,16 +12,9 @@ export_env_vars() {
   export REPO_FIXTURES="$_TMPDIR/repos"
   export HOME="$_TMPDIR/home"
   export NOTHOME="$_TMPDIR/nothome"
-  export HOMESICK="$HOME/.homesick"
 
-  export HOMESHICK_FN="homeshick"
-  local repo_dir
-  repo_dir=$(cd "$TESTDIR/.." && pwd)
-  export HOMESHICK_DIR=${HOMESHICK_DIR:-$repo_dir}
-  export HOMESHICK_FN_SRC_SH="$HOMESHICK_DIR/homeshick.sh"
-  export HOMESHICK_FN_SRC_FISH="$HOMESHICK_DIR/homeshick.fish"
-  export HOMESHICK_FN_SRC_CSH="$HOMESHICK_DIR/homeshick.csh"
-  export HOMESHICK_BIN="$HOMESHICK_DIR/bin/homeshick"
+  export HOMESHICK_DIR
+	HOMESHICK_DIR=$(cd "$TESTDIR/.." && pwd)
 
   # Check if expect is installed
   if type expect &>/dev/null; then
@@ -52,7 +45,7 @@ mk_structure() {
 }
 
 ln_homeshick() {
-  local hs_repo=$HOMESICK/repos/homeshick
+  local hs_repo=$HOME/.homesick/repos/homeshick
   mkdir -p "$hs_repo"
   local repo_dir
   repo_dir=$(cd "$TESTDIR/.." && pwd)
@@ -74,7 +67,7 @@ setup_env() {
   export_env_vars
   mk_structure
   # shellcheck source=../homeshick.sh
-  source "$HOMESHICK_FN_SRC_SH"
+  source "$HOMESHICK_DIR/homeshick.sh"
 }
 
 setup() {
@@ -96,7 +89,7 @@ fixture() {
 castle() {
   local fixture_name=$1
   fixture "$fixture_name"
-  $HOMESHICK_FN --batch clone "$REPO_FIXTURES/$fixture_name" > /dev/null
+  homeshick --batch clone "$REPO_FIXTURES/$fixture_name" > /dev/null
 }
 
 is_symlink() {

@@ -4,7 +4,7 @@ load ../helper
 
 @test 'track non-existent file' {
   castle 'symlinks'
-  run "$HOMESHICK_FN" track symlinks "$HOME/non-existent-file"
+  run homeshick track symlinks "$HOME/non-existent-file"
   [ $status -eq 1 ] # EX_ERR
 }
 
@@ -12,18 +12,18 @@ load ../helper
   castle 'symlinks'
   echo "test" > "$HOME/some_file"
   (cd "$HOME" && ln -s some_file link_to_some_file)
-  $HOMESHICK_FN track symlinks "$HOME/link_to_some_file"
+  homeshick track symlinks "$HOME/link_to_some_file"
   [ "$(cat "$HOME/link_to_some_file")" = 'test' ]
-  is_symlink ../../../../some_file "$HOMESICK/repos/symlinks/home/link_to_some_file"
+  is_symlink ../../../../some_file "$HOME/.homesick/repos/symlinks/home/link_to_some_file"
 }
 
 @test 'track absolute symlink' {
   castle 'symlinks'
   echo "test" > "$HOME/some_file"
   (cd "$HOME" && ln -s "$HOME/some_file" link_to_some_file)
-  $HOMESHICK_FN track symlinks "$HOME/link_to_some_file"
+  homeshick track symlinks "$HOME/link_to_some_file"
   [ "$(cat "$HOME/link_to_some_file")" = 'test' ]
-  is_symlink "$HOME/some_file" "$HOMESICK/repos/symlinks/home/link_to_some_file"
+  is_symlink "$HOME/some_file" "$HOME/.homesick/repos/symlinks/home/link_to_some_file"
 }
 
 @test "track relative symlink in deep folder structure to file outside \$HOME" {
@@ -32,10 +32,10 @@ load ../helper
   echo "test" > "$NOTHOME/some/folder/outside/home/some_file"
   mkdir -p "$HOME/somedir/someotherdir/deep"
   (cd "$HOME" && ln -s ../../../../nothome/some/folder/outside/home/some_file "$HOME/somedir/someotherdir/deep/link_to_some_file")
-  $HOMESHICK_FN track symlinks "$HOME/somedir/someotherdir/deep/link_to_some_file"
+  homeshick track symlinks "$HOME/somedir/someotherdir/deep/link_to_some_file"
   [ "$(cat "$HOME/somedir/someotherdir/deep/link_to_some_file")" = 'test' ]
   local relpath='../../../../../../../../nothome/some/folder/outside/home/some_file'
-  is_symlink "$relpath" "$HOMESICK/repos/symlinks/home/somedir/someotherdir/deep/link_to_some_file"
+  is_symlink "$relpath" "$HOME/.homesick/repos/symlinks/home/somedir/someotherdir/deep/link_to_some_file"
 }
 
 @test 'track relative snakelike symlink' {
@@ -45,18 +45,18 @@ load ../helper
   echo "test" > "$HOME/someother/folder/some_file"
   mkdir -p "$HOME/somethird/folder"
   (cd "$HOME" && ln -s ../../some/folder/../../someother/folder/some_file "$HOME/somethird/folder/link_to_some_file")
-  $HOMESHICK_FN track symlinks "$HOME/somethird/folder/link_to_some_file"
+  homeshick track symlinks "$HOME/somethird/folder/link_to_some_file"
   [ "$(cat "$HOME/somethird/folder/link_to_some_file")" = 'test' ]
   local relpath='../../../../../../someother/folder/some_file'
-  is_symlink "$relpath" "$HOMESICK/repos/symlinks/home/somethird/folder/link_to_some_file"
+  is_symlink "$relpath" "$HOME/.homesick/repos/symlinks/home/somethird/folder/link_to_some_file"
 }
 
 @test 'track dead symlink' {
   castle 'symlinks'
   (cd "$HOME" && ln -s some_file link_to_some_file)
-  $HOMESHICK_FN track symlinks "$HOME/link_to_some_file"
+  homeshick track symlinks "$HOME/link_to_some_file"
   [ ! -e "$HOME/link_to_some_file" ]
-  is_symlink ../../../../some_file "$HOMESICK/repos/symlinks/home/link_to_some_file"
+  is_symlink ../../../../some_file "$HOME/.homesick/repos/symlinks/home/link_to_some_file"
 }
 
 @test 'track absolute path' {
@@ -64,8 +64,8 @@ load ../helper
   cat > "$HOME/.zshrc" <<EOF
 homeshick --batch refresh
 EOF
-  $HOMESHICK_FN track rc-files "$HOME/.zshrc"
-  [ -f "$HOMESICK/repos/rc-files/home/.zshrc" ]
+  homeshick track rc-files "$HOME/.zshrc"
+  [ -f "$HOME/.homesick/repos/rc-files/home/.zshrc" ]
   [ -L "$HOME/.zshrc" ]
 }
 
@@ -74,8 +74,8 @@ EOF
   cat > "$HOME/.path with spaces" <<EOF
 homeshick --batch refresh
 EOF
-  $HOMESHICK_FN track rc-files "$HOME/.path with spaces"
-  [ -f "$HOMESICK/repos/rc-files/home/.path with spaces" ]
+  homeshick track rc-files "$HOME/.path with spaces"
+  [ -f "$HOME/.homesick/repos/rc-files/home/.path with spaces" ]
   [ -L "$HOME/.path with spaces" ]
 }
 
@@ -86,8 +86,8 @@ EOF
   cat > "$file" <<EOF
 homeshick --batch refresh
 EOF
-  $HOMESHICK_FN track rc-files "$HOME/deep folder/structure/with spaces/.file with spaces"
-  [ -f "$HOMESICK/repos/rc-files/home/deep folder/structure/with spaces/.file with spaces" ]
+  homeshick track rc-files "$HOME/deep folder/structure/with spaces/.file with spaces"
+  [ -f "$HOME/.homesick/repos/rc-files/home/deep folder/structure/with spaces/.file with spaces" ]
   [ -L "$file" ]
 }
 
@@ -102,10 +102,10 @@ EOF
   cat > "$file2" <<EOF
 homeshick --batch refresh
 EOF
-  $HOMESHICK_FN track rc-files "$HOME/.path with spaces" "$HOME/deep folder/structure/with spaces/.file with spaces"
-  [ -f "$HOMESICK/repos/rc-files/home/deep folder/structure/with spaces/.file with spaces" ]
+  homeshick track rc-files "$HOME/.path with spaces" "$HOME/deep folder/structure/with spaces/.file with spaces"
+  [ -f "$HOME/.homesick/repos/rc-files/home/deep folder/structure/with spaces/.file with spaces" ]
   [ -L "$file1" ]
-  [ -f "$HOMESICK/repos/rc-files/home/.path with spaces" ]
+  [ -f "$HOME/.homesick/repos/rc-files/home/.path with spaces" ]
   [ -L "$file2" ]
 }
 
@@ -114,8 +114,8 @@ EOF
   cat > "$HOME/.zshrc" <<EOF
 homeshick --batch refresh
 EOF
-  (cd "$HOME" && $HOMESHICK_FN track rc-files .zshrc)
-  [ -f "$HOMESICK/repos/rc-files/home/.zshrc" ]
+  (cd "$HOME" && homeshick track rc-files .zshrc)
+  [ -f "$HOME/.homesick/repos/rc-files/home/.zshrc" ]
   [ -L "$HOME/.zshrc" ]
 }
 
@@ -124,8 +124,8 @@ EOF
   cat > "$HOME/.vimrc" <<EOF
 My empty vim config
 EOF
-  (cd "$HOME" && $HOMESHICK_FN track repo\ with\ spaces\ in\ name .vimrc)
-  local file="$HOMESICK/repos/repo with spaces in name/home/.vimrc"
+  (cd "$HOME" && homeshick track repo\ with\ spaces\ in\ name .vimrc)
+  local file="$HOME/.homesick/repos/repo with spaces in name/home/.vimrc"
   [ -f "$file" ]
   [ -L "$HOME/.vimrc" ]
 }
@@ -135,7 +135,7 @@ EOF
   cat > "$NOTHOME/some_other_file" <<EOF
 homeshick should refuse to track this file
 EOF
-  run "$HOMESHICK_FN" track rc-files "$NOTHOME/some_other_file"
+  run homeshick track rc-files "$NOTHOME/some_other_file"
   [ $status -eq 1 ]
   [ -e "$NOTHOME/some_other_file" ]
   [ ! -L "$NOTHOME/some_other_file" ]
@@ -147,16 +147,16 @@ EOF
   cat > "$HOME/.zshrc" <<EOF
 homeshick --batch refresh
 EOF
-  $HOMESHICK_FN track rc-files "$HOME/.zshrc"
+  homeshick track rc-files "$HOME/.zshrc"
   [ -L "$HOME/.zshrc" ]
   rm "$HOME/.zshrc"
   cat > "$HOME/.zshrc" <<EOF
 homeshick --batch refresh 7
 EOF
-  $HOMESHICK_FN track rc-files "$HOME/.zshrc"
+  homeshick track rc-files "$HOME/.zshrc"
   local tracked_file_size
-  tracked_file_size=$(stat -c %s "$HOMESICK/repos/rc-files/home/.zshrc" 2>/dev/null || \
-                      stat -f %z "$HOMESICK/repos/rc-files/home/.zshrc")
+  tracked_file_size=$(stat -c %s "$HOME/.homesick/repos/rc-files/home/.zshrc" 2>/dev/null || \
+                      stat -f %z "$HOME/.homesick/repos/rc-files/home/.zshrc")
   [ 26 -eq "$tracked_file_size" ]
   [ ! -L "$HOME/.zshrc" ]
 }
@@ -166,10 +166,10 @@ EOF
   cat > "$HOME/.zshrc" <<EOF
 homeshick --batch refresh
 EOF
-  $HOMESHICK_FN track rc-files "$HOME/.zshrc"
+  homeshick track rc-files "$HOME/.zshrc"
   [ -L "$HOME/.zshrc" ]
-  $HOMESHICK_FN track rc-files "$HOME/.zshrc"
-  [ ! -L "$HOMESICK/repos/rc-files/home/.zshrc" ]
+  homeshick track rc-files "$HOME/.zshrc"
+  [ ! -L "$HOME/.homesick/repos/rc-files/home/.zshrc" ]
 }
 
 @test 'git add when tracked' {
@@ -177,9 +177,9 @@ EOF
   cat > "$HOME/.zshrc" <<EOF
 homeshick --batch refresh
 EOF
-  $HOMESHICK_FN track rc-files "$HOME/.zshrc"
+  homeshick track rc-files "$HOME/.zshrc"
   local git_status
-  git_status=$(cd "$HOMESICK/repos/rc-files" && git status --porcelain)
+  git_status=$(cd "$HOME/.homesick/repos/rc-files" && git status --porcelain)
   [ "A  home/.zshrc" = "$git_status" ]
 }
 
@@ -190,19 +190,19 @@ EOF
   touch "$HOME/.somefolder/subfolder/file2"
   touch "$HOME/.somefolder/subfolder/file3"
   touch "$HOME/.somefolder/subfolder/stuff/file4"
-  $HOMESHICK_FN track rc-files "$HOME/.somefolder"
-  [ -e "$HOMESICK/repos/rc-files/home/.somefolder/file1" ]
-  [ -e "$HOMESICK/repos/rc-files/home/.somefolder/subfolder/file2" ]
-  [ -e "$HOMESICK/repos/rc-files/home/.somefolder/subfolder/file3" ]
-  [ -e "$HOMESICK/repos/rc-files/home/.somefolder/subfolder/stuff/file4" ]
+  homeshick track rc-files "$HOME/.somefolder"
+  [ -e "$HOME/.homesick/repos/rc-files/home/.somefolder/file1" ]
+  [ -e "$HOME/.homesick/repos/rc-files/home/.somefolder/subfolder/file2" ]
+  [ -e "$HOME/.homesick/repos/rc-files/home/.somefolder/subfolder/file3" ]
+  [ -e "$HOME/.homesick/repos/rc-files/home/.somefolder/subfolder/stuff/file4" ]
 }
 
 @test "don't track ignored file" {
   castle 'rc-files'
   mkdir "$HOME/.folder"
   touch "$HOME/.folder/somefile.swp"
-  $HOMESHICK_FN track rc-files "$HOME/.folder/somefile.swp"
-  [ ! -e "$HOMESICK/repos/rc-files/home/.folder/somefile.swp" ]
+  homeshick track rc-files "$HOME/.folder/somefile.swp"
+  [ ! -e "$HOME/.homesick/repos/rc-files/home/.folder/somefile.swp" ]
 }
 
 @test "don't track ignored files in folder" {
@@ -210,9 +210,9 @@ EOF
   mkdir "$HOME/.folder"
   touch "$HOME/.folder/somefile.swp"
   touch "$HOME/.folder/trackthisthough"
-  $HOMESHICK_FN track rc-files "$HOME/.folder/"
-  [ ! -e "$HOMESICK/repos/rc-files/home/.folder/somefile.swp" ]
-  [ -e "$HOMESICK/repos/rc-files/home/.folder/trackthisthough" ]
+  homeshick track rc-files "$HOME/.folder/"
+  [ ! -e "$HOME/.homesick/repos/rc-files/home/.folder/somefile.swp" ]
+  [ -e "$HOME/.homesick/repos/rc-files/home/.folder/trackthisthough" ]
 }
 
 @test 'track folder with spaces in name' {
@@ -220,9 +220,9 @@ EOF
   mkdir -p "$HOME/.some folder/sub folder/stuff"
   touch "$HOME/.some folder/file"
   touch "$HOME/.some folder/sub folder/stuff/other file"
-  $HOMESHICK_FN track rc-files "$HOME/.some folder"
-  [ -e "$HOMESICK/repos/rc-files/home/.some folder/file" ]
-  [ -e "$HOMESICK/repos/rc-files/home/.some folder/sub folder/stuff/other file" ]
+  homeshick track rc-files "$HOME/.some folder"
+  [ -e "$HOME/.homesick/repos/rc-files/home/.some folder/file" ]
+  [ -e "$HOME/.homesick/repos/rc-files/home/.some folder/sub folder/stuff/other file" ]
 }
 
 @test 'track with globbing' {
@@ -233,12 +233,12 @@ EOF
   touch "$HOME/.folder/globbed2.exclude"
   touch "$HOME/.folder/subfolder/this_as_well.bash"
   touch "$HOME/.folder/subfolder2/and_this.bash"
-  $HOMESHICK_FN track rc-files "$HOME/.folder"/**/*.bash
-  [ ! -e "$HOMESICK/repos/rc-files/home/.folder/ignored.swp" ]
-  [ ! -e "$HOMESICK/repos/rc-files/home/.folder/notglobbed.bash" ]
-  [ ! -e "$HOMESICK/repos/rc-files/home/.folder/globbed2.exclude" ]
-  [ -e "$HOMESICK/repos/rc-files/home/.folder/subfolder/this_as_well.bash" ]
-  [ -e "$HOMESICK/repos/rc-files/home/.folder/subfolder2/and_this.bash" ]
+  homeshick track rc-files "$HOME/.folder"/**/*.bash
+  [ ! -e "$HOME/.homesick/repos/rc-files/home/.folder/ignored.swp" ]
+  [ ! -e "$HOME/.homesick/repos/rc-files/home/.folder/notglobbed.bash" ]
+  [ ! -e "$HOME/.homesick/repos/rc-files/home/.folder/globbed2.exclude" ]
+  [ -e "$HOME/.homesick/repos/rc-files/home/.folder/subfolder/this_as_well.bash" ]
+  [ -e "$HOME/.homesick/repos/rc-files/home/.folder/subfolder2/and_this.bash" ]
 }
 
 @test 'track file in new folder with git version >= 1.8.2' {
@@ -250,9 +250,9 @@ EOF
   castle 'rc-files'
   mkdir "$HOME/.folder"
   touch "$HOME/.folder/ignored.swp"
-  $HOMESHICK_FN track rc-files "$HOME/.folder/ignored.swp"
-  [ ! -e "$HOMESICK/repos/rc-files/home/.folder/ignored.swp" ]
-  [ ! -e "$HOMESICK/repos/rc-files/home/.folder" ]
+  homeshick track rc-files "$HOME/.folder/ignored.swp"
+  [ ! -e "$HOME/.homesick/repos/rc-files/home/.folder/ignored.swp" ]
+  [ ! -e "$HOME/.homesick/repos/rc-files/home/.folder" ]
 }
 
 @test 'track file in new folder with mocked git version < 1.8.2' {
@@ -270,32 +270,32 @@ EOF
 
   mkdir "$HOME/.folder"
   touch "$HOME/.folder/ignored.swp"
-  GIT_VERSION=1.8.0 $HOMESHICK_FN track rc-files "$HOME/.folder/ignored.swp"
-  [ ! -e "$HOMESICK/repos/rc-files/home/.folder/ignored.swp" ]
-  [ -e "$HOMESICK/repos/rc-files/home/.folder" ]
+  GIT_VERSION=1.8.0 homeshick track rc-files "$HOME/.folder/ignored.swp"
+  [ ! -e "$HOME/.homesick/repos/rc-files/home/.folder/ignored.swp" ]
+  [ -e "$HOME/.homesick/repos/rc-files/home/.folder" ]
 }
 
 @test "track symlink in \$HOME to \$HOME" {
   castle 'symlinks'
   ln -s . .home
   (cd "$HOME" && ln -s . .home)
-  $HOMESHICK_FN track symlinks "$HOME/.home"
-  is_symlink ../../../.. "$HOMESICK/repos/symlinks/home/.home"
+  homeshick track symlinks "$HOME/.home"
+  is_symlink ../../../.. "$HOME/.homesick/repos/symlinks/home/.home"
 }
 
 @test 'track file pointing at hidden dir outside home' {
   castle 'symlinks'
   mkdir "$NOTHOME/..some"
   ln -s ../nothome/..some/file "$HOME/.test"
-  $HOMESHICK_FN track symlinks "$HOME/.test"
-  is_symlink ../../../../../nothome/..some/file "$HOMESICK/repos/symlinks/home/.test"
+  homeshick track symlinks "$HOME/.test"
+  is_symlink ../../../../../nothome/..some/file "$HOME/.homesick/repos/symlinks/home/.test"
 }
 
 @test 'track file pointing at hidden dir in snakelike fashion' {
   castle 'symlinks'
   ln -s .some/../.file "$HOME/.test"
-  $HOMESHICK_FN track symlinks "$HOME/.test"
-  is_symlink ../../../../.file "$HOMESICK/repos/symlinks/home/.test"
+  homeshick track symlinks "$HOME/.test"
+  is_symlink ../../../../.file "$HOME/.homesick/repos/symlinks/home/.test"
 }
 
 @test 'track regular file from a dir that is a symlink' {
@@ -303,7 +303,7 @@ EOF
   mkdir -p "$HOME/two-levels/under-home"
   ln -s "two-levels/under-home" "$HOME/symlinked-dir"
   touch "$HOME/symlinked-dir/trackme"
-  $HOMESHICK_FN track symlinks "$HOME/symlinked-dir/trackme"
+  homeshick track symlinks "$HOME/symlinked-dir/trackme"
   is_symlink ../../.homesick/repos/symlinks/home/symlinked-dir/trackme "$HOME/symlinked-dir/trackme"
 }
 
@@ -313,7 +313,7 @@ EOF
   ln -s "two-levels/under-home" "$HOME/symlinked-dir"
   touch "$HOME/linktome"
   ln -s "../linktome" "$HOME/symlinked-dir/trackme"
-  $HOMESHICK_FN track symlinks "$HOME/symlinked-dir/trackme"
-  is_symlink ../../../../../linktome "$HOMESICK/repos/symlinks/home/symlinked-dir/trackme"
+  homeshick track symlinks "$HOME/symlinked-dir/trackme"
+  is_symlink ../../../../../linktome "$HOME/.homesick/repos/symlinks/home/symlinked-dir/trackme"
   is_symlink ../../.homesick/repos/symlinks/home/symlinked-dir/trackme "$HOME/symlinked-dir/trackme"
 }
