@@ -51,7 +51,7 @@ load ../helper
 	[ "$(type -t sh)" = "file" ] || skip "sh not installed"
 	castle 'dotfiles'
 	local dotfiles_dir=$HOMESICK/repos/dotfiles
-	cmd=". "$HOMESHICK_FN_SRC_SH" && $HOMESHICK_FN cd dotfiles && echo \$PWD"
+	cmd=". \"$HOMESHICK_FN_SRC_SH\" && $HOMESHICK_FN cd dotfiles && echo \$PWD"
 	local result
 	result=$( sh <<< "$cmd" 2>&1 )
 	[ "$dotfiles_dir" = "$result" ]
@@ -61,7 +61,7 @@ load ../helper
 	[ "$(type -t dash)" = "file" ] || skip "dash not installed"
 	castle 'dotfiles'
 	local dotfiles_dir=$HOMESICK/repos/dotfiles
-	cmd=". "$HOMESHICK_FN_SRC_SH" && $HOMESHICK_FN cd dotfiles && echo \$PWD"
+	cmd=". \"$HOMESHICK_FN_SRC_SH\" && $HOMESHICK_FN cd dotfiles && echo \$PWD"
 	local result
 	result=$( dash <<< "$cmd" 2>&1 )
 	[ "$dotfiles_dir" = "$result" ]
@@ -92,8 +92,9 @@ EOF
 	[ "$(type -t fish)" = "file" ] || skip "fish not installed"
 	castle 'dotfiles'
 	# fish $PWD has all symlinks resolved
-	local dotfiles_dir=$(cd "$HOMESICK/repos/dotfiles" && pwd -P)
-	cmd="source "$HOMESHICK_FN_SRC_FISH"; and $HOMESHICK_FN cd dotfiles; and pwd"
+	local dotfiles_dir
+	dotfiles_dir=$(cd "$HOMESICK/repos/dotfiles" && pwd -P)
+	cmd="source \"$HOMESHICK_FN_SRC_FISH\"; and $HOMESHICK_FN cd dotfiles; and pwd"
 	local result
 	result=$( fish <<< "$cmd" 2>&1 )
 	[ "$dotfiles_dir" = "$result" ]

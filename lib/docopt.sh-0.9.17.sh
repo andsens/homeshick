@@ -10,6 +10,7 @@ parse() {
   if ${DOCOPT_DOC_CHECK:-true}; then
     local doc_hash
     if doc_hash=$(printf "%s" "$DOC" | (sha256sum 2>/dev/null || shasum -a 256)); then
+      # shellcheck disable=SC2154
       if [[ ${doc_hash:0:5} != "$digest" ]]; then
         stderr "The current usage doc (${doc_hash:0:5}) does not match \
 what the parser was generated with (${digest})
@@ -58,6 +59,7 @@ Run \`docopt.sh\` to refresh the parser."
     for idx in "${parsed_params[@]}"; do
       [[ $idx = 'a' ]] && continue
       if [[ ${shorts[$idx]} = "-h" || ${longs[$idx]} = "--help" ]]; then
+        # shellcheck disable=SC2154
         stdout "$trimmed_doc"
         _return 0
       fi
@@ -333,6 +335,7 @@ stderr() {
 
 error() {
   [[ -n $1 ]] && stderr "$1"
+  # shellcheck disable=SC2154
   stderr "$usage"
   _return 1
 }

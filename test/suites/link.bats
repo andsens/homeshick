@@ -126,7 +126,7 @@ EOF
 	castle 'rc-files'
 	touch "$HOME/.bashrc"
 	$HOMESHICK_FN --skip link rc-files
-	[ -f "$HOME/.bashrc" -a ! -L "$HOME/.bashrc" ]
+	[ -f "$HOME/.bashrc" ] && [ ! -L "$HOME/.bashrc" ]
 }
 
 @test 'existing symlinks are not relinked when running link' {

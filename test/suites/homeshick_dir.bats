@@ -11,15 +11,17 @@ load ../helper
 
 @test 'fish with homeshick_dir override' {
 	[ "$(type -t fish)" = "file" ] || skip "fish not installed"
-	cmd="source "$HOMESHICK_FN_SRC_FISH"; set HOMESHICK_DIR \"$_TMPDIR/nowhere\"; $HOMESHICK_FN"
-	local result=$( fish <<< "$cmd" 2>&1 >/dev/null )
+	cmd="source \"$HOMESHICK_FN_SRC_FISH\"; set HOMESHICK_DIR \"$_TMPDIR/nowhere\"; $HOMESHICK_FN"
+	local result
+	result=$( fish <<< "$cmd" 2>&1 >/dev/null )
 	[[ "$result" =~ "/nowhere/" ]]
 }
 
 @test 'csh with homeshick_dir override' {
 	[ "$(type -t csh)" = "file" ] || skip "csh not installed"
 	cmd="set HOMESHICK_DIR=/nowhere; source \"${HOMESHICK_FN_SRC_CSH}\""
-	local result=$( csh <<< "$cmd" 2>&1 >/dev/null )
+	local result
+	result=$( csh <<< "$cmd" 2>&1 >/dev/null )
 	[[ "$result" =~ "/nowhere/" ]]
 }
 

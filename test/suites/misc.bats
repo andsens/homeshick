@@ -16,7 +16,7 @@ load ../helper
 @test 'normal verbosity should not print identical messages when linking' {
 	castle 'symlinks'
 	$HOMESHICK_FN link symlinks
-	[ ! $($HOMESHICK_FN link symlinks | grep identical) ]
+	! $HOMESHICK_FN link symlinks | grep -q identical
 }
 
 @test 'link non-existent castle' {
@@ -33,7 +33,7 @@ load ../helper
 
 @test 'fish function should not print errors when invoked without arguments' {
 	[ "$(type -t fish)" = "file" ] || skip "fish not installed"
-	cmd="source "$HOMESHICK_FN_SRC_FISH"; and $HOMESHICK_FN"
+	cmd="source \"$HOMESHICK_FN_SRC_FISH\"; and $HOMESHICK_FN"
 	local stderr
 	stderr=$( fish <<< "$cmd" 2>&1 >/dev/null )
 	[ -z "$stderr" ]

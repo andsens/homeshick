@@ -8,7 +8,7 @@ load ../helper
 	[ $status -eq 1 ] # EX_ERR
 }
 
-@test 'track relative symlink in $HOME' {
+@test "track relative symlink in \$HOME" {
 	castle 'symlinks'
 	echo "test" > "$HOME/some_file"
 	(cd "$HOME" && ln -s some_file link_to_some_file)
@@ -26,7 +26,7 @@ load ../helper
 	is_symlink "$HOME/some_file" "$HOMESICK/repos/symlinks/home/link_to_some_file"
 }
 
-@test 'track relative symlink in deep folder structure to file outside $HOME' {
+@test "track relative symlink in deep folder structure to file outside \$HOME" {
 	castle 'symlinks'
 	mkdir -p "$NOTHOME/some/folder/outside/home"
 	echo "test" > "$NOTHOME/some/folder/outside/home/some_file"
@@ -275,7 +275,7 @@ EOF
 	[ -e "$HOMESICK/repos/rc-files/home/.folder" ]
 }
 
-@test 'track symlink in $HOME to $HOME' {
+@test "track symlink in \$HOME to \$HOME" {
 	castle 'symlinks'
 	ln -s . .home
 	(cd "$HOME" && ln -s . .home)

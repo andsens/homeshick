@@ -4,6 +4,7 @@ load ../helper
 
 function setup() {
 	setup_env
+	# shellcheck source=../../lib/fs.sh
 	source "$HOMESHICK_DIR/lib/fs.sh"
 }
 
@@ -15,7 +16,7 @@ function test_rel_path() {
 	link=$(create_rel_path "$source_dir" "$target")
 	if [[ $link != "$expected" ]]; then
 		printf "got '%s'\n" "$link"
-		[ "$expected" = "$cleaned" ]
+		[ "$expected" = "$link" ]
 	fi
 }
 

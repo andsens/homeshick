@@ -34,7 +34,7 @@ EOF
 	local fetch_head
 	local timestamp
 	fetch_head="$HOMESICK/repos/rc-files/.git/FETCH_HEAD"
-	system=`uname -a`
+	system=$(uname -a)
 	if [[ "$system" =~ "Linux" ]]; then
 		timestamp=$(date -d@$(($(date +%s)-6*86400)) '+%Y%m%d%H%M.%S')
 	else
