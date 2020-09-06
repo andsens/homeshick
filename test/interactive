@@ -41,8 +41,8 @@ run() {
   [ -z "$E" ] || set -E
   [ -z "$T" ] || set -T
 }
-# shellcheck source=helper.bash
-source "$SCRIPTDIR/helper.bash"
+# shellcheck source=helper.sh
+source "$SCRIPTDIR/helper.sh"
 export_env_vars
 setup_env
 ln_homeshick

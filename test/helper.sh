@@ -156,6 +156,6 @@ function commit_repo_state {
     git config user.name "Homeshick user"
     git config user.email "homeshick@example.com"
     git add -A
-    git commit -m "Commiting Repo State from test helper.bash."
+    git commit -m "Commiting Repo State from test helper.sh."
   )
 }
