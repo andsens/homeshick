@@ -1,67 +1,67 @@
 #compdef homeshick
 
 _homeshick () {
-	local context state line curcontext="$curcontext" ret=1
-	_arguments -n : \
-		{-q,--quiet}'[Suppress status output]' \
-		'(-s --skip)'{-f,--force}'[Overwrite files that already exist]' \
-		'(-f --force)'{-s,--skip}'[Skip files that already exist]' \
-		{-b,--batch}'[Batch-mode: Skip interactive prompt]' \
-		{-v,--verbose}'[Verbose-mode: Detailed status output]' \
-		{-h,--help}'[Help message]' \
-		'1:commands:(cd clone generate list check refresh pull link track help)' \
-		'*::arguments:->arguments' \
-		&& ret=0
+  local context state line curcontext="$curcontext" ret=1
+  _arguments -n : \
+    {-q,--quiet}'[Suppress status output]' \
+    '(-s --skip)'{-f,--force}'[Overwrite files that already exist]' \
+    '(-f --force)'{-s,--skip}'[Skip files that already exist]' \
+    {-b,--batch}'[Batch-mode: Skip interactive prompt]' \
+    {-v,--verbose}'[Verbose-mode: Detailed status output]' \
+    {-h,--help}'[Help message]' \
+    '1:commands:(cd clone generate list check refresh pull link track help)' \
+    '*::arguments:->arguments' \
+    && ret=0
 
-	case $state in
-		(arguments)
-			curcontext="${curcontext%:*:*}:homeshick-arguments-$words[1]:"
-			case $words[1] in
-				(cd)
-					_arguments \
-						'1:castles:_homeshick_repo_folders' \
-					&& ret=0
-				;;
-				(check|refresh|pull)
-					_arguments \
-						'*: :_homeshick_castles' \
-					&& ret=0
-				;;
-				(link)
-					_arguments \
-						'*: :_homeshick_castles' \
-					&& ret=0
-				;;
-				(track)
-					_arguments \
-						'1: :_homeshick_castles' \
-						"*: :_path_files" \
-					&& ret=0
-				;;
-				(help)
-					_arguments \
-						':command:(cd clone generate list check refresh pull link track help)' \
-					&& ret=0
-				;;
-			esac
-		;;
-	esac
+  case $state in
+    (arguments)
+      curcontext="${curcontext%:*:*}:homeshick-arguments-$words[1]:"
+      case $words[1] in
+        (cd)
+          _arguments \
+            '1:castles:_homeshick_repo_folders' \
+          && ret=0
+        ;;
+        (check|refresh|pull)
+          _arguments \
+            '*: :_homeshick_castles' \
+          && ret=0
+        ;;
+        (link)
+          _arguments \
+            '*: :_homeshick_castles' \
+          && ret=0
+        ;;
+        (track)
+          _arguments \
+            '1: :_homeshick_castles' \
+            "*: :_path_files" \
+          && ret=0
+        ;;
+        (help)
+          _arguments \
+            ':command:(cd clone generate list check refresh pull link track help)' \
+          && ret=0
+        ;;
+      esac
+    ;;
+  esac
 
-	return ret
+  return ret
 }
 
 _homeshick_repo_folders() {
-	_path_files -/W $HOME/.homesick/repos
+  _path_files -/W $HOME/.homesick/repos
 }
 
 _homeshick_castles()
 {
-	local castles repos="$HOME/.homesick/repos"
-	castles=()
-	for repo in $(find -L $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
-		castles+=($(_homeshick_basename "${repo%/.git}"))
-	done
-	_describe -t castles 'castle' castles && ret=0
+  local castles repos="$HOME/.homesick/repos"
+  castles=()
+  for repo in $(find -L $repos -mindepth 2 -maxdepth 2 -type d -name .git); do
+    castles+=($(_homeshick_basename "${repo%/.git}"))
+  done
+  _describe -t castles 'castle' castles && ret=0
 }
 
 _homeshick_basename()

@@ -23,17 +23,17 @@ exit_status=$EX_SUCCESS
 type git &>/dev/null || err "$EX_SOFTWARE" "git not found in path"
 
 if [[ ! -d $repos ]]; then
-	mkdir -p "$repos"
+  mkdir -p "$repos"
 fi
 
 # used in pull.sh
 # shellcheck disable=SC2034
 T_START=$(date +%s)
 if [[ -z $GIT_VERSION ]]; then
-	read -r _ _ GIT_VERSION _ < <(command git --version)
-	if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
-		err "$EX_SOFTWARE" "could not determine git version"
-	fi
+  read -r _ _ GIT_VERSION _ < <(command git --version)
+  if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
+    err "$EX_SOFTWARE" "could not determine git version"
+  fi
 fi
 
 TALK=true
@@ -44,26 +44,26 @@ VERBOSE=false
 
 # Retrieve all the flags preceeding a subcommand
 while [[ $# -gt 0 ]]; do
-	if [[ $1 =~ ^- ]]; then
-		# Convert combined short options into multiples short options (e.g. `-qb' to `-q -b')
-		if [[ $1 =~ ^-[a-z]{2,} ]]; then
-			param=$1
-			shift
-			set -- "${param:0:2}" "-${param:2}" "$@"
-			unset param
-		fi
-		case $1 in
-			-h | --help)  cmd="help" ; shift; continue ;;
-			-q | --quiet) TALK=false ; shift; continue ;;
-			-s | --skip)  SKIP=true  ; shift; continue ;;
-			-f | --force) FORCE=true ; shift; continue ;;
-			-b | --batch) BATCH=true ; shift; continue ;;
-			-v | --verbose) VERBOSE=true ; shift; continue ;;
-			*)     err "$EX_USAGE" "Unknown option '$1'" ;;
-		esac
-	else
-		break
-	fi
+  if [[ $1 =~ ^- ]]; then
+    # Convert combined short options into multiples short options (e.g. `-qb' to `-q -b')
+    if [[ $1 =~ ^-[a-z]{2,} ]]; then
+      param=$1
+      shift
+      set -- "${param:0:2}" "-${param:2}" "$@"
+      unset param
+    fi
+    case $1 in
+      -h | --help)  cmd="help" ; shift; continue ;;
+      -q | --quiet) TALK=false ; shift; continue ;;
+      -s | --skip)  SKIP=true  ; shift; continue ;;
+      -f | --force) FORCE=true ; shift; continue ;;
+      -b | --batch) BATCH=true ; shift; continue ;;
+      -v | --verbose) VERBOSE=true ; shift; continue ;;
+      *)     err "$EX_USAGE" "Unknown option '$1'" ;;
+    esac
+  else
+    break
+  fi
 done
 
 [[ $# -gt 0 ]] || cmd="help"
@@ -71,78 +71,78 @@ done
 # Get the subcommand
 valid_commands=(cd clone generate list check updates refresh pull symlink link track help)
 if [[ ! $cmd ]]; then
-	# We actually want literal matching of the rhs here, $1 shouldn't be a regexp
-	# shellcheck disable=SC2076
-	if [[ " ${valid_commands[*]} " =~ " $1 " ]]; then
-		cmd=$1
-		shift
-	fi
-	if [[ ! $cmd ]]; then
-		err "$EX_USAGE" "Unknown command '$1'"
-	fi
+  # We actually want literal matching of the rhs here, $1 shouldn't be a regexp
+  # shellcheck disable=SC2076
+  if [[ " ${valid_commands[*]} " =~ " $1 " ]]; then
+    cmd=$1
+    shift
+  fi
+  if [[ ! $cmd ]]; then
+    err "$EX_USAGE" "Unknown command '$1'"
+  fi
 fi
 
 # Get the arguments for the subcommand, also parse flags if there are any left
 while [[ $# -gt 0 ]]; do
-	if [[ $1 =~ ^- ]]; then
-		# Convert combined short options into multiples short options (e.g. `-qb' to `-q -b')
-		if [[ $1 =~ ^-[a-z]{2,} ]]; then
-			param=$1
-			shift
-			set -- "${param:0:2}" "-${param:2}" "$@"
-			unset param
-		fi
-		case $1 in
-			-h | --help)
-				cmd="help"
-				shift; continue ;;
-			-q | --quiet)
-				TALK=false
-				shift; continue ;;
-			-s | --skip)
-				SKIP=true
-				shift; continue ;;
-			-f | --force)
-				FORCE=true
-				shift; continue ;;
-			-b | --batch)
-				BATCH=true
-				shift; continue ;;
-			-v | --verbose)
-				VERBOSE=true
-				shift; continue ;;
-			*)     err "$EX_USAGE" "Unknown option '$1'" ;;
-		esac
-	fi
+  if [[ $1 =~ ^- ]]; then
+    # Convert combined short options into multiples short options (e.g. `-qb' to `-q -b')
+    if [[ $1 =~ ^-[a-z]{2,} ]]; then
+      param=$1
+      shift
+      set -- "${param:0:2}" "-${param:2}" "$@"
+      unset param
+    fi
+    case $1 in
+      -h | --help)
+        cmd="help"
+        shift; continue ;;
+      -q | --quiet)
+        TALK=false
+        shift; continue ;;
+      -s | --skip)
+        SKIP=true
+        shift; continue ;;
+      -f | --force)
+        FORCE=true
+        shift; continue ;;
+      -b | --batch)
+        BATCH=true
+        shift; continue ;;
+      -v | --verbose)
+        VERBOSE=true
+        shift; continue ;;
+      *)     err "$EX_USAGE" "Unknown option '$1'" ;;
+    esac
+  fi
 
-	case $cmd in
-		cd | clone | generate | check | updates | pull | symlink | link)
-			params+=("$1")
-			shift; continue ;;
-		refresh)
-			[[ ! $threshhold ]] && threshhold=$(($1*86400)) || params+=("$1")
-			shift; continue ;;
-		track)
-			[[ ! $castle ]] && castle=$1 || params+=("$1")
-			shift; continue ;;
-		list) err "$EX_USAGE" "The 'list' command does not take any arguments" ;;
-		help)
-			[[ ! $help_cmd ]] && help_cmd=$1
-			shift; continue;;
-		*) err "$EX_USAGE" "Unknown command '$1'" ;;
-	esac
+  case $cmd in
+    cd | clone | generate | check | updates | pull | symlink | link)
+      params+=("$1")
+      shift; continue ;;
+    refresh)
+      [[ ! $threshhold ]] && threshhold=$(($1*86400)) || params+=("$1")
+      shift; continue ;;
+    track)
+      [[ ! $castle ]] && castle=$1 || params+=("$1")
+      shift; continue ;;
+    list) err "$EX_USAGE" "The 'list' command does not take any arguments" ;;
+    help)
+      [[ ! $help_cmd ]] && help_cmd=$1
+      shift; continue;;
+    *) err "$EX_USAGE" "Unknown command '$1'" ;;
+  esac
 done
 
 # If no additional arguments are given, run the subcommand for every castle
 if [[ ${#params[@]} -eq 0 ]]; then
-	case $cmd in
-		check | updates | refresh | pull | symlink | link)
-			while IFS= read -d $'\n' -r name ; do
-				params+=("$name")
-			done < <(list_castle_names) ;;
-		# These commands require parameters, show the help message instead
-		cd | clone | generate | track) help_cmd=$cmd; cmd="help"; exit_status=$EX_USAGE ;;
-	esac
+  case $cmd in
+    check | updates | refresh | pull | symlink | link)
+      while IFS= read -d $'\n' -r name ; do
+        params+=("$name")
+      done < <(list_castle_names) ;;
+    # These commands require parameters, show the help message instead
+    cd | clone | generate | track) help_cmd=$cmd; cmd="help"; exit_status=$EX_USAGE ;;
+  esac
 fi
 
 # Default param for refresh is 7
@@ -150,62 +150,62 @@ fi
 
 # Include the file that implements the invoked command
 case $cmd in
-	cd) ;;
-	symlink)
-		# shellcheck source=../lib/commands/link.sh
-		source "$homeshick/lib/commands/link.sh" ;;
-	updates)
-		# shellcheck source=../lib/commands/check.sh
-		source "$homeshick/lib/commands/check.sh" ;;
-	*)
-		# Don't know what will be included, so just disable the rule
-		# shellcheck disable=SC1090
-		source "$homeshick/lib/commands/$cmd.sh" ;;
+  cd) ;;
+  symlink)
+    # shellcheck source=../lib/commands/link.sh
+    source "$homeshick/lib/commands/link.sh" ;;
+  updates)
+    # shellcheck source=../lib/commands/check.sh
+    source "$homeshick/lib/commands/check.sh" ;;
+  *)
+    # Don't know what will be included, so just disable the rule
+    # shellcheck disable=SC1090
+    source "$homeshick/lib/commands/$cmd.sh" ;;
 esac
 
 case $cmd in
-	list)  list           ;;
-	cd)    help cd        ;; # cd is implemented in the homeshick.{sh,csh} helper script.
-	help)  help $help_cmd ;;
-	*)
-		for param in "${params[@]}"; do
-			case $cmd in
-				clone)
-					clone "$param" ;;
-				generate)
-					generate "$param" ;;
-				check|updates)
-					(check "$param") ;;
-				refresh)
-					(refresh $threshhold "$param") ;;
-				pull)
-					(pull "$param") ;;
-				symlink|link)
-					symlink "$param" ;;
-				track)
-					track "$castle" "$param" ;;
-			esac
-			result=$?
-			if [[ $result == "$EX_USAGE" ]]; then
-				exit "$EX_USAGE"
-			fi
-			if [[ $exit_status == 0 && $result != 0 ]]; then
-				exit_status=$result
-			fi
-		done
-		case $cmd in
-			clone)
-				symlink_cloned_files "${params[@]}" ;;
-			refresh)
-				pull_outdated $threshhold "${params[@]}" ;;
-			pull)
-				symlink_new_files "${params[@]}" ;;
-		esac
-		result=$?
-		if [[ $exit_status == 0 && $result != 0 ]]; then
-			exit_status=$result
-		fi
-		;;
+  list)  list           ;;
+  cd)    help cd        ;; # cd is implemented in the homeshick.{sh,csh} helper script.
+  help)  help $help_cmd ;;
+  *)
+    for param in "${params[@]}"; do
+      case $cmd in
+        clone)
+          clone "$param" ;;
+        generate)
+          generate "$param" ;;
+        check|updates)
+          (check "$param") ;;
+        refresh)
+          (refresh $threshhold "$param") ;;
+        pull)
+          (pull "$param") ;;
+        symlink|link)
+          symlink "$param" ;;
+        track)
+          track "$castle" "$param" ;;
+      esac
+      result=$?
+      if [[ $result == "$EX_USAGE" ]]; then
+        exit "$EX_USAGE"
+      fi
+      if [[ $exit_status == 0 && $result != 0 ]]; then
+        exit_status=$result
+      fi
+    done
+    case $cmd in
+      clone)
+        symlink_cloned_files "${params[@]}" ;;
+      refresh)
+        pull_outdated $threshhold "${params[@]}" ;;
+      pull)
+        symlink_new_files "${params[@]}" ;;
+    esac
+    result=$?
+    if [[ $exit_status == 0 && $result != 0 ]]; then
+      exit_status=$result
+    fi
+    ;;
 esac
 
 exit $exit_status

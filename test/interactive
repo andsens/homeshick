@@ -5,41 +5,41 @@ SCRIPTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 export SCRIPTDIR
 
 if [[ -n $1 ]]; then
-	if [[ $1 == '--help' ]]; then
-		printf "Run homeshick working copy interactively\n"
-		printf " Usage: interactive [shell]\n"
-		exit 0
-	else
-		if [[ $# -gt 1 ]]; then
-			printf "only one SHELL argument allowed\n" >&2
-			exit 64 # 64=$EX_USAGE
-		fi
-		_shell=$1
-	fi
+  if [[ $1 == '--help' ]]; then
+    printf "Run homeshick working copy interactively\n"
+    printf " Usage: interactive [shell]\n"
+    exit 0
+  else
+    if [[ $# -gt 1 ]]; then
+      printf "only one SHELL argument allowed\n" >&2
+      exit 64 # 64=$EX_USAGE
+    fi
+    _shell=$1
+  fi
 fi
 
 if [[ -z $_shell ]]; then
-	_shell=$SHELL
+  _shell=$SHELL
 fi
 
 # Replacement function for the run fn in bats
 # Disable SC2034 for global variables
 # shellcheck disable=SC2034
 run() {
-	local e E T
-	[[ ! "$-" =~ e ]] || e=1
-	[[ ! "$-" =~ E ]] || E=1
-	[[ ! "$-" =~ T ]] || T=1
-	set +e
-	set +E
-	set +T
-	output="$("$@" 2>&1)"
-	status="$?"
-	# shellcheck disable=SC2206
-	IFS=$'\n' lines=($output)
-	[ -z "$e" ] || set -e
-	[ -z "$E" ] || set -E
-	[ -z "$T" ] || set -T
+  local e E T
+  [[ ! "$-" =~ e ]] || e=1
+  [[ ! "$-" =~ E ]] || E=1
+  [[ ! "$-" =~ T ]] || T=1
+  set +e
+  set +E
+  set +T
+  output="$("$@" 2>&1)"
+  status="$?"
+  # shellcheck disable=SC2206
+  IFS=$'\n' lines=($output)
+  [ -z "$e" ] || set -e
+  [ -z "$E" ] || set -E
+  [ -z "$T" ] || set -T
 }
 # shellcheck source=helper.bash
 source "$SCRIPTDIR/helper.bash"
@@ -49,9 +49,9 @@ ln_homeshick
 
 setup_script="$SCRIPTDIR/setup.sh"
 if [[ -f $setup_script ]]; then
-	$setup_script
+  $setup_script
 else
-	"$SCRIPTDIR/setup-default.sh"
+  "$SCRIPTDIR/setup-default.sh"
 fi
 
 cd "$HOME"

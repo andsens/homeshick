@@ -3,10 +3,10 @@
 # help is used globally
 # shellcheck disable=SC2120
 function help {
-	if [[ $1 ]]; then
-		extended_help "$1"
-		exit "$EX_SUCCESS"
-	fi
+  if [[ $1 ]]; then
+    extended_help "$1"
+    exit "$EX_SUCCESS"
+  fi
 
 printf "homes\e[1;34mh\e[0mick uses git in concert with symlinks to track your precious dotfiles.
 
@@ -43,25 +43,25 @@ printf "homes\e[1;34mh\e[0mick uses git in concert with symlinks to track your p
 }
 
 function extended_help {
-	case $1 in
-		cd)
+  case $1 in
+    cd)
       printf "Enters a castle's home directory.\n"
       printf "NOTE: For this to work, homeshick must be invoked via homeshick.{sh,csh,fish}.\n\n"
       printf "Usage:\n  homeshick cd CASTLE"
       ;;
-		clone)
+    clone)
       printf "Clones URI as a castle for homeshick\n"
       printf "Usage:\n  homeshick clone URL.."
       ;;
-		generate)
+    generate)
       printf "Generates a repo prepped for usage with homeshick\n"
       printf "Usage:\n  homeshick generate CASTLE.."
       ;;
-		list)
+    list)
       printf "Lists cloned castles\n"
       printf "Usage:\n  homeshick list"
       ;;
-		check|updates)
+    check|updates)
       printf "Checks if a castle has been updated on the remote\n"
       printf "Usage:\n  homeshick %s [CASTLE..]" "$1"
       ;;
@@ -70,28 +70,28 @@ function extended_help {
       printf "The default is one week.\n"
       printf "Usage:\n  homeshick refresh [DAYS] [CASTLE..]"
       ;;
-		pull)
+    pull)
       printf "Updates a castle. Also recurse into submodules.\n"
       printf "Usage:\n  homeshick pull [CASTLE..]"
       ;;
-		link|symlink)
+    link|symlink)
       printf "Symlinks all dotfiles from a castle\n"
       printf "Usage:\n  homeshick %s [CASTLE..]" "$1"
       ;;
-		track)
+    track)
       printf "Adds a file to a castle.\n"
       printf "This moves the file into the castle and creates a symlink in its place.\n"
       printf "Usage:\n  homeshick track CASTLE FILE.."
       ;;
-		help)
+    help)
       printf "Shows usage of a task\n"
       printf "Usage:\n  homeshick help [TASK]"
       ;;
-		*)
-			# no args for help
-			# shellcheck disable=SC2119
-			help
-			;;
-		esac
-	printf "\n\n"
+    *)
+      # no args for help
+      # shellcheck disable=SC2119
+      help
+      ;;
+    esac
+  printf "\n\n"
 }

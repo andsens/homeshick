@@ -39,7 +39,7 @@ updates itself. The `development` branch is where work is done for the next
 release version of homeshick.
 
 ### Code style ###
-* Indent with tabs and align with spaces.
+* Indent with 2 spaces.
 * Always use double brackets for `if` blocks
 * Run your changes through
 [shellcheck](https://www.shellcheck.net/) with `test/shellcheck`

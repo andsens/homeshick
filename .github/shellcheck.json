@@ -1,22 +1,22 @@
 {
-	"problemMatcher": [
-		{
-			"owner": "shellcheck",
-			"pattern": [
-				{
-					"regexp": "^In (.+) line (\\d+):$",
-					"file": 1,
-					"line": 2
-				},
-				{
-					"regexp": ".*"
-				},
-				{
-					"regexp": "(SC\\d+): (.+)$",
-					"code": 1,
-					"message": 2
-				}
-			]
-		}
-	]
+  "problemMatcher": [
+    {
+      "owner": "shellcheck",
+      "pattern": [
+        {
+          "regexp": "^In (.+) line (\\d+):$",
+          "file": 1,
+          "line": 2
+        },
+        {
+          "regexp": ".*"
+        },
+        {
+          "regexp": "(SC\\d+): (.+)$",
+          "code": 1,
+          "message": 2
+        }
+      ]
+    }
+  ]
 }
