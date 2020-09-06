@@ -49,9 +49,11 @@ jobs:
         path: test/bash-versions/bash-${{ matrix.bash-version }}/bash
         key: ${{ env.cache-name }}-${{ matrix.bash-version }}
     - name: Download & compile bash ${{ matrix.bash-version }}
-      run: test/get_bash.sh "${{ matrix.bash-version }}"
+      run: |
+        test/get_bash.sh "${{ matrix.bash-version }}"
+        echo "::add-path::$PWD/test/bash-versions/bash-${{ matrix.bash-version }}"
     - name: Test
       run: |
         echo "::add-matcher::.github/bats.json"
-        PATH=$PWD/test/bash-versions/bash-${{ matrix.bash-version }}:$PATH /usr/local/bin/bats --tap "$PWD/test/suites"
+        /usr/local/bin/bats --tap "$PWD/test/suites"
         echo "::remove-matcher owner=bats::"
