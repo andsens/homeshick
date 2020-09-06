@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function export_env_vars {
+export_env_vars() {
   if [[ -n $BATS_TEST_DIRNAME ]]; then
     TESTDIR=$(cd "$BATS_TEST_DIRNAME/.." && pwd)
   else
@@ -31,7 +31,7 @@ function export_env_vars {
   fi
 }
 
-function remove_coreutils_from_path {
+remove_coreutils_from_path() {
   # Check if coreutils is in PATH
   system=$(uname -a)
   if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
@@ -47,11 +47,11 @@ function remove_coreutils_from_path {
   fi
 }
 
-function mk_structure {
+mk_structure() {
   mkdir "$REPO_FIXTURES" "$HOME" "$NOTHOME"
 }
 
-function ln_homeshick {
+ln_homeshick() {
   local hs_repo=$HOMESICK/repos/homeshick
   mkdir -p "$hs_repo"
   local repo_dir
@@ -64,12 +64,12 @@ function ln_homeshick {
   ln -s "$repo_dir/completions" "$hs_repo/completions"
 }
 
-function rm_structure {
+rm_structure() {
   # Make sure _TMPDIR wasn't unset
   [[ -n $_TMPDIR ]] && rm -rf "$_TMPDIR"
 }
 
-function setup_env {
+setup_env() {
   remove_coreutils_from_path
   export_env_vars
   mk_structure
@@ -77,15 +77,15 @@ function setup_env {
   source "$HOMESHICK_FN_SRC_SH"
 }
 
-function setup {
+setup() {
   setup_env
 }
 
-function teardown {
+teardown() {
   rm_structure
 }
 
-function fixture {
+fixture() {
   local name=$1
   if [[ ! -e "$REPO_FIXTURES/$name" ]]; then
     # shellcheck disable=SC1090
@@ -93,25 +93,25 @@ function fixture {
   fi
 }
 
-function castle {
+castle() {
   local fixture_name=$1
   fixture "$fixture_name"
   $HOMESHICK_FN --batch clone "$REPO_FIXTURES/$fixture_name" > /dev/null
 }
 
-function is_symlink {
+is_symlink() {
   expected=$1
   path=$2
   target=$(readlink "$path")
   [ "$expected" = "$target" ]
 }
 
-function get_inode_no {
+get_inode_no() {
   stat -c %i "$1" 2>/dev/null || stat -f %i "$1"
 }
 
 # Snatched from http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
-function version_compare {
+version_compare() {
   if [[ $1 == "$2" ]]; then
     return 0
   fi
@@ -137,7 +137,7 @@ function version_compare {
   return 0
 }
 
-function get_git_version {
+get_git_version() {
   if [[ -z $GIT_VERSION ]]; then
     read -r _ _ GIT_VERSION _ < <(command git --version)
     if [[ ! $GIT_VERSION =~ ([0-9]+)(\.[0-9]+){0,3} ]]; then
@@ -147,7 +147,7 @@ function get_git_version {
   printf "%s" "$GIT_VERSION"
 }
 
-function commit_repo_state {
+commit_repo_state() {
   local repo=$1
   (
     # Let cd just fail

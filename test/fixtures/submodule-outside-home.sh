@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=2164
-function fixture_submodule_outside_home() {
+fixture_submodule_outside_home() {
   local git_username="Homeshick user"
   local git_useremail="homeshick@example.com"
   local submodule_outside_home_files="$REPO_FIXTURES/submodule-outside-home"

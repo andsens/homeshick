@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=2164
-function fixture_nodirs() {
+fixture_nodirs() {
   local git_username="Homeshick user"
   local git_useremail="homeshick@example.com"
   local nodirs="$REPO_FIXTURES/nodirs"

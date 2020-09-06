@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function ask_symlink {
+ask_symlink() {
   if [[ $# -gt 0 ]]; then
     if [[ $# == 1 ]]; then
       msg="The castle $1 has new files."
@@ -26,7 +26,7 @@ function ask_symlink {
 # Automatically colors the line according to the answer the user gives.
 # Currently homeshick only has prompts with "no" as the default,
 # so there's no reason to implement prompt_yes right now
-function prompt_no {
+prompt_no() {
   local OTALK=$TALK
   # Disable the quiet flag while prompting in interactive mode
   if ! $BATCH; then

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=2164
-function fixture_dotfiles() {
+fixture_dotfiles() {
   local git_username="Homeshick user"
   local git_useremail="homeshick@example.com"
   local dotfiles="$REPO_FIXTURES/dotfiles"

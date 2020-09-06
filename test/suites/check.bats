@@ -2,27 +2,27 @@
 
 load ../helper
 
-function add_new_file_to_castle {
+add_new_file_to_castle() {
   cd "$HOMESICK/repos/rc-files" || return $?
   touch homeshick_new_file_bats_test
 }
 
-function add_empty_folder_to_castle {
+add_empty_folder_to_castle() {
   cd "$HOMESICK/repos/rc-files" || return $?
   mkdir homeshick_new_folder_bats_test
 }
 
-function modify_file_in_castle {
+modify_file_in_castle() {
   cd "$HOMESICK/repos/rc-files" || return $?
   echo modify >> "$(find home -type f | head -1)"
 }
 
-function delete_file_in_castle {
+delete_file_in_castle() {
   cd "$HOMESICK/repos/rc-files" || return $?
   rm "$(find home -type f | head -1)"
 }
 
-function add_commit_to_castle {
+add_commit_to_castle() {
   cd "$HOMESICK/repos/rc-files" || return $?
   git config user.name "Homeshick user"
   git config user.email "homeshick@example.com"

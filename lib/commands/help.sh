@@ -2,7 +2,7 @@
 
 # help is used globally
 # shellcheck disable=SC2120
-function help {
+help() {
   if [[ $1 ]]; then
     extended_help "$1"
     exit "$EX_SUCCESS"
@@ -42,7 +42,7 @@ printf "homes\e[1;34mh\e[0mick uses git in concert with symlinks to track your p
 "
 }
 
-function extended_help {
+extended_help() {
   case $1 in
     cd)
       printf "Enters a castle's home directory.\n"

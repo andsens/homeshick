@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=2164
-function fixture_nested_submodules() {
+fixture_nested_submodules() {
   local git_username="Homeshick user"
   local git_useremail="homeshick@example.com"
   local nested_submodules="$REPO_FIXTURES/nested-submodules"

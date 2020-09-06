@@ -2,13 +2,13 @@
 
 load ../helper
 
-function setup() {
+setup() {
   setup_env
   # shellcheck source=../../lib/fs.sh
   source "$HOMESHICK_DIR/lib/fs.sh"
 }
 
-function test_rel_path() {
+test_rel_path() {
   local source_dir=$1
   local target=$2
   local expected=$3

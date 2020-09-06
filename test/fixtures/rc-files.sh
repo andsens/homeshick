@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=2164
-function fixture_rc_files() {
+fixture_rc_files() {
   local git_username="Homeshick user"
   local git_useremail="homeshick@example.com"
   local rc_files="$REPO_FIXTURES/rc-files"

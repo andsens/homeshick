@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function track {
+track() {
   [[ ! $1 || ! $2 ]] && help track
   local castle=$1
   local filename

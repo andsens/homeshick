@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function generate {
+generate() {
   [[ ! $1 ]] && help_err generate
   local castle=$1
   # repos is a global variable

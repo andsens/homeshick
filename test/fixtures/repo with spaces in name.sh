@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=2164
-function fixture_repo_with_spaces_in_name() {
+fixture_repo_with_spaces_in_name() {
   local git_username="Homeshick user"
   local git_useremail="homeshick@example.com"
   local namewithspaces="${REPO_FIXTURES}/repo with spaces in name"

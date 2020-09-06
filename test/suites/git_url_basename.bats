@@ -2,7 +2,7 @@
 
 load ../helper
 
-function setup() {
+setup() {
   setup_env
   # shellcheck source=../../lib/commands/clone.sh
   source "$HOMESHICK_DIR/lib/commands/clone.sh"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function list {
+list() {
   while IFS= read -d $'\n' -r reponame ; do
     local ref
     local branch

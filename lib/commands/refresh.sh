@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function refresh {
+refresh() {
   [[ ! $1 || ! $2 ]] && help_err refresh
   local threshhold=$1
   local castle=$2
@@ -26,7 +26,7 @@ function refresh {
   fi
 }
 
-function pull_outdated {
+pull_outdated() {
   local threshhold=$1; shift
   local outdated_castles=()
   while [[ $# -gt 0 ]]; do
@@ -56,7 +56,7 @@ function pull_outdated {
   return "$EX_SUCCESS"
 }
 
-function ask_pull {
+ask_pull() {
   if [[ $# -gt 0 ]]; then
     if [[ $# == 1 ]]; then
       msg="The castle $1 is outdated."

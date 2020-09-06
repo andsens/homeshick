@@ -2,13 +2,13 @@
 
 load ../helper
 
-function setup() {
+setup() {
   setup_env
   # shellcheck source=../../lib/fs.sh
   source "$HOMESHICK_DIR/lib/fs.sh"
 }
 
-function test_clean_path() {
+test_clean_path() {
   local path=$1
   local expected=$2
   local cleaned

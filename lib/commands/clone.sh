@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function clone {
+clone() {
   [[ ! $1 ]] && help_err clone
   local git_repo=$1
   is_github_shorthand "$git_repo"
@@ -38,7 +38,7 @@ function clone {
   return "$EX_SUCCESS"
 }
 
-function symlink_cloned_files {
+symlink_cloned_files() {
   local cloned_castles=()
   while [[ $# -gt 0 ]]; do
     local git_repo=$1
@@ -63,7 +63,7 @@ function symlink_cloned_files {
 }
 
 # Convert username/repo into https://github.com/username/repo.git
-function is_github_shorthand {
+is_github_shorthand() {
   if [[ ! $1 =~ \.git$ && $1 =~ ^([0-9A-Za-z-]+/[0-9A-Za-z_\.-]+)$ ]]; then
     return 0
   fi
@@ -71,7 +71,7 @@ function is_github_shorthand {
 }
 
 # Get the repo name from an URL
-function repo_basename {
+repo_basename() {
 if [[ $1 =~ ^[^/:]+: ]]; then
   # For scp-style syntax like '[user@]host.xz:path/to/repo.git/',
   # remove the '[user@]host.xz:' part.

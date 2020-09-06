@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function symlink {
+symlink() {
   [[ ! $1 ]] && help symlink
   local castle=$1
   castle_exists 'link' "$castle"
@@ -82,7 +82,7 @@ function symlink {
 # Works recursively on submodules as well
 # Disable SC2154, we cannot do it inline where $homeshick is used.
 # shellcheck disable=SC2154
-function get_repo_files {
+get_repo_files() {
   # Resolve symbolic links
   # e.g. on osx $TMPDIR is in /var/folders...
   # which is actually /private/var/folders...

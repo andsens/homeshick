@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Snatched from http://stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
-function version_compare {
+version_compare() {
   if [[ $1 == "$2" ]]; then
     return 0
   fi
@@ -27,7 +27,7 @@ function version_compare {
   return 0
 }
 
-function repo_has_upstream {
+repo_has_upstream() {
   local repo=$1
 
   # Check if the castle has an upstream remote

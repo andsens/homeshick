@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function check {
+check() {
   local exit_status=$EX_SUCCESS
   [[ ! $1 ]] && help_err check
   local castle=$1

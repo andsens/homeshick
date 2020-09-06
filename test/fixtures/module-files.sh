@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=2164
-function fixture_module_files() {
+fixture_module_files() {
   local git_username="Homeshick user"
   local git_useremail="homeshick@example.com"
   local module_files="$REPO_FIXTURES/module-files"

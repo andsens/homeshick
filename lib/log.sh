@@ -9,7 +9,7 @@ bldblu="\e[1;34m" # Blue - no action/ignored
 bldcyn="\e[1;36m" # Cyan - pending action
 bldwht="\e[1;37m" # White - info
 
-function err {
+err() {
   local exit_status=$1
   local reason="$2"
   shift 2
@@ -25,30 +25,30 @@ function err {
   exit "$exit_status"
 }
 
-function help_err {
+help_err() {
   # shellcheck source=commands/help.sh disable=SC2154
   source "$homeshick/lib/commands/help.sh"
   extended_help "$1"
   exit "$EX_USAGE"
 }
 
-function status {
+status() {
   if $TALK; then
     printf "$1%13s$txtdef %s\n" "$2" "$3"
   fi
 }
 
-function warn {
+warn() {
   status "$bldylw" "$1" "$2"
 }
 
-function info {
+info() {
   status "$bldwht" "$1" "$2"
 }
 
 pending_status=''
 pending_message=''
-function pending {
+pending() {
   pending_status="$1"
   pending_message="$2"
   if $TALK; then
@@ -58,21 +58,21 @@ function pending {
 
 # fail is used globally
 # shellcheck disable=SC2120
-function fail {
+fail() {
   [[ $1 ]] && pending_status=$1
   [[ $2 ]] && pending_message=$2
   status "\r$bldred" "$pending_status" "$pending_message"
   unset pending_status pending_message
 }
 
-function ignore {
+ignore() {
   [[ $1 ]] && pending_status=$1
   [[ $2 ]] && pending_message=$2
   status "\r$bldblu" "$pending_status" "$pending_message"
   unset pending_status pending_message
 }
 
-function success {
+success() {
   [[ $1 ]] && pending_status=$1
   [[ $2 ]] && pending_message=$2
   status "\r$bldgrn" "$pending_status" "$pending_message"

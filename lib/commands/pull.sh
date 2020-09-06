@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function pull {
+pull() {
   [[ ! $1 ]] && help_err pull
   local castle=$1
   # repos is a global variable
@@ -29,7 +29,7 @@ function pull {
   return "$EX_SUCCESS"
 }
 
-function symlink_new_files {
+symlink_new_files() {
   local updated_castles=()
   while [[ $# -gt 0 ]]; do
     local castle=$1

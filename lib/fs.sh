@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function castle_exists {
+castle_exists() {
   local action=$1
   local castle=$2
   # repos is a global variable, disable SC2154
@@ -11,7 +11,7 @@ function castle_exists {
   fi
 }
 
-function home_exists {
+home_exists() {
   local action=$1
   local castle=$2
   local repo="$repos/$castle"
@@ -20,7 +20,7 @@ function home_exists {
   fi
 }
 
-function list_castle_names {
+list_castle_names() {
   while IFS= read -d $'\0' -r repo ; do
     # Avoid using basename for a small speed-up
     # See link, for why it's OK to use bash string substitution in this case
@@ -37,7 +37,7 @@ function list_castle_names {
 # All path parts except the last one must exist.
 # A pwd option can be given as the first argument (like -P to resolve symlinks).
 # In order to resolve the last part of the path append "/." to it.
-function abs_path {
+abs_path() {
   local path
   local pwd_opt=""
   if [[ $# -eq 1 ]]; then
@@ -68,7 +68,7 @@ function abs_path {
 }
 
 # Removes unnecessary path parts, such as '/./' and 'somedir/../' and trailing slashes
-function clean_path {
+clean_path() {
   local path=$1
 
   # Split path into parts
@@ -166,7 +166,7 @@ function clean_path {
 # $target: "/root/delta/file"
 # result: "../root/delta/file"
 # If "/root/delta" were a symlink to "../gamma", the result would be "file"
-function create_rel_path {
+create_rel_path() {
   local source_dir=$1
   local target=$2
 

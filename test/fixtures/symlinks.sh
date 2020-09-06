@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=2164
-function fixture_symlinks() {
+fixture_symlinks() {
   local git_username="Homeshick user"
   local git_useremail="homeshick@example.com"
   local symlinks="$REPO_FIXTURES/symlinks"
