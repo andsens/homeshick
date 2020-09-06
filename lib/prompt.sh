@@ -11,7 +11,7 @@ function ask_symlink {
 			IFS=$OIFS
 		fi
 		if prompt_no 'updates' "$msg" 'symlink?'; then
-			# shellcheck source=lib/commands/link.sh disable=SC2154
+			# shellcheck source=commands/link.sh disable=SC2154
 			source "$homeshick/lib/commands/link.sh"
 			for castle in "$@"; do
 				symlink "$castle"

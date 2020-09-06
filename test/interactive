@@ -41,7 +41,7 @@ run() {
 	[ -z "$E" ] || set -E
 	[ -z "$T" ] || set -T
 }
-# shellcheck source=test/helper.bash
+# shellcheck source=helper.bash
 source "$SCRIPTDIR/helper.bash"
 export_env_vars
 setup_env

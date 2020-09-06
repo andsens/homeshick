@@ -3,16 +3,15 @@
 repos="$HOME/.homesick/repos"
 # Include all helper functions. We will include the required command function later on.
 homeshick=${HOMESHICK_DIR:-$HOME/.homesick/repos/homeshick}
-# On travis-ci exit_status for some reason errors out, ignore it
-# shellcheck disable=SC1090
+# shellcheck source=../lib/exit_status.sh
 source "$homeshick/lib/exit_status.sh"
-# shellcheck source=lib/fs.sh
+# shellcheck source=../lib/fs.sh
 source "$homeshick/lib/fs.sh"
-# shellcheck source=lib/git.sh
+# shellcheck source=../lib/git.sh
 source "$homeshick/lib/git.sh"
-# shellcheck source=lib/log.sh
+# shellcheck source=../lib/log.sh
 source "$homeshick/lib/log.sh"
-# shellcheck source=lib/prompt.sh
+# shellcheck source=../lib/prompt.sh
 source "$homeshick/lib/prompt.sh"
 
 # lots of global variables in here, so just disable SC2034 for the entire file
@@ -153,10 +152,10 @@ fi
 case $cmd in
 	cd) ;;
 	symlink)
-		# shellcheck source=lib/commands/link.sh
+		# shellcheck source=../lib/commands/link.sh
 		source "$homeshick/lib/commands/link.sh" ;;
 	updates)
-		# shellcheck source=lib/commands/check.sh
+		# shellcheck source=../lib/commands/check.sh
 		source "$homeshick/lib/commands/check.sh" ;;
 	*)
 		# Don't know what will be included, so just disable the rule

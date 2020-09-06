@@ -26,7 +26,7 @@ function err {
 }
 
 function help_err {
-	# shellcheck source=lib/commands/help.sh disable=SC2154
+	# shellcheck source=commands/help.sh disable=SC2154
 	source "$homeshick/lib/commands/help.sh"
 	extended_help "$1"
 	exit "$EX_USAGE"

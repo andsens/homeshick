@@ -67,7 +67,7 @@ function ask_pull {
 			IFS=$OIFS
 		fi
 		if prompt_no 'refresh' "$msg" 'pull?'; then
-			# shellcheck source=lib/commands/pull.sh disable=SC2154
+			# shellcheck source=pull.sh disable=SC2154
 			source "$homeshick/lib/commands/pull.sh"
 			for castle in "$@"; do
 				pull "$castle"

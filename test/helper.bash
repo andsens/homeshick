@@ -73,7 +73,7 @@ function setup_env {
 	remove_coreutils_from_path
 	export_env_vars
 	mk_structure
-	# shellcheck source=homeshick.sh
+	# shellcheck source=../homeshick.sh
 	source "$HOMESHICK_FN_SRC_SH"
 }
 
