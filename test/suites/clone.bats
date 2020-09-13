@@ -1,6 +1,16 @@
 #!/usr/bin/env bats
 
-load ../helper
+load ../helper.sh
+
+setup() {
+  create_test_dir
+  # shellcheck source=../../homeshick.sh
+  source "$HOMESHICK_DIR/homeshick.sh"
+}
+
+teardown() {
+  delete_test_dir
+}
 
 @test 'clone with github shorthand, while matching path exists' {
   $EXPECT_INSTALLED || skip 'expect not installed'

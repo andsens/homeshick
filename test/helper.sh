@@ -1,21 +1,33 @@
 #!/usr/bin/env bash
 
-export_env_vars() {
-  if [[ -n $BATS_TEST_DIRNAME ]]; then
-    TESTDIR=$(cd "$BATS_TEST_DIRNAME/.." && pwd)
-  else
-    TESTDIR=$(cd "$SCRIPTDIR" && pwd)
-  fi
-  export TESTDIR
-  _TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t homeshick)
-  export _TMPDIR
-  export REPO_FIXTURES="$_TMPDIR/repos"
-  export HOME="$_TMPDIR/home"
-  export NOTHOME="$_TMPDIR/nothome"
+load /usr/local/bats/support/load.bash
+load /usr/local/bats/assert/load.bash
+load /usr/local/bats/file/load.bash
 
+setup_file() {
+  check_expect
+  remove_coreutils_from_path
+  determine_homeshick_dir
+}
+
+determine_homeshick_dir() {
+  HOMESHICK_DIR=$(cd "$BATS_TEST_DIRNAME/../.." && echo "$PWD")
   export HOMESHICK_DIR
-	HOMESHICK_DIR=$(cd "$TESTDIR/.." && pwd)
+}
 
+create_test_dir() {
+  _TMPDIR="$(temp_make --prefix 'homeshick-')"
+  REPO_FIXTURES="$_TMPDIR/repos"
+  HOME="$_TMPDIR/home"
+  NOTHOME="$_TMPDIR/nothome"
+  mkdir "$REPO_FIXTURES" "$HOME" "$NOTHOME"
+}
+
+delete_test_dir() {
+  temp_del "$_TMPDIR"
+}
+
+check_expect() {
   # Check if expect is installed
   if type expect &>/dev/null; then
     export EXPECT_INSTALLED=true
@@ -27,62 +39,21 @@ export_env_vars() {
 remove_coreutils_from_path() {
   # Check if coreutils is in PATH
   system=$(uname -a)
-  if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]]; then
-    if type brew &>/dev/null; then
-      coreutils_path=$(brew --prefix coreutils 2>/dev/null)/libexec/gnubin
-      if [[ -d $coreutils_path && $PATH == *$coreutils_path* ]]; then
-        if [[ -z $HOMESHICK_KEEP_PATH || $HOMESHICK_KEEP_PATH == false ]]; then
-          export PATH=${PATH//$coreutils_path/''}
-          export PATH=${PATH//'::'/':'} # Remove any left over colons
-        fi
-      fi
+  if [[ $system =~ "Darwin" && ! $system =~ "AppleTV" ]] && type brew &>/dev/null; then
+    coreutils_path=$(brew --prefix coreutils 2>/dev/null)/libexec/gnubin
+    if [[ -d $coreutils_path && $PATH == *$coreutils_path* ]] && \
+       [[ -z $HOMESHICK_KEEP_PATH || $HOMESHICK_KEEP_PATH == false ]]; then
+      export PATH=${PATH//$coreutils_path/''}
+      export PATH=${PATH//'::'/':'} # Remove any left over colons
     fi
   fi
-}
-
-mk_structure() {
-  mkdir "$REPO_FIXTURES" "$HOME" "$NOTHOME"
-}
-
-ln_homeshick() {
-  local hs_repo=$HOME/.homesick/repos/homeshick
-  mkdir -p "$hs_repo"
-  local repo_dir
-  repo_dir=$(cd "$TESTDIR/.." && pwd)
-  ln -s "$repo_dir/homeshick.sh" "$hs_repo/homeshick.sh"
-  ln -s "$repo_dir/homeshick.csh" "$hs_repo/homeshick.csh"
-  ln -s "$repo_dir/homeshick.fish" "$hs_repo/homeshick.fish"
-  ln -s "$repo_dir/bin" "$hs_repo/bin"
-  ln -s "$repo_dir/lib" "$hs_repo/lib"
-  ln -s "$repo_dir/completions" "$hs_repo/completions"
-}
-
-rm_structure() {
-  # Make sure _TMPDIR wasn't unset
-  [[ -n $_TMPDIR ]] && rm -rf "$_TMPDIR"
-}
-
-setup_env() {
-  remove_coreutils_from_path
-  export_env_vars
-  mk_structure
-  # shellcheck source=../homeshick.sh
-  source "$HOMESHICK_DIR/homeshick.sh"
-}
-
-setup() {
-  setup_env
-}
-
-teardown() {
-  rm_structure
 }
 
 fixture() {
   local name=$1
   if [[ ! -e "$REPO_FIXTURES/$name" ]]; then
     # shellcheck disable=SC1090
-    source "$TESTDIR/fixtures/$name.sh"
+    source "$HOMESHICK_DIR/test/fixtures/$name.sh"
   fi
 }
 

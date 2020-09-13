@@ -1,9 +1,8 @@
 #!/usr/bin/env bats
 
-load ../helper
+load ../helper.sh
 
 setup() {
-  setup_env
   # shellcheck source=../../lib/commands/clone.sh
   source "$HOMESHICK_DIR/lib/commands/clone.sh"
 }

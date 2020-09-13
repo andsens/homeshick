@@ -1,11 +1,15 @@
 #!/usr/bin/env bats
 
-load ../helper
+load ../helper.sh
 
 setup() {
-  setup_env
+  create_test_dir
   # shellcheck source=../../lib/fs.sh
   source "$HOMESHICK_DIR/lib/fs.sh"
+}
+
+teardown() {
+  delete_test_dir
 }
 
 test_rel_path() {

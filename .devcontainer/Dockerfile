@@ -20,4 +20,7 @@ RUN wget -O- https://github.com/koalaman/shellcheck/releases/download/v0.7.1/she
 RUN pip3 install docopt.sh==0.9.17
 RUN git clone --depth 1 --branch v1.2.1 https://github.com/bats-core/bats-core.git /tmp/bats \
 	&& /tmp/bats/install.sh /usr/local \
-	&& rm -rf /tmp/bats
+	&& rm -rf /tmp/bats \
+	&& git clone --depth 1 --branch v0.3.0 https://github.com/bats-core/bats-support.git /usr/local/bats/support \
+	&& git clone --depth 1 --branch v2.0.0 https://github.com/bats-core/bats-assert.git /usr/local/bats/assert \
+	&& git clone --depth 1 --branch v0.3.0 https://github.com/bats-core/bats-file.git /usr/local/bats/file
