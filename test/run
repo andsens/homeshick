@@ -3,11 +3,75 @@ set -e
 
 main() {
   cd "$(dirname "${BASH_SOURCE[0]}")"
+  DOC="run - Run bats test suites
+Usage:
+  run [--version=VERSION...] [SUITE...]
+Options:
+  -b --version VERSION  Bash version to test with (e.g. 5.0), can be specified
+                        multiple times. Will default to all available versions
+                        when not specified.
+"
+# docopt parser below, refresh this parser with `docopt.sh run`
+# shellcheck disable=2016,1090,1091,2034,2154
+docopt() { source ../lib/docopt.sh-0.9.17.sh '0.9.17' || { ret=$?
+printf -- "exit %d\n" "$ret"; exit "$ret"; }; set -e; trimmed_doc=${DOC:0:284}
+usage=${DOC:27:46}; digest=e0ed6; shorts=(-b); longs=(--version); argcounts=(1)
+node_0(){ value __version 0 true; }; node_1(){ value SUITE a true; }; node_2(){
+oneormore 0; }; node_3(){ optional 2; }; node_4(){ oneormore 1; }; node_5(){
+optional 4; }; node_6(){ required 3 5; }; node_7(){ required 6; }
+cat <<<' docopt_exit() { [[ -n $1 ]] && printf "%s\n" "$1" >&2
+printf "%s\n" "${DOC:27:46}" >&2; exit 1; }'; unset var___version var_SUITE
+parse 7 "$@"; local prefix=${DOCOPT_PREFIX:-''}; unset "${prefix}__version" \
+"${prefix}SUITE"; if declare -p var___version >/dev/null 2>&1; then
+eval "${prefix}"'__version=("${var___version[@]}")'; else
+eval "${prefix}"'__version=()'; fi
+if declare -p var_SUITE >/dev/null 2>&1; then
+eval "${prefix}"'SUITE=("${var_SUITE[@]}")'; else eval "${prefix}"'SUITE=()'; fi
+local docopt_i=1; [[ $BASH_VERSION =~ ^4.3 ]] && docopt_i=2
+for ((;docopt_i>0;docopt_i--)); do declare -p "${prefix}__version" \
+"${prefix}SUITE"; done; }
+# docopt parser above, complete command for generating this parser is `docopt.sh --library=../lib/docopt.sh-0.9.17.sh run`
+  eval "$(docopt "$@")"
   local version_path
+  local versions=()
+  # shellcheck disable=SC2154
+  if [[ ${#__version[@]} -gt 0 ]]; then
+    local version
+    for version in "${__version[@]}"; do
+      version_path="bash-versions/bash-$version"
+      if [[ ! -x $version_path/bash ]]; then
+        printf -- "Executable %s not found.\n" "$version_path/bash" >&2
+        return 1
+      fi
+      versions+=("$version_path")
+    done
+  else
+    for version_path in $(echo bash-versions/*); do
+      [[ -x $version_path/bash ]] || continue
+      versions+=("$version_path")
+    done
+  fi
+
+  local suite_path
+  local suites=()
+  # shellcheck disable=SC2153
+  if [[ ${#SUITE[*]} -gt 0 ]]; then
+    local suite
+    for suite in "${SUITE[@]}"; do
+      suite_path="suites/$suite.bats"
+      if [[ ! -f $suite_path ]]; then
+        printf -- "Suite %s not found.\n" "$suite_path" >&2
+        return 1
+      fi
+      suites+=("$suite_path")
+    done
+  else
+    suites+=("suites")
+  fi
+
   local ret=0
-  for version_path in bash-versions/*; do
-    [[ -d $version_path ]] || continue
-    if ! PATH=$PWD/$version_path:$PATH bats --tap "$PWD/suites"; then
+  for version_path in "${versions[@]}"; do
+    if ! PATH=$PWD/$version_path:$PATH bats --tap "${suites[@]}"; then
       ret=$?
     fi
   done
