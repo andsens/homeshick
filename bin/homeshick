@@ -69,7 +69,7 @@ done
 [[ $# -gt 0 ]] || cmd="help"
 
 # Get the subcommand
-valid_commands=(cd clone generate list check updates refresh pull symlink link track help)
+valid_commands=(cd clone generate list ls check updates refresh pull symlink link track help)
 if [[ ! $cmd ]]; then
   # We actually want literal matching of the rhs here, $1 shouldn't be a regexp
   # shellcheck disable=SC2076
@@ -125,7 +125,7 @@ while [[ $# -gt 0 ]]; do
     track)
       [[ ! $castle ]] && castle=$1 || params+=("$1")
       shift; continue ;;
-    list) err "$EX_USAGE" "The 'list' command does not take any arguments" ;;
+    list | ls) err "$EX_USAGE" "The '$1' command does not take any arguments" ;;
     help)
       [[ ! $help_cmd ]] && help_cmd=$1
       shift; continue;;
@@ -164,7 +164,7 @@ case $cmd in
 esac
 
 case $cmd in
-  list)  list           ;;
+  list | ls)  list      ;;
   cd)    help cd        ;; # cd is implemented in the homeshick.{sh,csh} helper script.
   help)  help $help_cmd ;;
   *)
