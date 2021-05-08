@@ -9,7 +9,7 @@ _homeshick () {
     {-b,--batch}'[Batch-mode: Skip interactive prompt]' \
     {-v,--verbose}'[Verbose-mode: Detailed status output]' \
     {-h,--help}'[Help message]' \
-    '1:commands:(cd clone generate list check refresh pull link track help)' \
+    '1:commands:(cd clone generate list ls check refresh pull link track help)' \
     '*::arguments:->arguments' \
     && ret=0
 

@@ -67,6 +67,7 @@ _homeshick_complete()
         clone
         generate
         list
+        ls
         check
         refresh
         pull

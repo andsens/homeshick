@@ -25,6 +25,7 @@ printf "homes\e[1;34mh\e[0mick uses git in concert with symlinks to track your p
   homeshick help [TASK]               # Show usage of a task
 
  Aliases:
+  ls      # Alias to list
   symlink # Alias to link
   updates # Alias to check
 
@@ -57,9 +58,9 @@ extended_help() {
       printf "Generates a repo prepped for usage with homeshick\n"
       printf "Usage:\n  homeshick generate CASTLE.."
       ;;
-    list)
+    list|ls)
       printf "Lists cloned castles\n"
-      printf "Usage:\n  homeshick list"
+      printf "Usage:\n  homeshick %s" "$1"
       ;;
     check|updates)
       printf "Checks if a castle has been updated on the remote\n"
