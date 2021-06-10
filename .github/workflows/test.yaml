@@ -33,7 +33,7 @@ jobs:
     steps:
     - name: Install testing dependencies
       run: |
-        sudo apt-add-repository ppa:fish-shell/release-2 --yes
+        sudo apt-add-repository ppa:fish-shell/release-3 --yes
         sudo apt-get -qq update
         sudo apt-get -qq install fish expect tcsh
         git clone --depth 1 --branch v1.2.1 https://github.com/bats-core/bats-core.git /tmp/bats
