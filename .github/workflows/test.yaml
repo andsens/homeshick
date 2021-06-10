@@ -54,7 +54,7 @@ jobs:
     - name: Download & compile bash ${{ matrix.bash-version }}
       run: |
         test/get_bash.sh "${{ matrix.bash-version }}"
-        echo "::add-path::$PWD/test/bash-versions/bash-${{ matrix.bash-version }}"
+        echo "$PWD/test/bash-versions/bash-${{ matrix.bash-version }}" >> "$GITHUB_PATH"
     - name: Test
       run: |
         echo "::add-matcher::.github/bats.json"
