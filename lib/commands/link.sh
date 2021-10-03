@@ -52,6 +52,14 @@ symlink() {
             ignore 'identical' "$relpath"
           fi
           continue
+        elif [[ ! -L $homepath && -f $homepath && -f $repopath ]] && files_are_same "$homepath" "$repopath"; then
+          # $homepath is a real file, and
+          # $repopath is a real file or a symlinked file, and
+          # $homepath & $repopath files have same contents
+
+          # skip, ie we're ok with forcing link creation.
+          # likely some program doesn't support symlinks and is overwriting them:
+          true
         elif $SKIP; then
           ignore 'exists' "$relpath"
           continue

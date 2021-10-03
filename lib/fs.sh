@@ -178,7 +178,7 @@ create_rel_path() {
   local prefix
   prefix=$target/
   # Find the common prefix of $source_dir and $target
-  while [[ ! ${source_dir:0:${#prefix}} = "$prefix" ]]; do
+  while [[ ${source_dir:0:${#prefix}} != "$prefix" ]]; do
     # Remove directory parts from prefix until we find the common directory
     prefix=$(dirname "$prefix")
     # Append the trailing slash, except for "/" (hence the %/)
@@ -200,7 +200,7 @@ create_rel_path() {
 
   # Determine the path from the source_dir to the common directory (consists only of ../)
   local common_dir_path=''
-  while [[ $source_dir_path != '' && $source_dir_path != '.' ]]; do
+  while [[ -n $source_dir_path && $source_dir_path != '.' ]]; do
     source_dir_path=$(dirname "$source_dir_path")
     if [[ ${#common_dir_path} -eq 0 ]]; then
       common_dir_path=".."
@@ -212,8 +212,28 @@ create_rel_path() {
   # The relative path is just the path from $source_dir to $common dir to the target
   if [[ -n $common_dir_path && -n $target_path ]]; then
     # Add dir separator if both paths are non-empty
-    printf "%s/%s" "$common_dir_path" "$target_path"
+    printf '%s/%s' "$common_dir_path" "$target_path"
   else
-    printf "%s%s" "$common_dir_path" "$target_path"
+    printf '%s%s' "$common_dir_path" "$target_path"
   fi
+}
+
+# check if given two files have same contents.
+# files _may_ be symlinks.
+#
+# return 0 if files have same contents, non-0 for _any_ other reason.
+files_are_same() {
+  local f1="$1"
+  local f2="$2"
+
+  if command -v cmp >/dev/null 2>/dev/null; then
+    cmp --silent -- "$f1" "$f2"
+    return $?
+  elif command -v diff >/dev/null 2>/dev/null; then
+    diff -- "$f1" "$f2" >/dev/null 2>/dev/null
+    return $?
+  fi
+
+  # if we don't have any supported file comparison tools availabe, return falsey:
+  return 1
 }

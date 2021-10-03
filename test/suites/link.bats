@@ -110,8 +110,7 @@ newline"
   castle 'rc-files'
   touch "$HOME/.bashrc"
   homeshick --batch link rc-files
-  [ -f "$HOME/.bashrc" ]
-  [ ! -L "$HOME/.bashrc" ]
+  [ -f "$HOME/.bashrc" -a ! -L "$HOME/.bashrc" ]
 }
 
 @test 'overwrite file with link when the prompt is answered with yes' {
@@ -137,6 +136,35 @@ EOF
   touch "$HOME/.bashrc"
   homeshick --skip link rc-files
   [ -f "$HOME/.bashrc" ] && [ ! -L "$HOME/.bashrc" ]
+}
+
+@test 'overwrite file if contents are the same; no --skip, --force or --batch needed' {
+  castle 'rc-files'
+  cat > "$HOME/.bashrc" <<EOF
+#!/bin/bash
+PS1='\[33[01;32m\]\u@\h\[33[00m\]:\[33[01;34m\]\w\'
+EOF
+  homeshick link rc-files
+  is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
+}
+
+@test "don't overwrite file or prompt for it if contents ARE the same but the original file is a link" {
+  castle 'rc-files'
+  cat > "$HOME/bashrc-with-original-content" <<EOF
+#!/bin/bash
+PS1='\[33[01;32m\]\u@\h\[33[00m\]:\[33[01;34m\]\w\'
+EOF
+  ln -s "$HOME/bashrc-with-original-content" "$HOME/.bashrc"
+  homeshick --batch link rc-files
+  [ -L "$HOME/.bashrc" ]
+  ! is_symlink .homesick/repos/rc-files/home/.bashrc "$HOME/.bashrc"
+}
+
+@test "don't overwrite file or prompt for it if contents are NOT the same and --batch is on" {
+  castle 'rc-files'
+  echo 'some different content than the file in castle has' > "$HOME/.bashrc"
+  homeshick --batch link rc-files
+  [ -f "$HOME/.bashrc" -a ! -L "$HOME/.bashrc" ]
 }
 
 @test 'existing symlinks are not relinked when running link' {
