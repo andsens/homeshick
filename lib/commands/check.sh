@@ -22,7 +22,7 @@ check() {
   remote_url=$(cd "$repo" && git config "remote.$remote_name.url" 2>/dev/null)
   # Get the HEAD of the current branch on the upstream remote
   local remote_head
-  remote_head=$(git ls-remote --heads "$remote_url" "$branch" 2>/dev/null | cut -f 1)
+  remote_head=$(cd "$repo" && git ls-remote --heads "$remote_url" "$branch" 2>/dev/null | cut -f 1)
   if [[ $remote_head ]]; then
     local local_head
     local_head=$(cd "$repo" && git rev-parse HEAD)
