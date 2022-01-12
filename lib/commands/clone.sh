@@ -31,7 +31,7 @@ clone() {
     success
 
     pending 'submodules' "$git_repo"
-    git_out=$(cd "$repo_path"; git submodule update --init 2>&1) || \
+    git_out=$(cd "$repo_path" && git submodule update --init 2>&1) || \
       err "$EX_SOFTWARE" "Unable to clone submodules for $git_repo. Git says:" "$git_out"
     success
   fi
