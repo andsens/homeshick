@@ -13,7 +13,6 @@
   },
   // Set *default* container specific settings.json values on container create.
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash",
     "shellcheck.executablePath": "/usr/local/bin/shellcheck"
   },
   // Add the IDs of extensions you want installed when the container is created.
