@@ -24,7 +24,13 @@ create_test_dir() {
 }
 
 delete_test_dir() {
-  temp_del "$_TMPDIR"
+  # For some reason temp_del gets stuck when run running `rm -r`, might be
+  # the setup on my PC. Work around it by adding `-f`
+  if [[ $_TMPDIR != *homeshick-* ]]; then
+    printf -- "%s does not look like a homeshick testing tmp dir!\n" "$_TMPDIR" >&3
+    exit 1
+  fi
+  rm -rf "$_TMPDIR"
 }
 
 check_expect() {
