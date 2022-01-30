@@ -12,7 +12,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 	python3-setuptools python3-wheel python3-pip \
-	xz-utils make gcc libc6-dev \
+	xz-utils make gcc bison libc6-dev \
 	fish tcsh expect \
 	&& rm -rf /var/lib/apt/lists/*
 RUN wget -O- https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz | \

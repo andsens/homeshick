@@ -13,7 +13,6 @@
   },
   // Set *default* container specific settings.json values on container create.
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash",
     "shellcheck.executablePath": "/usr/local/bin/shellcheck"
   },
   // Add the IDs of extensions you want installed when the container is created.
@@ -21,7 +20,8 @@
     "timonwong.shellcheck",
     "editorconfig.editorconfig",
     "lextudio.restructuredtext",
-    "me-dutour-mathieu.vscode-github-actions"
+    "me-dutour-mathieu.vscode-github-actions",
+    "jetmartin.bats"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
