@@ -41,6 +41,7 @@ SKIP=false
 FORCE=false
 BATCH=false
 VERBOSE=false
+GIT=false
 
 # Retrieve all the flags preceeding a subcommand
 while [[ $# -gt 0 ]]; do
@@ -59,6 +60,7 @@ while [[ $# -gt 0 ]]; do
       -f | --force) FORCE=true ; shift; continue ;;
       -b | --batch) BATCH=true ; shift; continue ;;
       -v | --verbose) VERBOSE=true ; shift; continue ;;
+      -g | --git) GIT=true ; shift; continue ;;
       *)     err "$EX_USAGE" "Unknown option '$1'" ;;
     esac
   else

@@ -10,7 +10,11 @@ clone() {
       msg="${msg} use \`homeshick clone ./$git_repo' to circumvent the github shorthand"
       warn 'clone' "$msg"
     fi
-    git_repo="https://github.com/$git_repo.git"
+    if ${GIT}; then
+      git_repo="git@github.com:$git_repo.git"
+    else
+      git_repo="https://github.com/$git_repo.git"
+    fi
   fi
   local repo_path
   # repos is a global variable

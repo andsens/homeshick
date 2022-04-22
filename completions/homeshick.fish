@@ -44,6 +44,7 @@ complete -f -c homeshick -s s -l skip -d 'Skip files that already exist'
 complete -f -c homeshick -s f -l force -d 'Overwrite files that already exist'
 complete -f -c homeshick -s b -l batch -d 'Batch-mode: Skip interactive prompts / Choose the default'
 complete -f -c homeshick -s v -l verbose -d 'Verbose-mode: Detailed status output'
+complete -f -c homeshick -s g -l git -d 'Git-mode: Use git protocol for GitHub shorthand clone'
 
 # cd
 complete -f -c homeshick -n '__fish_homeshick_needs_command' -a cd -r -d 'Enter a castle'

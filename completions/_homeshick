@@ -8,6 +8,7 @@ _homeshick () {
     '(-f --force)'{-s,--skip}'[Skip files that already exist]' \
     {-b,--batch}'[Batch-mode: Skip interactive prompt]' \
     {-v,--verbose}'[Verbose-mode: Detailed status output]' \
+    {-g,--git}'[Git-mode: Use git protocol for GitHub shorthand clone]' \
     {-h,--help}'[Help message]' \
     '1:commands:(cd clone generate list ls check refresh pull link track help)' \
     '*::arguments:->arguments' \

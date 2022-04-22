@@ -31,6 +31,12 @@ EOF
   )
 }
 
+@test 'clone with github shorthand and --git flag' {
+  $EXPECT_INSTALLED || skip 'expect not installed'
+  ping -c 1 -w 3 github.com || ping -c 1 -t 3 github.com || skip 'github not reachable'
+  homeshick --batch --git clone andsens/rc-files
+}
+
 @test 'clone a repo' {
   fixture 'rc-files'
   homeshick --batch clone "$REPO_FIXTURES/rc-files"
