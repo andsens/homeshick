@@ -157,6 +157,9 @@ case $cmd in
   updates)
     # shellcheck source=../lib/commands/check.sh
     source "$homeshick/lib/commands/check.sh" ;;
+  ls)
+    # shellcheck source=../lib/commands/list.sh
+    source "$homeshick/lib/commands/list.sh" ;;
   *)
     # Don't know what will be included, so just disable the rule
     # shellcheck disable=SC1090
