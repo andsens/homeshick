@@ -21,6 +21,9 @@ create_test_dir() {
   HOME="$_TMPDIR/home"
   NOTHOME="$_TMPDIR/nothome"
   mkdir "$REPO_FIXTURES" "$HOME" "$NOTHOME"
+
+  git config --global init.defaultBranch master
+  git config --global protocol.file.allow always
 }
 
 delete_test_dir() {
