@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-load /usr/local/bats/support/load.bash
-load /usr/local/bats/assert/load.bash
-load /usr/local/bats/file/load.bash
+load ../bats/lib/support/load.bash
+load ../bats/lib/assert/load.bash
+load ../bats/lib/file/load.bash
 
 setup_file() {
   check_expect

@@ -39,9 +39,6 @@ jobs:
         git clone --depth 1 --branch v1.2.1 https://github.com/bats-core/bats-core.git /tmp/bats
         sudo /tmp/bats/install.sh /usr/local
         rm -rf /tmp/bats
-        sudo git clone --depth 1 --branch v0.3.0 https://github.com/bats-core/bats-support.git /usr/local/bats/support
-        sudo git clone --depth 1 --branch v2.0.0 https://github.com/bats-core/bats-assert.git /usr/local/bats/assert
-        sudo git clone --depth 1 --branch v0.3.0 https://github.com/bats-core/bats-file.git /usr/local/bats/file
     - name: Checkout the project
       uses: actions/checkout@v3
     - name: Cache bash versions
@@ -55,6 +52,8 @@ jobs:
       run: |
         test/get_bash.sh "${{ matrix.bash-version }}"
         echo "$PWD/test/bash-versions/bash-${{ matrix.bash-version }}" >> "$GITHUB_PATH"
+    - name: Download bats libraries
+      run: test/get_bats_libs.sh
     - name: Test
       run: |
         echo "::add-matcher::.github/bats.json"
