@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
-load /usr/local/bats/support/load.bash
-load /usr/local/bats/assert/load.bash
-load /usr/local/bats/file/load.bash
+if [[ ! -d "$(dirname "${BASH_SOURCE[0]}")/bats/lib/support" ]]; then
+  printf "bats libraries are missing - run get_bats_libs.sh"
+  exit 1
+fi
+
+load ../bats/lib/support/load.bash
+load ../bats/lib/assert/load.bash
+load ../bats/lib/file/load.bash
 
 setup_file() {
   check_expect
