@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ ! -d "$(dirname "${BASH_SOURCE[0]}")/bats/lib/support" ]]; then
-  printf "bats libraries are missing - run get_bats_libs.sh"
+  printf -- "bats libraries are missing - run get_bats_libs.sh\n" >&2
   exit 1
 fi
 
