@@ -51,6 +51,10 @@ for ((;docopt_i>0;docopt_i--)); do declare -p "${prefix}__version" \
       versions+=("$version_path")
     done
   fi
+  if ((${#versions[@]} == 0)); then
+    printf -- "No bash versions found. Run get_bash.sh to download and compile bash versions.\n" >&2
+    return
+  fi
 
   local suite_path
   local suites=()
