@@ -27,8 +27,7 @@ jobs:
   test:
     strategy:
       matrix:
-        bash-version: ['3.2.57', '4.0', '4.1', '4.2', '4.3', '4.3.30', '4.4', '5.0']
-
+        bash-version: ['3.2.57', '4.0', '4.1', '4.2', '4.3', '4.3.30', '4.4', '5.0', '5.1', '5.1.12', '5.1.16', '5.2', '5.2.9']
     runs-on: ubuntu-latest
     steps:
     - name: Install testing dependencies
