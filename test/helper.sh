@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [[ ! -d "$(dirname "${BASH_SOURCE[0]}")/bats/lib/support" ]]; then
+  printf "bats libraries are missing - run get_bats_libs.sh"
+  exit 1
+fi
+
 load ../bats/lib/support/load.bash
 load ../bats/lib/assert/load.bash
 load ../bats/lib/file/load.bash
