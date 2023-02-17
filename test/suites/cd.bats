@@ -28,6 +28,39 @@ teardown() {
   [ "$dotfiles_dir" = "$result" ]
 }
 
+@test 'cd to dotfiles castle subdirectory relative to HOME' {
+  castle 'dotfiles'
+  local dotfiles_dir=$HOME/.homesick/repos/dotfiles/home/.config/foo.conf
+  local home_dir=$HOME/.config/foo.conf
+  mkdir -p "$home_dir"
+  local result
+  result=$(homeshick cd dotfiles $home_dir && pwd)
+  [ "$dotfiles_dir" = "$result" ]
+}
+
+@test 'cd to dotfiles castle subdirectory relative to PWD' {
+  castle 'dotfiles'
+  local dotfiles_dir=$HOME/.homesick/repos/dotfiles/home/.config/foo.conf
+  local home_dir=$HOME/.config/foo.conf
+  mkdir -p "$home_dir"
+  cd "$home_dir"
+  local result
+  result=$(homeshick cd dotfiles . && pwd)
+  [ "$dotfiles_dir" = "$result" ]
+}
+
+@test 'cd to dotfiles castle subdirectory relative to NOTHOME should fail' {
+  castle 'dotfiles'
+  local dotfiles_dir=$HOME/.homesick/repos/dotfiles/home/.config/foo.conf
+  local nothome_dir=$NOTHOME/.config/foo.conf
+  mkdir -p "$nothome_dir"
+  cd "$nothome_dir"
+  local result
+  result=$(! homeshick cd dotfiles . 2>/dev/null && pwd)
+  >&2 printf '"%s" = "%s"?\n' "$nothome_dir" "$result"
+  [ "$nothome_dir" = "$result" ]
+}
+
 @test 'cd to my_module castle' {
   castle 'module-files'
   homeshick --batch clone "$REPO_FIXTURES/my_module"

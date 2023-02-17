@@ -150,7 +150,9 @@ fi
 
 # Include the file that implements the invoked command
 case $cmd in
-  cd) ;;
+  cd)
+    # shellcheck source=../lib/commands/cd.sh
+    source "$homeshick/lib/commands/cd.sh" ;;
   symlink)
     # shellcheck source=../lib/commands/link.sh
     source "$homeshick/lib/commands/link.sh" ;;
@@ -168,7 +170,7 @@ esac
 
 case $cmd in
   list | ls)  list      ;;
-  cd)    help cd        ;; # cd is implemented in the homeshick.{sh,csh} helper script.
+  cd)    homeshick_cd "${params[@]}" ;;
   help)  help $help_cmd ;;
   *)
     for param in "${params[@]}"; do

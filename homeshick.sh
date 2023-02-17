@@ -5,11 +5,20 @@
 # "homeshick cd CASTLE" to enter a castle.
 
 homeshick () {
-  if [ "$1" = "cd" ] && [ -n "$2" ]; then
+  HOMESHICK_STATUS=0
+  HOMESHICK_BIN="${HOMESHICK_DIR:-$HOME/.homesick/repos/homeshick}/bin/homeshick"
+  if [ "$1" = "cd" ]; then
+    HOMESHICK_REPO_TARGET="$("$HOMESHICK_BIN" "$@")"
     # We want replicate cd behavior, so don't use cd ... ||
     # shellcheck disable=SC2164
-    cd "$HOME/.homesick/repos/$2"
+    case "$HOMESHICK_REPO_TARGET" in
+      /*) cd "$HOMESHICK_REPO_TARGET"; HOMESHICK_STATUS=$?;;
+      *) [ -n "$HOMESHICK_REPO_TARGET" ] && printf '%s\n' "$HOMESHICK_REPO_TARGET"; HOMESHICK_STATUS=64;;
+    esac
   else
-    "${HOMESHICK_DIR:-$HOME/.homesick/repos/homeshick}/bin/homeshick" "$@"
+    "$HOMESHICK_BIN" "$@"
+    HOMESHICK_STATUS=$?
   fi
+  unset HOMESHICK_BIN HOMESHICK_REPO_TARGET
+  return "$HOMESHICK_STATUS"
 }

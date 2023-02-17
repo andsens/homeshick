@@ -6,13 +6,22 @@
 # "homeshick cd CASTLE" to enter a castle.
 
 function homeshick
-  if test \( (count $argv) = 2 -a "$argv[1]" = "cd" \)
-    cd "$HOME/.homesick/repos/$argv[2]"
-  else if set -q HOMESHICK_DIR
-    eval $HOMESHICK_DIR/bin/homeshick (string escape -- $argv)
+  if set -q HOMESHICK_DIR
+    set -f homeshick_bin $HOMESHICK_DIR/bin/homeshick
   else if set homeshick (type -P homeshick 2> /dev/null)
-    eval $homeshick (string escape -- $argv)
+    set -f homeshick_bin $homeshick 
   else
-    eval $HOME/.homesick/repos/homeshick/bin/homeshick (string escape -- $argv)
+    set -f homeshick_bin $HOME/.homesick/repos/homeshick/bin/homeshick
+  end
+  if test \( "$argv[1]" = "cd" \)
+    set -l homeshick_target_dir "$(eval $homeshick_bin (string escape -- $argv))"
+    if string match -q "/*" "$homeshick_target_dir"
+      cd "$homeshick_target_dir"
+    else
+      test -n "$homeshick_target_dir"; and printf '%s\n' "$homeshick_target_dir"
+      return 64
+    end
+  else
+    eval $homeshick_bin (string escape -- $argv)
   end
 end
