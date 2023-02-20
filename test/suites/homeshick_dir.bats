@@ -30,8 +30,10 @@ teardown() {
 
 @test 'csh with homeshick_dir override' {
   [ "$(type -t csh)" = "file" ] || skip "csh not installed"
-  cmd="set HOMESHICK_DIR=/nowhere; source \"$HOMESHICK_DIR/homeshick.csh\""
+  # "source" command expected to error, but csh must exit 0 or test will fail
+  cmd="set HOMESHICK_DIR=/nowhere; source \"$HOMESHICK_DIR/homeshick.csh\"; exit 0"
   local result
+  >&2 printf 'HOMESHICK_DIR=%s\n' "$HOMESHICK_DIR"
   result=$( csh <<< "$cmd" 2>&1 >/dev/null )
   [[ "$result" =~ "/nowhere/" ]] || false
 }
