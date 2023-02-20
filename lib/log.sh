@@ -26,10 +26,13 @@ err() {
 }
 
 help_err() {
+  cmd="$1"
+  reason="${2:-"Missing command line argument(s)"}"
+  shift $(($# < 2 ? 1 : 2))
   # shellcheck source=commands/help.sh disable=SC2154
   source "$homeshick/lib/commands/help.sh"
-  extended_help "$1"
-  exit "$EX_USAGE"
+  extended_help "$cmd"
+  err "$EX_USAGE" "$reason" "$@"
 }
 
 status() {
