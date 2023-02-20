@@ -141,7 +141,7 @@ if [[ ${#params[@]} -eq 0 ]]; then
         params+=("$name")
       done < <(list_castle_names) ;;
     # These commands require parameters, show the help message instead
-    cd | clone | generate | track) help_cmd=$cmd; cmd="help"; exit_status=$EX_USAGE ;;
+    cd | clone | generate | track) help_err "$cmd";;
   esac
 fi
 

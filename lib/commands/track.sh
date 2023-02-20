@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 track() {
-  [[ ! $1 || ! $2 ]] && help track
+  [[ ! $1 || ! $2 ]] && help_err track
   local castle=$1
   local filename
   filename=$(abs_path "$2")
