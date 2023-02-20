@@ -137,7 +137,7 @@ EOF
   # fish $PWD has all symlinks resolved
   local dotfiles_dir
   dotfiles_dir=$(cd "$HOME/.homesick/repos/dotfiles" && pwd -P)
-  cmd="source \"$HOMESHICK_DIR/homeshick.fish\"; and homeshick cd dotfiles; and pwd"
+  cmd="source \"$HOMESHICK_DIR/homeshick.fish\"; and homeshick cd dotfiles; and pwd -P"
   local result
   result=$( fish <<< "$cmd" )
   [ "$dotfiles_dir" = "$result" ]
