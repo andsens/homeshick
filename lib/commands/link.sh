@@ -8,7 +8,9 @@ symlink() {
   # shellcheck disable=SC2154
   local repo="$repos/$castle"
   if [[ ! -d $repo/home ]]; then
-    ignore 'ignored' "$castle"
+    if $VERBOSE; then
+      ignore 'ignored' "$castle"
+    fi
     return "$EX_SUCCESS"
   fi
   # Run through the repo files using process substitution.
