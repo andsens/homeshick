@@ -36,6 +36,7 @@ prompt_no() {
   local status=$1
   local message=$2
   local prompt=$3
+  local batch_default=${4:-2}
   local result=-1
 
   # global vars
@@ -69,8 +70,12 @@ prompt_no() {
       pending "$pending_status" "$pending_message"
     done
   else
-    pending "$prompt" "BATCH - No"
-    result=2
+    result=$batch_default
+    if $TALK; then
+      local response_txt
+      response_txt=$(if [[ $result == 0 ]]; then echo Yes; else echo No; fi)
+      pending "$prompt" "BATCH - $response_txt"
+    fi
   fi
   if [[ $result == 0 ]]; then
     success
@@ -78,5 +83,5 @@ prompt_no() {
     fail
   fi
   TALK=$OTALK
-  return $result
+  return "$result"
 }

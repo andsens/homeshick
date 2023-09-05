@@ -66,7 +66,7 @@ ask_pull() {
       msg="The castles $* are outdated."
       IFS=$OIFS
     fi
-    if prompt_no 'refresh' "$msg" 'pull?'; then
+    if prompt_no 'refresh' "$msg" 'pull?' 0; then
       # shellcheck source=pull.sh disable=SC2154
       source "$homeshick/lib/commands/pull.sh"
       for castle in "$@"; do
