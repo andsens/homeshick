@@ -18,7 +18,7 @@ printf "homes\e[1;34mh\e[0mick uses git in concert with symlinks to track your p
   homeshick generate CASTLE..         # Generate a castle repo
   homeshick list                      # List cloned castles
   homeshick check [CASTLE..]          # Check a castle for updates
-  homeshick refresh [DAYS [CASTLE..]] # Check if a castle needs refreshing
+  homeshick refresh [DAYS [CASTLE..]] # Refresh a castle at regular intervals
   homeshick pull [CASTLE..]           # Update a castle
   homeshick link [CASTLE..]           # Symlinks all dotfiles from a castle
   homeshick track CASTLE FILE..       # Add a file to a castle
@@ -67,8 +67,8 @@ extended_help() {
       printf "Usage:\n  homeshick %s [CASTLE..]" "$1"
       ;;
     refresh)
-      printf "Checks if a castle has not been pulled in DAYS days.\n"
-      printf "The default is one week.\n"
+      printf "Checks when a castle was last pulled, and, if it was more than DAYS days ago,\n"
+      printf "pulls updates from the remote. The default interval is one week.\n"
       printf "Usage:\n  homeshick refresh [DAYS] [CASTLE..]"
       ;;
     pull)

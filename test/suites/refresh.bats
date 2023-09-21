@@ -14,8 +14,6 @@ teardown() {
 
 @test 'refresh a freshly cloned castle' {
   castle 'rc-files'
-  run homeshick refresh -b rc-files
-  [ $status -eq 87 ] # EX_TH_EXCEEDED
 
   $EXPECT_INSTALLED || skip 'expect not installed'
   open_bracket="\\u005b"
@@ -41,19 +39,17 @@ EOF
   castle 'rc-files'
   homeshick pull rc-files # creates the FETCH_HEAD file
 
-  local fetch_head
+  local fetch_head="$HOME/.homesick/repos/rc-files/.git/FETCH_HEAD"
+  [ -f "$fetch_head" ]
   local timestamp
-  fetch_head="$HOME/.homesick/repos/rc-files/.git/FETCH_HEAD"
   system=$(uname -a)
   if [[ "$system" =~ "Linux" ]]; then
-    timestamp=$(date -d@$(($(date +%s)-6*86400)) '+%Y%m%d%H%M.%S')
+    timestamp=$(date -d "now - 8 days")
   else
     # assume BSD system
-    timestamp=$(date -r $(($(date +%s)-6*86400)) '+%Y%m%d%H%M.%S')
+    timestamp=$(date -v -8d "+%Y-%m-%dT%H:%M:%S")
   fi
-  touch -t "$timestamp" "$fetch_head"
-  run homeshick refresh -b rc-files
-  [ $status -eq 87 ] # EX_TH_EXCEEDED
+  touch -d "$timestamp" "$fetch_head"
 
   $EXPECT_INSTALLED || skip 'expect not installed'
   open_bracket="\\u005b"
@@ -96,8 +92,6 @@ EOF
 
 @test 'refresh a castle with spaces in name' {
   castle 'repo with spaces in name'
-  run homeshick refresh -b 'repo with spaces in name'
-  [ $status -eq 87 ] # EX_TH_EXCEEDED
 
   $EXPECT_INSTALLED || skip 'expect not installed'
   open_bracket="\\u005b"
