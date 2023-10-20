@@ -182,7 +182,7 @@ case $cmd in
         refresh)
           (refresh $threshhold "$param") ;;
         pull)
-          (pull "$param") ;;
+          (pull "$param") && pull_completed+=("$param") ;;
         symlink|link)
           symlink "$param" ;;
         track)
@@ -202,7 +202,7 @@ case $cmd in
       refresh)
         pull_outdated $threshhold "${params[@]}" ;;
       pull)
-        symlink_new_files "${params[@]}" ;;
+        symlink_new_files "${pull_completed[@]}" ;;
     esac
     result=$?
     if [[ $exit_status == 0 && $result != 0 ]]; then
