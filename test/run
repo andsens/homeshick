@@ -75,9 +75,7 @@ for ((;docopt_i>0;docopt_i--)); do declare -p "${prefix}__version" \
 
   local ret=0
   for version_path in "${versions[@]}"; do
-    if ! PATH=$PWD/$version_path:$PATH bats --tap "${suites[@]}"; then
-      ret=$?
-    fi
+    PATH=$PWD/$version_path:$PATH bats --tap "${suites[@]}" || ret=$?
   done
   return $ret
 }
