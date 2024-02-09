@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # This script should be sourced in the context of your shell like so:
-# source $HOME/.homesick/repos/.homeshick/homeshick.sh
+# source $HOME/.homesick/repos/homeshick/homeshick.sh
 # Once the homeshick() function is defined, you can type
 # "homeshick cd CASTLE" to enter a castle.
 
