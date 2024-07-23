@@ -103,6 +103,8 @@ get_repo_files() {
       [[ $path == 'home' ]] && continue
       # Remove the home/ part
       path=${path/#home\//}
+      # Escape '%' characters for printf
+      path="${path//%/%%}";
       # Print the file path (NUL separated because \n can be used in filenames)
       # Disable SC2059, using %s messes with the filename
       # shellcheck disable=SC2059

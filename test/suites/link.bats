@@ -16,9 +16,9 @@ teardown() {
   castle 'repo with spaces in name'
   homeshick --batch link 'repo with spaces in name'
   stat "$HOME/.crazy
-file␇☺"
+%file␇☺"
   test -f "$HOME/.crazy
-file␇☺"
+%file␇☺"
 }
 
 @test 'do not fail when linking file with newline' {

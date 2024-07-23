@@ -25,9 +25,9 @@ fixture_repo_with_spaces_in_name() {
   git add ".folder with spaces in name/another file with spaces in its name"
 
   touch ".crazy
-file␇☺"
+%file␇☺"
   git add ".crazy
-file␇☺"
+%file␇☺"
 
   git commit -m 'Add file with newline and all kinds of crazy characters in the name'
 }
