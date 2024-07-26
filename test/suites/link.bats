@@ -21,6 +21,13 @@ file␇☺"
 file␇☺"
 }
 
+@test 'link file with printf conversion chars' {
+  castle 'repo with spaces in name'
+  homeshick --batch link 'repo with spaces in name'
+  stat "$HOME/%printf conver%sionchar%s %%"
+  test -f "$HOME/%printf conver%sionchar%s %%"
+}
+
 @test 'do not fail when linking file with newline' {
  castle 'rc-files'
  test_filename="filename

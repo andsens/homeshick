@@ -94,7 +94,7 @@ get_repo_files() {
   root=$(cd "$1" && pwd -P)
   (
     local path
-    while IFS= read -d $'\n' -r path; do
+    while IFS= read -d $'\0' -r path; do
       # Remove quotes from ls-files
       # (used when there are newlines in the path)
       path=${path/#\"/}
@@ -104,9 +104,7 @@ get_repo_files() {
       # Remove the home/ part
       path=${path/#home\//}
       # Print the file path (NUL separated because \n can be used in filenames)
-      # Disable SC2059, using %s messes with the filename
-      # shellcheck disable=SC2059
-      printf "$path\0"
+      printf "%s\0" "$path"
       # Get the path of all the parent directories
       # up to the repo root.
       while true; do
@@ -114,13 +112,12 @@ get_repo_files() {
         # If path is '.' we're done
         [[ $path == '.' ]] && break
         # Print the path
-        # shellcheck disable=SC2059
-        printf "$path\0"
+        printf "%s\0" "$path"
       done
     # Enter the repo, list the repo root files in home
     # and do the same for any submodules
     done < <(cd "$root" &&
-             git ls-files 'home/' &&
+             git ls-files -z 'home/' &&
              git submodule --quiet foreach --recursive \
              "$homeshick/lib/submodule_files.sh \"$root\" \"\$toplevel\" \"\$path\"")
     # Unfortunately we have to use an external script for `git submodule foreach'

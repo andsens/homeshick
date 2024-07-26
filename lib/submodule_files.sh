@@ -17,5 +17,5 @@ if [[ $repo =~ ^home ]]; then
   cd "$toplevel/$path"
   # List the files and prefix every line
   # with the relative repo path
-  git ls-files | sed "s#^#${repo//#/\\#}/#"
+  git ls-files -z | sed -z "s#^#${repo//#/\\#}/#"
 fi

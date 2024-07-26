@@ -28,6 +28,8 @@ fixture_repo_with_spaces_in_name() {
 file␇☺"
   git add ".crazy
 file␇☺"
+  touch "%printf conver%sionchar%s %%"
+  git add "%printf conver%sionchar%s %%"
 
   git commit -m 'Add file with newline and all kinds of crazy characters in the name'
 }
