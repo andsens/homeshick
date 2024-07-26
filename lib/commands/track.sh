@@ -34,7 +34,7 @@ track() {
   for homepath in $files_to_track; do
     IFS=$oldIFS
 
-    local relpath=${homepath#$HOME/}
+    local relpath=${homepath#"$HOME/"}
     pending 'track' "$relpath"
     local relpath_in_repo="home/$relpath"
     local repopath="$repo/$relpath_in_repo"

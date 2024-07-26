@@ -191,12 +191,12 @@ create_rel_path() {
   if [[ $target = "${prefix%/}" ]]; then
     target_path=''
   else
-    target_path=${target##$prefix}
+    target_path=${target##"$prefix"}
   fi
   # The path from the common directory to the source_dir is
   # $source_dir without the prefix
   local source_dir_path
-  source_dir_path=${source_dir##$prefix}
+  source_dir_path=${source_dir##"$prefix"}
 
   # Determine the path from the source_dir to the common directory (consists only of ../)
   local common_dir_path=''
