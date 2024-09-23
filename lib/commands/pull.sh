@@ -19,7 +19,7 @@ pull() {
   (cd "$repo" && git rev-parse --verify "refs/tags/$BEFORE_PULL_TAG" &>/dev/null) && \
     err "$EX_DATAERR" "Pull marker tag ($BEFORE_PULL_TAG) already exists in $repo. Please resolve this before pulling."
   # make a tag at the current commit, so we can compare against it below
-  (cd "$repo" && git tag "$BEFORE_PULL_TAG" 2>&1)
+  (cd "$repo" && git tag --no-sign "$BEFORE_PULL_TAG" 2>&1)
   # remove the tag if one of the git operations fails
   trap 'cd "$repo" && git tag -d "$BEFORE_PULL_TAG" &>/dev/null' EXIT
 
