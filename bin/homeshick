@@ -171,6 +171,7 @@ case $cmd in
   cd)    help cd        ;; # cd is implemented in the homeshick.{sh,csh} helper script.
   help)  help $help_cmd ;;
   *)
+    declare -a pull_completed
     for param in "${params[@]}"; do
       case $cmd in
         clone)
@@ -182,7 +183,13 @@ case $cmd in
         refresh)
           (refresh $threshhold "$param") ;;
         pull)
-          (pull "$param") && pull_completed+=("$param") ;;
+          prev_hash=$(cd "$repos/$param" && git rev-parse HEAD)
+          (pull "$param")
+          result=$?
+          curr_hash=$(cd "$repos/$param" && git rev-parse HEAD)
+          [[ "$prev_hash" != "$curr_hash" ]] && pull_completed+=("$param")
+          (exit $result)
+          ;;
         symlink|link)
           symlink "$param" ;;
         track)
