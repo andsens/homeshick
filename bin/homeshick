@@ -183,7 +183,7 @@ case $cmd in
         refresh)
           (refresh $threshhold "$param") ;;
         pull)
-          prev_hash=$(cd "$repos/$param" && git rev-parse HEAD --)
+          prev_hash=$(cd "$repos/$param" && git rev-parse HEAD -- 2>/dev/null)
           (pull "$param")
           result=$?
           if [[ $result -eq 0 ]]; then

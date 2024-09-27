@@ -304,3 +304,22 @@ expect_no_new_files() {
   assert_tag_points_to rc-files "$tag_before"
   [ ! -e "$HOME/.gitignore" ]
 }
+
+@test 'pull a castle with no local commits' {
+  # note: pull should succeed, but doesn't currently try to link
+  fixture 'pull-test'
+  (cd "$HOME" && git init .homesick/repos/pull-test)
+  (
+    cd "$HOME/.homesick/repos/pull-test" &&
+    git remote add origin "$REPO_FIXTURES/pull-test" &&
+    printf '[branch "master"]\n  remote = origin\n  merge = refs/heads/master' >> .git/config
+  )
+
+  [ ! -e "$HOME/.bashrc" ]
+  [ ! -e "$HOME/.gitignore" ]
+  run homeshick pull --batch pull-test
+  assert_success
+  expect_no_new_files pull-test
+  [ ! -e "$HOME/.bashrc" ]
+  [ ! -e "$HOME/.gitignore" ]
+}
