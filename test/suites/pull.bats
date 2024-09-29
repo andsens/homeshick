@@ -13,24 +13,6 @@ teardown() {
 }
 
 BEFORE_PULL_TAG=__homeshick-before-pull__
-assert_tag_is_removed() {
-  local castle
-  for castle in "$@"; do
-    (
-      cd "$HOME/.homesick/repos/$castle" || return $?
-      # show all the tags if the test fails
-      {
-        echo "all tags in $castle:"
-        git show-ref --tags || true
-        echo
-      } >&2
-      # this tag should not exist
-      run git rev-parse --verify "refs/tags/$BEFORE_PULL_TAG" >&2 2>&-
-      assert_failure
-    )
-  done
-}
-
 assert_tag_points_to() {
   # takes castle name as first argument and expected commit hash as second
   (
@@ -111,7 +93,6 @@ expect_no_new_files() {
   (cd "$HOME/.homesick/repos/rc-files" && git remote rm origin)
   run homeshick pull rc-files dotfiles
   [ $status -eq 0 ] # EX_SUCCESS
-  assert_tag_is_removed rc-files dotfiles
   # dotfiles FETCH_HEAD should exist if the castle was pulled
   [ -e "$HOME/.homesick/repos/dotfiles/.git/FETCH_HEAD" ]
 }
@@ -124,7 +105,6 @@ expect_no_new_files() {
   [ ! -e "$HOME/.gitignore" ]
   run homeshick pull rc-files <<<y
   assert_success
-  assert_tag_is_removed rc-files
   expect_new_files rc-files .gitignore
   [ -f "$HOME/.gitignore" ]
 }
@@ -138,7 +118,6 @@ expect_no_new_files() {
   [ ! -e "$HOME/.bashrc" ]
   run homeshick pull pull-renamed <<<y
   assert_success
-  assert_tag_is_removed pull-renamed
   expect_new_files pull-renamed .bashrc
   [ -f "$HOME/.bashrc" ]
 }
@@ -151,7 +130,6 @@ expect_no_new_files() {
   [ -f "$HOME/.bashrc" ]
   run homeshick pull --batch pull-test
   assert_success
-  assert_tag_is_removed pull-test
   expect_no_new_files pull-test
   [ -f "$HOME/.bashrc" ]
 }
@@ -167,7 +145,6 @@ expect_no_new_files() {
   [ -f "$HOME/.gitignore" ]
   run homeshick pull --batch rc-files
   assert_success
-  assert_tag_is_removed rc-files
   expect_no_new_files rc-files
   [ -f "$HOME/.gitignore" ]
 }
@@ -179,7 +156,6 @@ expect_no_new_files() {
 
   run homeshick pull --batch pull-test
   assert_success
-  assert_tag_is_removed pull-test
   expect_no_new_files pull-test
 }
 
@@ -190,7 +166,6 @@ expect_no_new_files() {
 
   run homeshick pull --batch pull-test
   assert_success
-  assert_tag_is_removed pull-test
   expect_no_new_files pull-test
 }
 
@@ -202,7 +177,6 @@ expect_no_new_files() {
   [ ! -e "$HOME/.gitignore" ]
   run homeshick pull pull-test <<<y
   assert_success
-  assert_tag_is_removed pull-test
   expect_new_files pull-test .gitignore
   [ -f "$HOME/.gitignore" ]
 }
@@ -215,7 +189,6 @@ expect_no_new_files() {
   [ ! -e "$HOME/.gitignore" ]
   run homeshick pull pull-test <<<y
   assert_success
-  assert_tag_is_removed pull-test
   expect_new_files pull-test .gitignore
   [ -f "$HOME/.gitignore" ]
 }
@@ -229,7 +202,6 @@ expect_no_new_files() {
   # git pull should fail, since the local branch can't be fast-forwarded
   run homeshick pull --batch pull-test
   assert_failure 70 # EX_SOFTWARE
-  assert_tag_is_removed pull-test
   assert_output -p 'fatal: Not possible to fast-forward, aborting.'
   [ ! -e "$HOME/.gitignore" ]
 }
@@ -243,7 +215,6 @@ expect_no_new_files() {
   [ ! -e "$HOME/.gitignore" ]
   run homeshick pull --batch pull-test
   assert_failure 70 # EX_SOFTWARE
-  assert_tag_is_removed pull-test
   [ ! -e "$HOME/.gitignore" ]
   local red='\e\[1;31m'
   local cyan='\e\[1;36m'
@@ -271,7 +242,6 @@ expect_no_new_files() {
   [ ! -e "$HOME/.my_module" ]
   run homeshick pull nodirs pull-test module-files <<<y
   assert_failure 70 # EX_SOFTWARE
-  assert_tag_is_removed nodirs pull-test module-files
   [ -d "$HOME/.my_module" ]
   local green='\e\[1;32m'
   local red='\e\[1;31m'
@@ -298,37 +268,6 @@ expect_no_new_files() {
   } | assert_output -e -
 }
 
-@test 'pull cleans up any marker tags after a git error' {
-  castle 'dotfiles'
-  castle 'pull-test'
-  castle 'nodirs'
-  reset_and_add_new_file pull-test HEAD~2
-  (cd "$HOME/.homesick/repos/pull-test" && git config pull.rebase false && git config pull.ff only)
-
-  run homeshick pull --batch dotfiles pull-test nodirs
-  assert_failure 70 # EX_SOFTWARE
-  # tags in all castles should be cleaned up
-  assert_tag_is_removed dotfiles pull-test nodirs
-  local green='\e\[1;32m'
-  local red='\e\[1;31m'
-  local cyan='\e\[1;36m'
-  local white='\e\[1;37m'
-  local reset='\e\[0m'
-  {
-    echo -ne '^'
-    echo -ne  "$cyan         pull$reset dotfiles\r"
-    echo -ne "$green         pull$reset dotfiles\n"
-    echo -ne  "$cyan         pull$reset pull-test\r"
-    echo -ne   "$red         pull$reset pull-test\n"
-    echo -ne   "$red        error$reset Unable to pull ${HOME//./\.}/\.homesick/repos/pull-test\. Git says:\n"
-    echo -ne '.*' # possibly some git advice
-    echo -ne 'fatal: Not possible to fast-forward, aborting\.\n'
-    echo -ne  "$cyan         pull$reset nodirs\r"
-    echo -ne "$green         pull$reset nodirs"
-    echo -ne '$'
-  } | assert_output -e -
-}
-
 @test 'pull a castle where the marker tag already exists' {
   castle 'rc-files'
   local tag_before
@@ -340,23 +279,14 @@ expect_no_new_files() {
   )
 
   [ ! -e "$HOME/.gitignore" ]
-  run homeshick pull --batch rc-files
-  assert_failure 65 # EX_DATAERR
+  run homeshick pull rc-files <<<y
+  assert_success
   # tag should not be touched
   assert_tag_points_to rc-files "$tag_before"
-  [ ! -e "$HOME/.gitignore" ]
-
-  local red='\e[1;31m'
-  local cyan='\e[1;36m'
-  local reset='\e[0m'
-  {
-    echo -ne "$cyan         pull$reset rc-files\r"
-    echo -ne  "$red         pull$reset rc-files\n"
-    echo -ne  "$red        error$reset Pull marker tag ($BEFORE_PULL_TAG) already exists in $HOME/.homesick/repos/rc-files. Please resolve this before pulling."
-  } | assert_output -
+  [ -f "$HOME/.gitignore" ]
 }
 
-@test 'pull only cleans up the marker tag if we created it' {
+@test 'pull leaves the marker tag alone' {
   castle 'dotfiles'
   castle 'rc-files'
   local tag_before
@@ -369,10 +299,27 @@ expect_no_new_files() {
 
   [ ! -e "$HOME/.gitignore" ]
   run homeshick pull --batch dotfiles rc-files
-  assert_failure 65 # EX_DATAERR
-  # tag in dotfiles should be cleaned up
-  assert_tag_is_removed dotfiles
+  assert_success
   # tag in rc-files should not be touched
   assert_tag_points_to rc-files "$tag_before"
+  [ ! -e "$HOME/.gitignore" ]
+}
+
+@test 'pull a castle with no local commits' {
+  # note: pull should succeed, but doesn't currently try to link
+  fixture 'pull-test'
+  (cd "$HOME" && git init .homesick/repos/pull-test)
+  (
+    cd "$HOME/.homesick/repos/pull-test" &&
+    git remote add origin "$REPO_FIXTURES/pull-test" &&
+    printf '[branch "master"]\n  remote = origin\n  merge = refs/heads/master' >> .git/config
+  )
+
+  [ ! -e "$HOME/.bashrc" ]
+  [ ! -e "$HOME/.gitignore" ]
+  run homeshick pull --batch pull-test
+  assert_success
+  expect_no_new_files pull-test
+  [ ! -e "$HOME/.bashrc" ]
   [ ! -e "$HOME/.gitignore" ]
 }
