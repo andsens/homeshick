@@ -22,7 +22,7 @@ if [[ -z $_shell ]]; then
   _shell=$SHELL
 fi
 
-# Replacement function for the run fn in bats
+# Replacements for the run and load functions in bats
 # Disable SC2034 for global variables
 # shellcheck disable=SC2034
 run() {
@@ -41,11 +41,64 @@ run() {
   [ -z "$E" ] || set -E
   [ -z "$T" ] || set -T
 }
+
+# extracted from bats-core/lib/bats-core/test_functions.bash
+_bats_internal_load() {
+  # note: stripped out redundant error checking, as this is only used from our load
+
+  # shellcheck disable=SC1090
+  if ! source "$1"; then
+    printf "Error while sourcing library loader at '%s'\n" "$1" >&2
+    return 1
+  fi
+  return 0
+}
+load() {
+  local slug="${1:?}"
+  if [[ ${slug:0:1} != / ]]; then # relative paths are relative to BATS_TEST_DIRNAME
+    slug="$BATS_TEST_DIRNAME/$slug"
+  fi
+
+  if [[ -f "$slug.bash" ]]; then
+    _bats_internal_load "$slug.bash"
+    return $?
+  elif [[ -f "$slug" ]]; then
+    _bats_internal_load "$slug"
+    return $?
+  fi
+
+  # loading from PATH (retained for backwards compatibility)
+  if [[ ! -f "$1" ]] && type -P "$1" >/dev/null; then
+    # shellcheck disable=SC1090
+    source "$1"
+    return $?
+  fi
+
+  # No library load path can be found
+  printf "load: Could not find '%s'[.bash]\n" "$slug" >&2
+  return 1
+}
+
+# these are used in several places (most notably, load and temp_make)
+export BATS_TMPDIR=${TMPDIR:-/tmp}
+export BATS_TEST_DIRNAME=$SCRIPTDIR/suites
+export BATS_TEST_FILENAME=$SCRIPTDIR/interactive
+export BATS_TEST_NAME=interactive
+export BATS_TEST_NUMBER=1
+
 # shellcheck source=helper.sh
 source "$SCRIPTDIR/helper.sh"
-export_env_vars
-setup_env
-ln_homeshick
+# a function named "setup" needs to be in the call stack for temp_make to work
+setup() {
+  create_test_dir
+  setup_file
+
+  export _TMPDIR
+  export REPO_FIXTURES
+  export HOME
+  export NOTHOME
+}
+setup
 
 setup_script="$SCRIPTDIR/setup.sh"
 if [[ -f $setup_script ]]; then
@@ -56,4 +109,4 @@ fi
 
 cd "$HOME"
 /usr/bin/env "$_shell"
-rm_structure
+delete_test_dir
