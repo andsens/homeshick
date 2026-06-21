@@ -44,7 +44,7 @@ EOF
   local timestamp
   system=$(uname -a)
   if [[ "$system" =~ "Linux" ]]; then
-    timestamp=$(date -d "now - 8 days")
+    timestamp=$(date -d "now - 8 days" "+%Y-%m-%dT%H:%M:%S")
   else
     # assume BSD system
     timestamp=$(date -v -8d "+%Y-%m-%dT%H:%M:%S")
